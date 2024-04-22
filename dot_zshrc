@@ -1,6 +1,0 @@
-# zshrc
-
-FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
-export EDITOR="code --wait"
-
-eval "$(sheldon source)"
