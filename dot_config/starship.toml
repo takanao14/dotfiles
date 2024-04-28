@@ -1,10 +1,11 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
 format = """
-[](fg:color_user)\
+[](fg:color_user)\
+[ ](bg:color_user)\
 $os\
 $username\
-[](bg:color_user fg:color_host)\
+[](bg:color_user fg:color_host)\
 $hostname\
 [](bg:color_directory fg:color_host)\
 $directory\
@@ -33,13 +34,13 @@ palette = 'gruvbox_dark'
 
 [palettes.gruvbox_dark]
 color_fg0       = '#fbf1c7'
-color_host      = '#3730A3'
-color_user      = '#075985'
+color_user      = '#3730A3'
+color_host      = '#075985'
 color_directory = '#134E4A'
-color_git       = '#166534'
-color_lang      = '#A16207'
-color_env       = '#C2410C'
-color_time      = '#B91C1C'
+color_git       = '#15803D'
+color_lang      = '#CA8A04'
+color_env       = '#EA580C'
+color_time      = '#991B1B'
 
 color_green = '#4CAF50'
 color_purple = '#9C27B0'
