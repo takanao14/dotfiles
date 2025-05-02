@@ -10,8 +10,6 @@
 #
 # See the documentation for more https://github.com/rossmacarthur/sheldon#readme
 
-{{ if (eq .chezmoi.os "darwin") }}
-
 shell = "zsh"
 
 [plugins]
@@ -52,23 +50,3 @@ apply = ["defer"]
 local = "~/.zsh.d/source"
 use = ["*.zsh"]
 apply = ["source"]
-
-{{ end }}
-
-{{ if (eq .chezmoi.os "linux") }}
-
-shell = "bash"
-
-[plugins]
-
-[plugins.local-defer]
-local = "~/.bash.d/defer"
-use = ["*.sh"]
-apply = ["defer"]
-
-[plugins.local-source]
-local = "~/.bash.d/source"
-use = ["*.sh"]
-apply = ["source"]
-
-{{ end }}
