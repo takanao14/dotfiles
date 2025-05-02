@@ -47,6 +47,6 @@ use = ["*.zsh"]
 apply = ["defer"]
 
 [plugins.local-source]
-local = "~/.zsh.d"
+local = "~/.zsh.d/source"
 use = ["*.zsh"]
 apply = ["source"]
