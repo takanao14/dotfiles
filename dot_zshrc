@@ -1,6 +1,6 @@
 # zshrc
 
-# echo "zshrc"
+#echo "zshrc"
 autoload -Uz compinit && compinit
 eval "$(chezmoi completion zsh)"
 
