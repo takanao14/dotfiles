@@ -1,0 +1,9 @@
+# zshrc
+
+# echo "zshrc"
+autoload -Uz compinit && compinit
+eval "$(chezmoi completion zsh)"
+
+export EDITOR="code --wait"
+eval "$(sheldon source)"
+
