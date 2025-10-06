@@ -1,0 +1,8 @@
+#echo "zprofile"
+
+{{ if eq .chezmoi.os "darwin" }}
+# add mac specific stuff here
+eval "$(/opt/homebrew/bin/brew shellenv)"
+{{ else if eq .chezmoi.os "linux" }}
+# add linuex specific stuff here
+{{ end }}
