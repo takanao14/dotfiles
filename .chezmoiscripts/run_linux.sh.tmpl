@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+# {{- if eq .chezmoi.os "linux" }}
+
+echo "linuix script"
+
+# install sheldon
+if ! command -v sheldon &> /dev/null ; then
+    echo "install sheldon"
+    curl --proto '=https' -fLsS https://rossmacarthur.github.io/install/crate.sh \
+        | bash -s -- --repo rossmacarthur/sheldon --to $HOME/.local/bin
+fi
+
+# install starshio
+if ! command -v starship &> /dev/null ; then
+    echo "install starship"
+    curl -sS https://starship.rs/install.sh | sh -s -- --bin-dir $HOME/.local/bin -y
+fi
+
+# install direnv
+if ! command -v direnv &> /dev/null ; then
+    echo "install direnv"
+    curl -sfL https://direnv.net/install.sh | bash
+fi
+
+# {{- end }}
