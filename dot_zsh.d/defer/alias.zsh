@@ -1,0 +1,11 @@
+alias k=kubectl
+alias kgp='kubectl get pods'
+alias kgs='kubectl get svc'
+alias kdp='kubectl describe pod'
+alias kds='kubectl describe svc'
+alias kl='kubectl logs'
+alias kaf='kubectl apply -f'
+alias kdf='kubectl delete -f'
+alias kns='kubectl ns'
+alias kctx='kubectl ctx'
+alias kx='kubectl exec -it'
