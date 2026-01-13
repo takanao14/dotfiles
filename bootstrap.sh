@@ -12,7 +12,7 @@ if [[ "$machine" == "Darwin" ]]; then
     eval "$(/opt/homebrew/bin/brew shellenv)"
   fi
 
-  if ! command -v chezmoid &> /dev/null; then
+  if ! command -v chezmoi &> /dev/null; then
     echo "install chezmoi"
     brew install chezmoi
   fi
