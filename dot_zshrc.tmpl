@@ -2,7 +2,11 @@
 
 #echo "zshrc"
 autoload -Uz compinit && compinit
+
+{{ if eq .chezmoi.os "darwin" }}
+# add mac specific stuff here
 FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
+{{ end }}
 FPATH=$HOME/.zfunc:$FPATH
 
 export EDITOR="code --wait"
