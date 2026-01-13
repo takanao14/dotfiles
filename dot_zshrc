@@ -2,8 +2,8 @@
 
 #echo "zshrc"
 autoload -Uz compinit && compinit
-eval "$(chezmoi completion zsh)"
+FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
+FPATH=$HOME/.zfunc:$FPATH
 
 export EDITOR="code --wait"
 eval "$(sheldon source)"
-
