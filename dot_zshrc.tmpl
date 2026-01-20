@@ -4,7 +4,7 @@
 autoload -Uz compinit && compinit
 
 {{ if eq .chezmoi.os "darwin" }}
-FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
+# FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
 {{ end }}
 FPATH=$HOME/.zfunc:$FPATH
 
