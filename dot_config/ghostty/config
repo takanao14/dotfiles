@@ -6,3 +6,5 @@ theme = Japanesque
 # termianl sie
 window-width = 120
 window-height = 30
+
+focus-follows-mouse = true
