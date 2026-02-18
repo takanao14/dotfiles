@@ -19,4 +19,15 @@ if [[ "$machine" == "Darwin" ]]; then
 
 elif [[ "$machine" == "Linux" ]]; then
   echo "Linux"
+
+  if ! command -v zsh &> /dev/null; then
+    echo "install zsh"
+    sudo apt install zsh -y
+  fi
+
+  if ! command -v chezmoi &> /dev/null; then
+    echo "install chezmoi"
+    sh -c "$(curl -fsLS chezmoi.io/get)" -- -b $HOME/.local/bin
+  fi
+
 fi
