@@ -44,7 +44,7 @@ fi
 if ! command -v kubectl &> /dev/null ; then
     echo "install kubectl"
     sudo apt-get update
-    sudo apt-get install -y apt-transport-https ca-certificates curl gnupg
+    sudo apt-get install -y apt-transport-https ca-certificates curl
     sudo curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.35/deb/Release.key -o /usr/share/keyrings/kubernetes-apt-keyring.asc
     echo 'deb [signed-by=/usr/share/keyrings/kubernetes-apt-keyring.asc] https://pkgs.k8s.io/core:/stable:/v1.35/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
     sudo chmod 644 /etc/apt/sources.list.d/kubernetes.list
@@ -58,6 +58,17 @@ if ! command -v kubie &> /dev/null ; then
     curl -sfL https://github.com/sbstp/kubie/releases/download/v0.26.1/kubie-linux-amd64 -o kubie
     chmod +x kubie
     mv kubie $HOME/.local/bin
+fi
+
+# install hashicorp terraform, packer
+if ! command -v terraform &> /dev/null ; then
+    echo "install terraform"
+    sudo apt-get update
+    sudo apt-get install -y software-properties-common
+    sudo curl -sfSL https://apt.releases.hashicorp.com/gpg -o /usr/share/keyrings/hashicorp-archive-keyring.asc
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.asc] https://apt.releases.hashicorp.com $(grep -oP '(?<=UBUNTU_CODENAME=).*' /etc/os-release || lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+    sudo apt update
+    sudo apt-get install terraform packer -y
 fi
 
 # {{- end }}
