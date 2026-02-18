@@ -9,11 +9,14 @@ copy_on_select true
 keybinds {
 
     shared {
-        bind "Esc" { SwitchToMode "locked"; }
         bind "Alt Up" { MoveFocus "Up"; }
         bind "Alt Down" { MoveFocus "Down"; }
         bind "Alt Left" { MoveFocus "Left"; }
         bind "Alt Right" { MoveFocus "Right"; }
+    }
+
+    shared_except "locked" {
+        bind "Esc" { SwitchToMode "locked"; }
     }
 
     locked {
