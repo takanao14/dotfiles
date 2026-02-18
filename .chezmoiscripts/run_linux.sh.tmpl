@@ -24,4 +24,40 @@ if ! command -v direnv &> /dev/null ; then
     curl -sfL https://direnv.net/install.sh | bash
 fi
 
+# install eza
+if ! command -v eza &> /dev/null ; then
+    echo "install eza"
+    curl -sfL https://github.com/eza-community/eza/releases/latest/download/eza_x86_64-unknown-linux-gnu.tar.gz | tar xz
+    chmod +x eza
+    mv eza $HOME/.local/bin
+fi
+
+# install fzf
+if ! command -v fzf &> /dev/null ; then
+    echo "install fzf"
+    curl -sfL https://github.com/junegunn/fzf/releases/download/v0.67.0/fzf-0.67.0-linux_amd64.tar.gz | tar xz
+    chmod +x fzf
+    mv fzf $HOME/.local/bin
+fi
+
+# install kubectl
+if ! command -v kubectl &> /dev/null ; then
+    echo "install kubectl"
+    sudo apt-get update
+    sudo apt-get install -y apt-transport-https ca-certificates curl gnupg
+    sudo curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.35/deb/Release.key -o /usr/share/keyrings/kubernetes-apt-keyring.asc
+    echo 'deb [signed-by=/usr/share/keyrings/kubernetes-apt-keyring.asc] https://pkgs.k8s.io/core:/stable:/v1.35/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+    sudo chmod 644 /etc/apt/sources.list.d/kubernetes.list
+    sudo apt-get update
+    sudo apt-get install -y kubectl
+fi
+
+# install kubie
+if ! command -v kubie &> /dev/null ; then
+    echo "install kubie"
+    curl -sfL https://github.com/sbstp/kubie/releases/download/v0.26.1/kubie-linux-amd64 -o kubie
+    chmod +x kubie
+    mv kubie $HOME/.local/bin
+fi
+
 # {{- end }}
