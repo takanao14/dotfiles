@@ -8,3 +8,9 @@ window-width = 120
 window-height = 30
 
 focus-follows-mouse = true
+
+# Zellij integration
+macos-option-as-alt = left
+
+keybind = alt+left=unbind
+keybind = alt+right=unbind
