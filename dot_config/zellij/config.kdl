@@ -17,6 +17,7 @@ keybinds {
 
     shared_except "locked" {
         bind "Esc" { SwitchToMode "locked"; }
+        bind "Enter" { SwitchToMode "locked"; }
     }
 
     locked {
@@ -27,11 +28,7 @@ keybinds {
     tmux {
         bind "2" { NewPane "Down"; SwitchToMode "locked"; }
         bind "3" { NewPane "Right"; SwitchToMode "locked"; }
-        bind "o" { FocusNextPane;  }
-        bind "Up" { MoveFocus "Up"; }
-        bind "Down" { MoveFocus "Down"; }
-        bind "Left" { MoveFocus "Left"; }
-        bind "Right" { MoveFocus "Right"; }
+        bind "o" { FocusNextPane; SwitchToMode "locked"; }
         bind "Esc" { SwitchToMode "locked"; }
         bind "Enter" { SwitchToMode "locked"; }
     }
