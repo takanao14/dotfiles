@@ -71,4 +71,10 @@ if ! command -v terraform &> /dev/null ; then
     sudo apt-get install terraform packer -y
 fi
 
+# install terragrunt
+if ! command -v terragrunt &> /dev/null ; then
+    echo "install terragrunt"
+    curl -sL https://terragrunt.gruntwork.io/install | bash -s -- -d ~/.local/bin
+fi
+
 # {{- end }}
