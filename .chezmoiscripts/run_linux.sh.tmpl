@@ -60,7 +60,7 @@ if ! command -v kubie &> /dev/null ; then
     mv kubie $HOME/.local/bin
 fi
 
-# install hashicorp terraform, packer
+# install hashicorp terraform, packer, vault
 if ! command -v terraform &> /dev/null ; then
     echo "install terraform"
     sudo apt-get update
@@ -68,7 +68,15 @@ if ! command -v terraform &> /dev/null ; then
     sudo curl -sfSL https://apt.releases.hashicorp.com/gpg -o /usr/share/keyrings/hashicorp-archive-keyring.asc
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.asc] https://apt.releases.hashicorp.com $(grep -oP '(?<=UBUNTU_CODENAME=).*' /etc/os-release || lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
     sudo apt update
-    sudo apt-get install terraform packer -y
+    sudo apt-get install -y terraform packer vault
+fi
+
+# install zellij
+if ! command -v zellij &> /dev/null ; then
+    echo "install zellij"
+    curl -sfL https://github.com/zellij-org/zellij/releases/download/v0.43.1/zellij-x86_64-unknown-linux-musl.tar.gz | tar xz
+    chmod +x zellij
+    mv zellij $HOME/.local/bin
 fi
 
 # {{- end }}
