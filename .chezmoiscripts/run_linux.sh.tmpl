@@ -79,4 +79,10 @@ if ! command -v zellij &> /dev/null ; then
     mv zellij $HOME/.local/bin
 fi
 
+# install terragrunt
+if ! command -v terragrunt &> /dev/null ; then
+    echo "install terragrunt"
+    curl -sL https://terragrunt.gruntwork.io/install | bash -s -- -d ~/.local/bin
+fi
+
 # {{- end }}
