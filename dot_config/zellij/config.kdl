@@ -13,6 +13,7 @@ keybinds {
         bind "Alt Down" { MoveFocus "Down"; }
         bind "Alt Left" { MoveFocus "Left"; }
         bind "Alt Right" { MoveFocus "Right"; }
+        bind "Alt s" { SwitchToMode "scroll"; }
     }
 
     shared_except "locked" {
