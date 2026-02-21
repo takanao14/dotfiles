@@ -1,6 +1,8 @@
 # appearance
-font-family = "JetBrainsMonoNL Nerd Font Mono"
-font-size = 15
+#font-family = "JetBrainsMonoNL Nerd Font Mono"
+font-family = "UDEV Gothic 35NFLG"
+
+font-size = 16
 theme = Japanesque
 
 # termianl sie
