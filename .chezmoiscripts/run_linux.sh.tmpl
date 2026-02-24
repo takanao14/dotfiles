@@ -2,6 +2,8 @@
 
 # {{- if eq .chezmoi.os "linux" }}
 
+set -e -o pipefail
+
 echo "linux script"
 
 # Version variables
@@ -12,7 +14,26 @@ K9S_VERSION="${K9S_VERSION:-0.50.18}"
 HELMFILE_VERSION="${HELMFILE_VERSION:-1.3.0}"
 K0SCTL_VERSION="${K0SCTL_VERSION:-0.28.0}"
 
-# install sheldon
+# Helper function to install binary from GitHub releases
+install_binary() {
+    local name="$1"
+    local url="$2"
+    local output_file="$3"
+    
+    echo "Installing ${name}..."
+    TMP_DIR=$(mktemp -d)
+    trap "rm -rf ${TMP_DIR}" EXIT
+    
+    if [[ "$url" == *.tar.gz ]]; then
+        curl -fsSL "$url" | tar xz -C "${TMP_DIR}"
+        install -m 0755 "${TMP_DIR}/${name}" "${output_file}" || \
+            install -m 0755 "${TMP_DIR}/${name##*/}" "${output_file}"
+    else
+        curl -fsSL "$url" -o "${output_file}"
+        chmod 0755 "${output_file}"
+    fi
+}
+
 if ! command -v sheldon &> /dev/null ; then
     echo "Installing sheldon"
     curl --proto '=https' -fLsS https://rossmacarthur.github.io/install/crate.sh \
@@ -32,28 +53,16 @@ if ! command -v direnv &> /dev/null ; then
     curl -sfL https://direnv.net/install.sh | bash
 fi
 
-# install eza
 if ! command -v eza &> /dev/null ; then
-    echo "Installing eza"
-    curl -sfL https://github.com/eza-community/eza/releases/latest/download/eza_x86_64-unknown-linux-gnu.tar.gz | tar xz
-    chmod +x eza
-    mv eza $HOME/.local/bin
+    install_binary "eza" "https://github.com/eza-community/eza/releases/latest/download/eza_x86_64-unknown-linux-gnu.tar.gz" "$HOME/.local/bin/eza"
 fi
 
-# install fzf
 if ! command -v fzf &> /dev/null ; then
-    echo "Installing fzf"
-    curl -sfL https://github.com/junegunn/fzf/releases/download/v0.67.0/fzf-0.67.0-linux_amd64.tar.gz | tar xz
-    chmod +x fzf
-    mv fzf $HOME/.local/bin
+    install_binary "fzf" "https://github.com/junegunn/fzf/releases/download/v${FZF_VERSION}/fzf-${FZF_VERSION}-linux_amd64.tar.gz" "$HOME/.local/bin/fzf"
 fi
 
-# install zellij
 if ! command -v zellij &> /dev/null ; then
-    echo "Installing zellij"
-    curl -sfL https://github.com/zellij-org/zellij/releases/download/${ZELLIJ_VERSION}/zellij-x86_64-unknown-linux-musl.tar.gz | tar xz
-    chmod +x zellij
-    mv zellij $HOME/.local/bin
+    install_binary "zellij" "https://github.com/zellij-org/zellij/releases/download/v${ZELLIJ_VERSION}/zellij-x86_64-unknown-linux-musl.tar.gz" "$HOME/.local/bin/zellij"
 fi
 
 # install hashicorp terraform, packer, vault
@@ -104,41 +113,19 @@ if ! command -v helm &> /dev/null ; then
 fi
 
 if ! command -v kubie &> /dev/null ; then
-    # Install kubie - Kubernetes context and namespace switcher
-    # Kubie provides easier context switching and isolated shell sessions per context
-    echo "Installing kubie ${KUBIE_VERSION}..."
-    curl -fsSL "https://github.com/sbstp/kubie/releases/download/${KUBIE_VERSION}/kubie-linux-amd64" -o $HOME/.local/bin/kubie
-    chmod 0755 $HOME/.local/bin/kubie
+    install_binary "kubie" "https://github.com/sbstp/kubie/releases/download/v${KUBIE_VERSION}/kubie-linux-amd64" "$HOME/.local/bin/kubie"
 fi
 
 if ! command -v k9s &> /dev/null ; then
-    # Install k9s - Terminal-based UI for Kubernetes clusters
-    # k9s provides a powerful terminal UI for managing Kubernetes resources
-    echo "Installing k9s ${K9S_VERSION}..."
-    TMP_DIR=$(mktemp -d)
-    curl -fsSL "https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/k9s_Linux_amd64.tar.gz" -o "${TMP_DIR}/k9s.tar.gz"
-    tar -xzf "${TMP_DIR}/k9s.tar.gz" -C "${TMP_DIR}" k9s
-    install -m 0755 "${TMP_DIR}/k9s" $HOME/.local/bin/k9s
-    rm -rf "${TMP_DIR}"
+    install_binary "k9s" "https://github.com/derailed/k9s/releases/download/v${K9S_VERSION}/k9s_Linux_amd64.tar.gz" "$HOME/.local/bin/k9s"
 fi
 
 if ! command -v helmfile &> /dev/null ; then
-    # Install helmfile - Declarative Helm chart deployment tool
-    # Helmfile allows you to define multiple Helm releases in a declarative manner
-    echo "Installing helmfile v${HELMFILE_VERSION}..."
-    TMP_DIR=$(mktemp -d)
-    curl -fsSL "https://github.com/helmfile/helmfile/releases/download/v${HELMFILE_VERSION}/helmfile_${HELMFILE_VERSION}_linux_amd64.tar.gz" -o "${TMP_DIR}/helmfile.tar.gz"
-    tar -xzf "${TMP_DIR}/helmfile.tar.gz" -C "${TMP_DIR}" helmfile
-    install -m 0755 "${TMP_DIR}/helmfile" $HOME/.local/bin/helmfile
-    rm -rf "${TMP_DIR}"
+    install_binary "helmfile" "https://github.com/helmfile/helmfile/releases/download/v${HELMFILE_VERSION}/helmfile_${HELMFILE_VERSION}_linux_amd64.tar.gz" "$HOME/.local/bin/helmfile"
 fi
 
 if ! command -v k0sctl &> /dev/null ; then
-# Install k0sctl - k0s cluster lifecycle management tool
-    # k0sctl is used to bootstrap and manage k0s Kubernetes clusters
-    echo "Installing k0sctl ${K0SCTL_VERSION}..."
-    curl -fSL "https://github.com/k0sproject/k0sctl/releases/download/${K0SCTL_VERSION}/k0sctl-linux-amd64" -o $HOME/.local/bin/k0sctl
-    chmod 0755 $HOME/.local/bin/k0sctl
+    install_binary "k0sctl" "https://github.com/k0sproject/k0sctl/releases/download/v${K0SCTL_VERSION}/k0sctl-linux-amd64" "$HOME/.local/bin/k0sctl"
 fi
 
 # {{- end }}
