@@ -63,7 +63,6 @@ if ! command -v zellij &> /dev/null ; then
     install_binary "zellij" "https://github.com/zellij-org/zellij/releases/download/v${ZELLIJ_VERSION}/zellij-x86_64-unknown-linux-musl.tar.gz" "$HOME/.local/bin/zellij"
 fi
 
-# install hashicorp terraform, packer, vault
 if ! command -v terraform &> /dev/null ; then
     echo "Installing Terraform, Packer, and Vault"
     # Install prerequisites
