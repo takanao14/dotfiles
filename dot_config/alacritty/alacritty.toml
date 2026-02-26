@@ -1,0 +1,6 @@
+[window]
+padding = { x = 4, y = 4 }
+
+[font]
+normal = { family = "UDEV Gothic 35NFLG", style = "Regular" }
+size = 16
