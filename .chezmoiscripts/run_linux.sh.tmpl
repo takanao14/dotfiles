@@ -127,13 +127,4 @@ if ! command -v terragrunt &> /dev/null ; then
     curl -fsSL https://terragrunt.gruntwork.io/install | bash -s -- -d "$HOME/.local/bin"
 fi
 
-# if DISPLAY is set, install ghostty
-if [ -n "$DISPLAY" ] ; then
-    if ! command -v ghostty &> /dev/null ; then
-        echo "Installing ghostty"
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/mkasberg/ghostty-ubuntu/HEAD/install.sh)"
-    fi
-fi
-
-
 # {{- end }}
