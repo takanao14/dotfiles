@@ -59,20 +59,20 @@ install_binary() {
 
 # Helper function to update package cache
 update_package_cache() {
-    {{- if eq .chezmoi.osRelease.id "ubuntu" }}
+    # {{- if eq .chezmoi.osRelease.id "ubuntu" }}
     sudo apt-get update
-    {{- else if eq .chezmoi.osRelease.id "rocky" }}
+    # {{- else if eq .chezmoi.osRelease.id "rocky" }}
     sudo dnf makecache --refresh
-    {{- end }}
+    # {{- end }}
 }
 
 # Helper function to install packages
 install_packages() {
-    {{- if eq .chezmoi.osRelease.id "ubuntu" }}
+    # {{- if eq .chezmoi.osRelease.id "ubuntu" }}
     sudo apt-get install -y "$@"
-    {{- else if eq .chezmoi.osRelease.id "rocky" }}
+    # {{- else if eq .chezmoi.osRelease.id "rocky" }}
     sudo dnf install -y "$@"
-    {{- end }}
+    # {{- end }}
 }
 
 # Helper function to add APT repository with GPG key (Ubuntu)
@@ -166,7 +166,6 @@ install_hashicorp_tools() {
     update_package_cache
     install_packages gnupg software-properties-common
 
-    {{- if eq .chezmoi.osRelease.id "ubuntu" }}
     # Source os-release to get the codename
     . /etc/os-release
     local codename="${UBUNTU_CODENAME:-$(lsb_release -cs)}"
