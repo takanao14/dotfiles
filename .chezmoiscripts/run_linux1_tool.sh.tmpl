@@ -210,7 +210,6 @@ install_k0sctl() {
 
 main() {
     log_info "=== Linux Development Tools Installation ==="
-    echo
     
     # Shell enhancement tools
     ensure_installed "sheldon" install_sheldon
@@ -232,7 +231,6 @@ main() {
     ensure_installed "helmfile" install_helmfile
     ensure_installed "k0sctl" install_k0sctl
     
-    echo
     log_info "=== Installation completed ==="
 }
 

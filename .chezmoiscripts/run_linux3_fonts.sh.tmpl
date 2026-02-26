@@ -73,16 +73,16 @@ check_dependencies() {
 }
 
 is_font_installed() {
-    fc-list : family | grep -q "Udev Gothic 35"
+    fc-list : family | grep -q "UDEV Gothic NF"
 }
 
 download_and_extract_font() {
     local tmp_dir="$1"
     local zip_file="$tmp_dir/udev-gothic.zip"
     
-    log_info "Downloading Udev Gothic 35 ${UDEV_GOTHIC_VERSION}..."
+    log_info "Downloading UDEV Gothic 35 ${UDEV_GOTHIC_VERSION}..."
     if ! curl -fsSL --retry 3 --retry-delay 2 "$DOWNLOAD_URL" -o "$zip_file"; then
-        log_error "Failed to download Udev Gothic 35"
+        log_error "Failed to download UDEV Gothic 35"
         return 1
     fi
     
@@ -121,10 +121,10 @@ rebuild_font_cache() {
 }
 
 install_udev_gothic() {
-    log_info "Installing Udev Gothic 35 font..."
+    log_info "Installing UDEV Gothic 35 font..."
     
     if is_font_installed; then
-        log_info "Udev Gothic 35 is already installed"
+        log_info "UDEV Gothic 35 is already installed"
         return 0
     fi
     
@@ -150,13 +150,12 @@ install_udev_gothic() {
         return 1
     fi
     
-    log_info "Udev Gothic 35 installed successfully"
+    log_info "UDEV Gothic 35 installed successfully"
     return 0
 }
 
 main() {
     log_info "=== Font Installation Script ==="
-    echo
     
     check_system
     
@@ -165,7 +164,6 @@ main() {
         exit 1
     fi
     
-    echo
     log_info "=== Font installation completed ==="
 }
 

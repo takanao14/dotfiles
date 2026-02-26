@@ -56,12 +56,14 @@ check_system() {
     if [[ "$has_gui" == "false" ]]; then
         log_warn "No GUI session detected (xrdp or Wayland required)"
         log_warn "Skipping Alacritty installation"
+        log_info "=== Installation completed successfully ==="
         exit 0
     fi
     
     # Skip if alacritty is already installed
     if command -v alacritty &> /dev/null; then
         log_info "Alacritty is already installed ($(alacritty --version))"
+        log_info "=== Installation completed successfully ==="
         exit 0
     fi
 }
@@ -171,7 +173,6 @@ verify_installation() {
 
 main() {
     log_info "=== Alacritty Installation Script for Ubuntu 24.04 ==="
-    echo
     
     check_system
     install_dependencies
@@ -183,7 +184,6 @@ main() {
     install_completions
     verify_installation
     
-    echo
     log_info "=== Installation completed successfully ==="
 }
 
