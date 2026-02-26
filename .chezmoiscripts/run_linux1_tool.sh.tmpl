@@ -41,12 +41,12 @@ install_binary() {
     local name="$1"
     local url="$2"
     local output_file="$3"
-    
+
     log_info "Installing ${name}..."
     local tmp_dir
     tmp_dir=$(mktemp -d)
     trap "rm -rf ${tmp_dir}" RETURN
-    
+
     if [[ "$url" == *.tar.gz ]]; then
         curl -fsSL "$url" | tar xz -C "$tmp_dir"
         install -m 0755 "$tmp_dir/${name}" "$output_file" || \
@@ -57,13 +57,31 @@ install_binary() {
     fi
 }
 
-# Helper function to add APT repository with GPG key
+# Helper function to update package cache
+update_package_cache() {
+    {{- if eq .chezmoi.osRelease.id "ubuntu" }}
+    sudo apt-get update
+    {{- else if eq .chezmoi.osRelease.id "rocky" }}
+    sudo dnf makecache --refresh
+    {{- end }}
+}
+
+# Helper function to install packages
+install_packages() {
+    {{- if eq .chezmoi.osRelease.id "ubuntu" }}
+    sudo apt-get install -y "$@"
+    {{- else if eq .chezmoi.osRelease.id "rocky" }}
+    sudo dnf install -y "$@"
+    {{- end }}
+}
+
+# Helper function to add APT repository with GPG key (Ubuntu)
 add_apt_repository() {
     local repo_name="$1"
     local gpg_url="$2"
     local repo_line="$3"
     local keyring_path="/usr/share/keyrings/${repo_name}-keyring.gpg"
-    
+
     log_info "Adding ${repo_name} repository..."
     curl -fsSL "$gpg_url" | gpg --dearmor | sudo tee "$keyring_path" > /dev/null
     sudo chmod 644 "$keyring_path"
@@ -71,11 +89,28 @@ add_apt_repository() {
     sudo chmod 644 "/etc/apt/sources.list.d/${repo_name}.list"
 }
 
+# Helper function to add DNF repository (Rocky)
+add_dnf_repository() {
+    local repo_name="$1"
+    local repo_url="$2"
+    local gpgkey_url="$3"
+
+    log_info "Adding ${repo_name} repository..."
+    sudo tee "/etc/yum.repos.d/${repo_name}.repo" > /dev/null <<EOF
+[${repo_name}]
+name=${repo_name}
+baseurl=${repo_url}
+enabled=1
+gpgcheck=1
+gpgkey=${gpgkey_url}
+EOF
+}
+
 # Helper function to check and install tools
 ensure_installed() {
     local cmd="$1"
     local install_func="$2"
-    
+
     if ! command -v "$cmd" &> /dev/null; then
         "$install_func"
     fi
@@ -126,21 +161,25 @@ install_zellij() {
 
 install_hashicorp_tools() {
     log_info "Installing HashiCorp tools (Terraform, Packer, Vault)..."
-    
+
     # Install prerequisites
-    sudo apt-get update
-    sudo apt-get install -y gnupg software-properties-common
-    
+    update_package_cache
+    install_packages gnupg software-properties-common
+
+    {{- if eq .chezmoi.osRelease.id "ubuntu" }}
     # Source os-release to get the codename
     . /etc/os-release
     local codename="${UBUNTU_CODENAME:-$(lsb_release -cs)}"
-    
+
     add_apt_repository "hashicorp" \
         "https://apt.releases.hashicorp.com/gpg" \
         "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-keyring.gpg] https://apt.releases.hashicorp.com ${codename} main"
-    
-    sudo apt-get update
-    sudo apt-get install -y terraform packer vault
+    {{- else if eq .chezmoi.osRelease.id "rocky" }}
+    add_dnf_repository "hashicorp" "https://rpm.releases.hashicorp.com/RHEL/\$releasever/\$basearch/stable"
+    {{- end }}
+
+    update_package_cache
+    install_packages terraform packer vault
 }
 
 install_terragrunt() {
@@ -155,29 +194,41 @@ install_terragrunt() {
 install_kubectl() {
     log_info "Installing kubectl..."
     # Reference: https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/#install-using-native-package-management
-    
-    sudo apt-get update
-    sudo apt-get install -y apt-transport-https ca-certificates curl gnupg
-    
+
+    update_package_cache
+    install_packages ca-certificates curl gnupg
+
+    {{- if eq .chezmoi.osRelease.id "ubuntu" }}
+    sudo apt-get install -y apt-transport-https
     sudo mkdir -p -m 755 /etc/apt/keyrings
     add_apt_repository "kubernetes" \
         "https://pkgs.k8s.io/core:/stable:/v1.35/deb/Release.key" \
         "deb [signed-by=/usr/share/keyrings/kubernetes-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.35/deb/ /"
-    
-    sudo apt-get update
-    sudo apt-get install -y kubectl
+    {{- else if eq .chezmoi.osRelease.id "rocky" }}
+    add_dnf_repository "kubernetes" \
+        "https://pkgs.k8s.io/core:/stable:/v1.35/rpm/" \
+        "https://pkgs.k8s.io/core:/stable:/v1.35/rpm/repodata/repomd.xml.key"
+    {{- end }}
+
+    update_package_cache
+    install_packages kubectl
 }
 
 install_helm() {
     log_info "Installing helm..."
     # Reference: https://helm.sh/docs/intro/install/
-    
+
+    {{- if eq .chezmoi.osRelease.id "ubuntu" }}
     add_apt_repository "helm" \
         "https://packages.buildkite.com/helm-linux/helm-debian/gpgkey" \
         "deb [signed-by=/usr/share/keyrings/helm-keyring.gpg] https://packages.buildkite.com/helm-linux/helm-debian/any/ any main"
-    
-    sudo apt-get update
-    sudo apt-get install -y helm
+
+    {{- else if eq .chezmoi.osRelease.id "rocky" }}
+
+    {{- end }}
+
+    update_package_cache
+    install_packages helm
 }
 
 install_kubie() {
@@ -210,7 +261,7 @@ install_k0sctl() {
 
 main() {
     log_info "=== Linux Development Tools Installation ==="
-    
+
     # Shell enhancement tools
     ensure_installed "sheldon" install_sheldon
     ensure_installed "starship" install_starship
@@ -218,11 +269,11 @@ main() {
     ensure_installed "eza" install_eza
     ensure_installed "fzf" install_fzf
     ensure_installed "zellij" install_zellij
-    
+
     # HashiCorp tools
     ensure_installed "terraform" install_hashicorp_tools
     ensure_installed "terragrunt" install_terragrunt
-    
+
     # Kubernetes tools
     ensure_installed "kubectl" install_kubectl
     ensure_installed "helm" install_helm
@@ -230,7 +281,7 @@ main() {
     ensure_installed "k9s" install_k9s
     ensure_installed "helmfile" install_helmfile
     ensure_installed "k0sctl" install_k0sctl
-    
+
     log_info "=== Installation completed ==="
 }
 

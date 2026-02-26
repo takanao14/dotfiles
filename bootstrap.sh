@@ -18,11 +18,26 @@ if [[ "$machine" == "Darwin" ]]; then
   fi
 
 elif [[ "$machine" == "Linux" ]]; then
-  echo "Linux"
+  echo "Linux Initialize"
+
+  # Detect Linux distribution
+  if [ -f /etc/os-release ]; then
+    . /etc/os-release
+    distro=$ID
+  else
+    distro="unknown"
+  fi
 
   if ! command -v zsh &> /dev/null; then
     echo "install zsh"
-    sudo apt install zsh -y
+    if [[ "$distro" == "ubuntu" ]] || [[ "$distro" == "debian" ]]; then
+      sudo apt install zsh -y
+    elif [[ "$distro" == "rocky" ]] || [[ "$distro" == "rhel" ]] || [[ "$distro" == "centos" ]] || [[ "$distro" == "fedora" ]]; then
+      sudo dnf install zsh -y
+    else
+      echo "Unsupported Linux distribution: $distro"
+      exit 1
+    fi
   fi
 
   if ! command -v chezmoi &> /dev/null; then
