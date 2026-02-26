@@ -2,7 +2,7 @@
 
 # {{- if eq .chezmoi.os "linux" }}
 
-# Font installation script for Ubuntu 24.04
+# Font installation script for Linux (Ubuntu 24.04 / Rocky 9.x)
 
 set -euo pipefail
 
@@ -65,7 +65,11 @@ check_dependencies() {
     
     if [[ ${#missing_deps[@]} -gt 0 ]]; then
         log_error "Missing required dependencies: ${missing_deps[*]}"
+        # {{- if eq .chezmoi.osRelease.id "ubuntu" }}
         log_info "Install them with: sudo apt-get install -y fontconfig unzip curl"
+        # {{- else if eq .chezmoi.osRelease.id "rocky" }}
+        log_info "Install them with: sudo dnf install -y fontconfig unzip curl"
+        # {{- end }}
         return 1
     fi
     
