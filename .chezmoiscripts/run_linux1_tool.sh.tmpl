@@ -164,6 +164,8 @@ install_hashicorp_tools() {
 
     # Install prerequisites
     update_package_cache
+
+    # {{- if eq .chezmoi.osRelease.id "ubuntu" }}
     install_packages gnupg software-properties-common
 
     # Source os-release to get the codename
@@ -173,9 +175,11 @@ install_hashicorp_tools() {
     add_apt_repository "hashicorp" \
         "https://apt.releases.hashicorp.com/gpg" \
         "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-keyring.gpg] https://apt.releases.hashicorp.com ${codename} main"
-    {{- else if eq .chezmoi.osRelease.id "rocky" }}
-    add_dnf_repository "hashicorp" "https://rpm.releases.hashicorp.com/RHEL/\$releasever/\$basearch/stable"
-    {{- end }}
+    # {{- else if eq .chezmoi.osRelease.id "rocky" }}
+    install_packages yum-utils
+    sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
+
+    # {{- end }}
 
     update_package_cache
     install_packages terraform packer vault
