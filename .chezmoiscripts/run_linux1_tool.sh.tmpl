@@ -164,8 +164,6 @@ install_hashicorp_tools() {
 
     # Install prerequisites
     update_package_cache
-
-    # {{- if eq .chezmoi.osRelease.id "ubuntu" }}
     install_packages gnupg software-properties-common
 
     # Source os-release to get the codename
