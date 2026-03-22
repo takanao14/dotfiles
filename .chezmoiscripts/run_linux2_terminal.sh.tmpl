@@ -2,7 +2,7 @@
 
 # {{- if eq .chezmoi.os "linux" }}
 
-# Alacritty installation script for Ubuntu 24.04 using Cargo
+# Alacritty installation script for Linux (Ubuntu 24.04 / Rocky 9.x) using Cargo
 # Reference: https://github.com/alacritty/alacritty/blob/master/INSTALL.md
 
 set -euo pipefail
@@ -71,6 +71,7 @@ check_system() {
 install_dependencies() {
     log_info "Installing build dependencies and required tools..."
     
+    # {{- if eq .chezmoi.osRelease.id "ubuntu" }}
     sudo apt-get update
     sudo apt-get install -y \
         cmake \
@@ -84,6 +85,19 @@ install_dependencies() {
         curl \
         scdoc \
         ncurses-bin
+    # {{- else if eq .chezmoi.osRelease.id "rocky" }}
+    sudo dnf install -y \
+        cmake \
+        freetype-devel \
+        fontconfig-devel \
+        libxcb-devel \
+        libxkbcommon-devel \
+        scdoc
+    sudo dnf group install -y "Development Tools"
+    # {{- else }}
+    log_error "Unsupported distribution: {{ .chezmoi.osRelease.id }}"
+    exit 1
+    # {{- end }}
 }
 
 install_rust() {
@@ -172,7 +186,7 @@ verify_installation() {
 }
 
 main() {
-    log_info "=== Alacritty Installation Script for Ubuntu 24.04 ==="
+    log_info "=== Alacritty Installation Script ==="
     
     check_system
     install_dependencies
