@@ -258,6 +258,13 @@ install_k0sctl() {
         "$BIN_DIR/k0sctl"
 }
 
+install_sops() {
+    sudo apt-get install -y age
+    curl -fsSL "https://github.com/getsops/sops/releases/download/v3.12.2/sops_3.12.2_amd64.deb" -o /tmp/sops.deb
+    sudo dpkg -i /tmp/sops.deb
+    rm /tmp/sops.deb
+}
+
 # ============================================================================
 # Main Installation
 # ============================================================================
@@ -284,6 +291,7 @@ main() {
     ensure_installed "k9s" install_k9s
     ensure_installed "helmfile" install_helmfile
     ensure_installed "k0sctl" install_k0sctl
+    ensure_installed "sops" install_sops
 
     log_info "=== Installation completed ==="
 }
