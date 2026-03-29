@@ -1,7 +1,9 @@
 shell: zsh
 
-exclude:
-  - ~/.kube/kubie.yaml
+configs:
+  exclude:
+    - ~/.kube/config
+    - ~/.kube/kubie.yaml
 
 prompt:
   disable: true
