@@ -51,6 +51,8 @@ readonly TERRAGRUNT_VERSION="${TERRAGRUNT_VERSION:-1.0.4}"
 readonly OPENTOFU_VERSION="${OPENTOFU_VERSION:-1.11.7}"
 # renovate: datasource=github-releases depName=openbao/openbao
 readonly OPENBAO_VERSION="${OPENBAO_VERSION:-2.5.3}"
+# renovate: datasource=github-releases depName=helm/helm
+readonly HELM_VERSION="${HELM_VERSION:-3.20.2}"
 
 # Ensure bin directory exists
 mkdir -p "$BIN_DIR"
@@ -284,22 +286,13 @@ install_kubectl() {
 }
 
 install_helm() {
-    log_info "Installing helm..."
-    # Reference: https://helm.sh/docs/intro/install/
-
-    # {{- if eq .chezmoi.osRelease.id "ubuntu" }}
-    add_apt_repository "helm" \
-        "https://packages.buildkite.com/helm-linux/helm-debian/gpgkey" \
-        "deb [signed-by=/usr/share/keyrings/helm-keyring.gpg] https://packages.buildkite.com/helm-linux/helm-debian/any/ any main"
-    update_package_cache
-    install_packages helm
-    # {{- else if eq .chezmoi.osRelease.id "rocky" }}
-    add_dnf_repository "helm" \
-        "https://baltocdn.com/helm/stable/rpm/" \
-        "https://baltocdn.com/helm/signing.asc"
-    update_package_cache
-    install_packages helm
-    # {{- end }}
+    log_info "Installing helm ${HELM_VERSION}..."
+    local tmp_dir
+    tmp_dir="$(mktemp -d)"
+    trap "rm -rf '${tmp_dir}'" RETURN
+    curl -fsSL "https://get.helm.sh/helm-v${HELM_VERSION}-linux-${GOARCH}.tar.gz" \
+        | tar xz -C "$tmp_dir"
+    install -m 0755 "$tmp_dir/linux-${GOARCH}/helm" "$BIN_DIR/helm"
 }
 
 install_kubie() {
@@ -374,7 +367,9 @@ main() {
 
     # Kubernetes tools (package manager managed, no pinned version)
     ensure_installed "kubectl" install_kubectl
-    ensure_installed "helm"    install_helm
+
+    # Kubernetes tools (pinned version)
+    install_if_needed "helm" "$HELM_VERSION" install_helm
 
     # Kubernetes tools (pinned version)
     install_if_needed "kubie"    "$KUBIE_VERSION"    install_kubie
