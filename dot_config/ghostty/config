@@ -5,7 +5,7 @@ font-family = "UDEV Gothic 35NFLG"
 font-size = 16
 theme = Japanesque
 
-# termianl sie
+# terminal size
 window-width = 120
 window-height = 30
 

@@ -7,7 +7,7 @@
 set -euo pipefail
 
 # Constants
-readonly UDEV_GOTHIC_VERSION="v2.2.0"
+readonly UDEV_GOTHIC_VERSION="${UDEV_GOTHIC_VERSION:-v2.2.0}"
 readonly FONTS_DIR="$HOME/.local/share/fonts/udev-gothic"
 readonly DOWNLOAD_URL="https://github.com/yuru7/udev-gothic/releases/download/${UDEV_GOTHIC_VERSION}/UDEVGothic_NF_${UDEV_GOTHIC_VERSION}.zip"
 

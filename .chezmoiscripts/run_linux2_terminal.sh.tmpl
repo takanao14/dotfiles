@@ -169,8 +169,6 @@ install_completions() {
 
     mkdir -p "$HOME/.zfunc"
     cp "$BUILD_DIR/alacritty/extra/completions/_alacritty" "$HOME/.zfunc/_alacritty"
-
-    log_warn "Add 'fpath+=~/.zfunc' to your ~/.zshrc if not already present"
 }
 
 verify_installation() {
