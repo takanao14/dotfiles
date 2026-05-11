@@ -7,7 +7,6 @@
 
 set -euo pipefail
 
-readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 readonly BUILD_DIR="$(mktemp -d)"
 readonly ALACRITTY_VERSION="${ALACRITTY_VERSION:-v0.16.1}"
 
