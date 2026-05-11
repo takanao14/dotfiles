@@ -8,7 +8,8 @@ if [[ "$machine" == "Darwin" ]]; then
     # homebrew installer
     echo "Homebrew Install"
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> $HOME/.zprofile
+    local brew_line='eval "$(/opt/homebrew/bin/brew shellenv)"'
+    grep -qF "$brew_line" "$HOME/.zprofile" 2>/dev/null || echo "$brew_line" >> "$HOME/.zprofile"
     eval "$(/opt/homebrew/bin/brew shellenv)"
   fi
 
