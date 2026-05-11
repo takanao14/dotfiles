@@ -165,7 +165,7 @@ install_hashicorp_tools() {
     # Install prerequisites
     update_package_cache
 
-    {{- if eq .chezmoi.osRelease.id "ubuntu" }}
+    # {{- if eq .chezmoi.osRelease.id "ubuntu" }}
     install_packages gnupg software-properties-common
 
     # Source os-release to get the codename
@@ -178,7 +178,6 @@ install_hashicorp_tools() {
     # {{- else if eq .chezmoi.osRelease.id "rocky" }}
     install_packages yum-utils
     sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
-
     # {{- end }}
 
     update_package_cache
@@ -201,17 +200,17 @@ install_kubectl() {
     update_package_cache
     install_packages ca-certificates curl gnupg
 
-    {{- if eq .chezmoi.osRelease.id "ubuntu" }}
+    # {{- if eq .chezmoi.osRelease.id "ubuntu" }}
     sudo apt-get install -y apt-transport-https
     sudo mkdir -p -m 755 /etc/apt/keyrings
     add_apt_repository "kubernetes" \
         "https://pkgs.k8s.io/core:/stable:/v1.35/deb/Release.key" \
         "deb [signed-by=/usr/share/keyrings/kubernetes-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.35/deb/ /"
-    {{- else if eq .chezmoi.osRelease.id "rocky" }}
+    # {{- else if eq .chezmoi.osRelease.id "rocky" }}
     add_dnf_repository "kubernetes" \
         "https://pkgs.k8s.io/core:/stable:/v1.35/rpm/" \
         "https://pkgs.k8s.io/core:/stable:/v1.35/rpm/repodata/repomd.xml.key"
-    {{- end }}
+    # {{- end }}
 
     update_package_cache
     install_packages kubectl
@@ -221,7 +220,7 @@ install_helm() {
     log_info "Installing helm..."
     # Reference: https://helm.sh/docs/intro/install/
 
-    {{- if eq .chezmoi.osRelease.id "ubuntu" }}
+    # {{- if eq .chezmoi.osRelease.id "ubuntu" }}
     add_apt_repository "helm" \
         "https://packages.buildkite.com/helm-linux/helm-debian/gpgkey" \
         "deb [signed-by=/usr/share/keyrings/helm-keyring.gpg] https://packages.buildkite.com/helm-linux/helm-debian/any/ any main"
@@ -230,8 +229,10 @@ install_helm() {
 
     {{- end }}
 
+    # {{- else if eq .chezmoi.osRelease.id "rocky" }}
     update_package_cache
     install_packages helm
+    # {{- end }}
 }
 
 install_kubie() {
