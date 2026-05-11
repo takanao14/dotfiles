@@ -1,1 +1,69 @@
-my dotfiles
+# dotfiles
+
+Personal dotfiles managed with [chezmoi](https://www.chezmoi.io/). Supports macOS and Linux (Ubuntu / Rocky Linux).
+
+## Setup
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/takanao14/dotfiles/main/bootstrap.sh | bash
+```
+
+`bootstrap.sh` automatically runs the following:
+
+1. Install Homebrew (macOS) / zsh and git (Linux)
+2. Install chezmoi
+3. Apply this repository via `chezmoi init --apply takanao14/dotfiles`
+
+## Structure
+
+```
+dotfiles/
+├── bootstrap.sh                   # Setup script for new machines
+├── dot_Brewfile                   # Homebrew package list (macOS)
+├── dot_zshrc.tmpl                 # ~/.zshrc
+├── dot_zprofile.tmpl              # ~/.zprofile (Homebrew path config)
+├── dot_tmux.conf                  # ~/.tmux.conf
+├── dot_zsh.d/
+│   ├── source/                    # Loaded immediately at zsh startup
+│   │   ├── fpath.zsh              # Completion path configuration
+│   │   └── starship.zsh           # Starship prompt initialization
+│   └── defer/                     # Lazily loaded via zsh-defer
+│       ├── alias.zsh              # Aliases (kubectl, etc.)
+│       ├── direnv.zsh             # direnv hook
+│       ├── zoxide.zsh             # zoxide initialization
+│       ├── terraform.zsh          # Terraform completion
+│       ├── terragrunt.zsh         # Terragrunt completion
+│       ├── krew.zsh               # kubectl krew path
+│       └── sshr.zsh               # sshr configuration
+├── dot_config/
+│   ├── ghostty/config             # Ghostty terminal configuration
+│   ├── alacritty/alacritty.toml   # Alacritty terminal configuration
+│   ├── starship.toml              # Starship prompt configuration
+│   ├── sheldon/plugins.toml       # sheldon plugin configuration
+│   └── zellij/config.kdl          # Zellij multiplexer configuration
+├── dot_kube/
+│   └── kubie.yaml                 # kubie (kubectl context manager) configuration
+└── .chezmoiscripts/               # Setup scripts auto-executed by chezmoi
+    ├── run_macos.sh.tmpl           # macOS: apply Brewfile
+    ├── run_linux1_tool.sh.tmpl     # Linux: install development tools
+    ├── run_linux2_terminal.sh.tmpl # Linux: build and install Alacritty
+    └── run_linux3_fonts.sh.tmpl    # Linux: install UDEV Gothic fonts
+```
+
+## Key Tools
+
+| Category | Tools |
+|----------|-------|
+| Shell | zsh, [sheldon](https://github.com/rossmacarthur/sheldon), [starship](https://starship.rs/) |
+| Terminal | [Ghostty](https://ghostty.org/) (macOS), [Alacritty](https://alacritty.org/) (Linux) |
+| Multiplexer | [Zellij](https://zellij.dev/), tmux |
+| Kubernetes | kubectl, [kubie](https://github.com/sbstp/kubie), [k9s](https://k9scli.io/), helm, helmfile, krew |
+| IaC | Terraform, Packer, Vault, Terragrunt |
+| Other | [direnv](https://direnv.net/), [fzf](https://github.com/junegunn/fzf), [eza](https://github.com/eza-community/eza), [zoxide](https://github.com/ajeetdsouza/zoxide), SOPS |
+
+## zsh Loading Strategy
+
+To keep startup fast, [zsh-defer](https://github.com/romkatv/zsh-defer) splits configuration loading into two phases:
+
+- `dot_zsh.d/source/` — loaded immediately at startup (e.g. completion path setup that cannot be deferred)
+- `dot_zsh.d/defer/` — lazily loaded in the background (aliases, tool initializations)

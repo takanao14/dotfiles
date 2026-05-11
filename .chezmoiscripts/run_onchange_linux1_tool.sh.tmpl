@@ -24,14 +24,33 @@ log_error() {
 }
 
 readonly BIN_DIR="$HOME/.local/bin"
+readonly VERSION_CACHE_DIR="$HOME/.local/share/chezmoi-versions"
+
+# Architecture detection
+readonly ARCH="$(uname -m)"
+readonly GOARCH="$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/')"
 
 # Version variables
-readonly FZF_VERSION="${FZF_VERSION:-0.68.0}"
-readonly ZELLIJ_VERSION="${ZELLIJ_VERSION:-0.43.1}"
-readonly KUBIE_VERSION="${KUBIE_VERSION:-0.26.1}"
+# renovate: datasource=github-releases depName=junegunn/fzf
+readonly FZF_VERSION="${FZF_VERSION:-0.72.0}"
+# renovate: datasource=github-releases depName=zellij-org/zellij
+readonly ZELLIJ_VERSION="${ZELLIJ_VERSION:-0.44.2}"
+# renovate: datasource=github-releases depName=sbstp/kubie
+readonly KUBIE_VERSION="${KUBIE_VERSION:-0.27.0}"
+# renovate: datasource=github-releases depName=derailed/k9s
 readonly K9S_VERSION="${K9S_VERSION:-0.50.18}"
-readonly HELMFILE_VERSION="${HELMFILE_VERSION:-1.3.0}"
-readonly K0SCTL_VERSION="${K0SCTL_VERSION:-0.28.0}"
+# renovate: datasource=github-releases depName=helmfile/helmfile
+readonly HELMFILE_VERSION="${HELMFILE_VERSION:-1.5.1}"
+# renovate: datasource=github-releases depName=k0sproject/k0sctl
+readonly K0SCTL_VERSION="${K0SCTL_VERSION:-0.30.1}"
+# renovate: datasource=github-releases depName=getsops/sops
+readonly SOPS_VERSION="${SOPS_VERSION:-3.13.0}"
+# renovate: datasource=github-releases depName=gruntwork-io/terragrunt
+readonly TERRAGRUNT_VERSION="${TERRAGRUNT_VERSION:-1.0.4}"
+# renovate: datasource=github-releases depName=opentofu/opentofu
+readonly OPENTOFU_VERSION="${OPENTOFU_VERSION:-1.11.7}"
+# renovate: datasource=github-releases depName=openbao/openbao
+readonly OPENBAO_VERSION="${OPENBAO_VERSION:-2.5.3}"
 
 # Ensure bin directory exists
 mkdir -p "$BIN_DIR"
@@ -106,13 +125,29 @@ gpgkey=${gpgkey_url}
 EOF
 }
 
-# Helper function to check and install tools
+# Helper function to check and install tools (no version tracking)
 ensure_installed() {
     local cmd="$1"
     local install_func="$2"
 
     if ! command -v "$cmd" &> /dev/null; then
         "$install_func"
+    fi
+}
+
+# Helper function to install or upgrade versioned tools
+install_if_needed() {
+    local cmd="$1"
+    local version="$2"
+    local install_func="$3"
+    local cache_file="$VERSION_CACHE_DIR/$cmd"
+
+    if ! command -v "$cmd" &>/dev/null || [[ "$(cat "$cache_file" 2>/dev/null)" != "$version" ]]; then
+        "$install_func"
+        mkdir -p "$VERSION_CACHE_DIR"
+        echo "$version" > "$cache_file"
+    else
+        log_info "$cmd $version is already up to date, skipping"
     fi
 }
 
@@ -139,19 +174,19 @@ install_direnv() {
 
 install_eza() {
     install_binary "eza" \
-        "https://github.com/eza-community/eza/releases/latest/download/eza_x86_64-unknown-linux-gnu.tar.gz" \
+        "https://github.com/eza-community/eza/releases/latest/download/eza_${ARCH}-unknown-linux-gnu.tar.gz" \
         "$BIN_DIR/eza"
 }
 
 install_fzf() {
     install_binary "fzf" \
-        "https://github.com/junegunn/fzf/releases/download/v${FZF_VERSION}/fzf-${FZF_VERSION}-linux_amd64.tar.gz" \
+        "https://github.com/junegunn/fzf/releases/download/v${FZF_VERSION}/fzf-${FZF_VERSION}-linux_${GOARCH}.tar.gz" \
         "$BIN_DIR/fzf"
 }
 
 install_zellij() {
     install_binary "zellij" \
-        "https://github.com/zellij-org/zellij/releases/download/v${ZELLIJ_VERSION}/zellij-x86_64-unknown-linux-musl.tar.gz" \
+        "https://github.com/zellij-org/zellij/releases/download/v${ZELLIJ_VERSION}/zellij-${ARCH}-unknown-linux-musl.tar.gz" \
         "$BIN_DIR/zellij"
 }
 
@@ -165,7 +200,7 @@ install_hashicorp_tools() {
     # Install prerequisites
     update_package_cache
 
-    {{- if eq .chezmoi.osRelease.id "ubuntu" }}
+    # {{- if eq .chezmoi.osRelease.id "ubuntu" }}
     install_packages gnupg software-properties-common
 
     # Source os-release to get the codename
@@ -178,7 +213,6 @@ install_hashicorp_tools() {
     # {{- else if eq .chezmoi.osRelease.id "rocky" }}
     install_packages yum-utils
     sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
-
     # {{- end }}
 
     update_package_cache
@@ -187,7 +221,39 @@ install_hashicorp_tools() {
 
 install_terragrunt() {
     log_info "Installing terragrunt..."
-    curl -fsSL https://terragrunt.gruntwork.io/install | bash -s -- -d "$BIN_DIR"
+    install_binary "terragrunt" \
+        "https://github.com/gruntwork-io/terragrunt/releases/download/v${TERRAGRUNT_VERSION}/terragrunt_linux_${GOARCH}" \
+        "$BIN_DIR/terragrunt"
+}
+
+install_opentofu() {
+    log_info "Installing opentofu..."
+    install_packages unzip
+    local tmp_dir
+    tmp_dir="$(mktemp -d)"
+    trap "rm -rf '${tmp_dir}'" RETURN
+    curl -fsSL "https://github.com/opentofu/opentofu/releases/download/v${OPENTOFU_VERSION}/tofu_${OPENTOFU_VERSION}_linux_${GOARCH}.zip" \
+        -o "${tmp_dir}/tofu.zip"
+    unzip -q "${tmp_dir}/tofu.zip" tofu -d "${tmp_dir}"
+    install -m 0755 "${tmp_dir}/tofu" "$BIN_DIR/tofu"
+}
+
+install_openbao() {
+    log_info "Installing openbao..."
+    local tmp_dir
+    tmp_dir="$(mktemp -d)"
+    trap "rm -rf '${tmp_dir}'" RETURN
+    # {{- if eq .chezmoi.osRelease.id "ubuntu" }}
+    local deb_file="${tmp_dir}/openbao.deb"
+    curl -fsSL "https://github.com/openbao/openbao/releases/download/v${OPENBAO_VERSION}/openbao_${OPENBAO_VERSION}_linux_${GOARCH}.deb" \
+        -o "${deb_file}"
+    sudo dpkg -i "${deb_file}"
+    # {{- else if eq .chezmoi.osRelease.id "rocky" }}
+    local rpm_file="${tmp_dir}/openbao.rpm"
+    curl -fsSL "https://github.com/openbao/openbao/releases/download/v${OPENBAO_VERSION}/openbao_${OPENBAO_VERSION}_linux_${GOARCH}.rpm" \
+        -o "${rpm_file}"
+    sudo rpm -i "${rpm_file}"
+    # {{- end }}
 }
 
 # ============================================================================
@@ -201,17 +267,17 @@ install_kubectl() {
     update_package_cache
     install_packages ca-certificates curl gnupg
 
-    {{- if eq .chezmoi.osRelease.id "ubuntu" }}
+    # {{- if eq .chezmoi.osRelease.id "ubuntu" }}
     sudo apt-get install -y apt-transport-https
     sudo mkdir -p -m 755 /etc/apt/keyrings
     add_apt_repository "kubernetes" \
         "https://pkgs.k8s.io/core:/stable:/v1.35/deb/Release.key" \
         "deb [signed-by=/usr/share/keyrings/kubernetes-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.35/deb/ /"
-    {{- else if eq .chezmoi.osRelease.id "rocky" }}
+    # {{- else if eq .chezmoi.osRelease.id "rocky" }}
     add_dnf_repository "kubernetes" \
         "https://pkgs.k8s.io/core:/stable:/v1.35/rpm/" \
         "https://pkgs.k8s.io/core:/stable:/v1.35/rpm/repodata/repomd.xml.key"
-    {{- end }}
+    # {{- end }}
 
     update_package_cache
     install_packages kubectl
@@ -221,48 +287,60 @@ install_helm() {
     log_info "Installing helm..."
     # Reference: https://helm.sh/docs/intro/install/
 
-    {{- if eq .chezmoi.osRelease.id "ubuntu" }}
+    # {{- if eq .chezmoi.osRelease.id "ubuntu" }}
     add_apt_repository "helm" \
         "https://packages.buildkite.com/helm-linux/helm-debian/gpgkey" \
         "deb [signed-by=/usr/share/keyrings/helm-keyring.gpg] https://packages.buildkite.com/helm-linux/helm-debian/any/ any main"
-
-    {{- else if eq .chezmoi.osRelease.id "rocky" }}
-
-    {{- end }}
-
     update_package_cache
     install_packages helm
+    # {{- else if eq .chezmoi.osRelease.id "rocky" }}
+    add_dnf_repository "helm" \
+        "https://baltocdn.com/helm/stable/rpm/" \
+        "https://baltocdn.com/helm/signing.asc"
+    update_package_cache
+    install_packages helm
+    # {{- end }}
 }
 
 install_kubie() {
     install_binary "kubie" \
-        "https://github.com/sbstp/kubie/releases/download/v${KUBIE_VERSION}/kubie-linux-amd64" \
+        "https://github.com/sbstp/kubie/releases/download/v${KUBIE_VERSION}/kubie-linux-${GOARCH}" \
         "$BIN_DIR/kubie"
 }
 
 install_k9s() {
     install_binary "k9s" \
-        "https://github.com/derailed/k9s/releases/download/v${K9S_VERSION}/k9s_Linux_amd64.tar.gz" \
+        "https://github.com/derailed/k9s/releases/download/v${K9S_VERSION}/k9s_Linux_${GOARCH}.tar.gz" \
         "$BIN_DIR/k9s"
 }
 
 install_helmfile() {
     install_binary "helmfile" \
-        "https://github.com/helmfile/helmfile/releases/download/v${HELMFILE_VERSION}/helmfile_${HELMFILE_VERSION}_linux_amd64.tar.gz" \
+        "https://github.com/helmfile/helmfile/releases/download/v${HELMFILE_VERSION}/helmfile_${HELMFILE_VERSION}_linux_${GOARCH}.tar.gz" \
         "$BIN_DIR/helmfile"
 }
 
 install_k0sctl() {
     install_binary "k0sctl" \
-        "https://github.com/k0sproject/k0sctl/releases/download/v${K0SCTL_VERSION}/k0sctl-linux-amd64" \
+        "https://github.com/k0sproject/k0sctl/releases/download/v${K0SCTL_VERSION}/k0sctl-linux-${GOARCH}" \
         "$BIN_DIR/k0sctl"
 }
 
 install_sops() {
-    sudo apt-get install -y age
-    curl -fsSL "https://github.com/getsops/sops/releases/download/v3.12.2/sops_3.12.2_amd64.deb" -o /tmp/sops.deb
-    sudo dpkg -i /tmp/sops.deb
-    rm /tmp/sops.deb
+    log_info "Installing sops..."
+    # {{- if eq .chezmoi.osRelease.id "ubuntu" }}
+    install_packages age
+    local deb_file
+    deb_file="$(mktemp --suffix=.deb)"
+    curl -fsSL "https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops_${SOPS_VERSION}_amd64.deb" -o "$deb_file"
+    sudo dpkg -i "$deb_file"
+    rm -f "$deb_file"
+    # {{- else if eq .chezmoi.osRelease.id "rocky" }}
+    install_packages age
+    install_binary "sops" \
+        "https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux.${GOARCH}" \
+        "$BIN_DIR/sops"
+    # {{- end }}
 }
 
 # ============================================================================
@@ -272,26 +350,38 @@ install_sops() {
 main() {
     log_info "=== Linux Development Tools Installation ==="
 
-    # Shell enhancement tools
+    # Shell enhancement tools (no pinned version)
     ensure_installed "sheldon" install_sheldon
     ensure_installed "starship" install_starship
-    ensure_installed "direnv" install_direnv
-    ensure_installed "eza" install_eza
-    ensure_installed "fzf" install_fzf
-    ensure_installed "zellij" install_zellij
+    ensure_installed "direnv"  install_direnv
+    ensure_installed "eza"     install_eza
 
-    # HashiCorp tools
+    # Shell enhancement tools (pinned version)
+    install_if_needed "fzf"    "$FZF_VERSION"    install_fzf
+    install_if_needed "zellij" "$ZELLIJ_VERSION" install_zellij
+
+    # HashiCorp tools (package manager managed, no pinned version)
     ensure_installed "terraform" install_hashicorp_tools
-    ensure_installed "terragrunt" install_terragrunt
+    ensure_installed "packer"    install_hashicorp_tools
+    ensure_installed "vault"     install_hashicorp_tools
 
-    # Kubernetes tools
+    # HashiCorp tools (pinned version)
+    install_if_needed "terragrunt" "$TERRAGRUNT_VERSION" install_terragrunt
+
+    # OpenTofu / OpenBao (pinned version)
+    install_if_needed "tofu" "$OPENTOFU_VERSION" install_opentofu
+    install_if_needed "bao"  "$OPENBAO_VERSION"  install_openbao
+
+    # Kubernetes tools (package manager managed, no pinned version)
     ensure_installed "kubectl" install_kubectl
-    ensure_installed "helm" install_helm
-    ensure_installed "kubie" install_kubie
-    ensure_installed "k9s" install_k9s
-    ensure_installed "helmfile" install_helmfile
-    ensure_installed "k0sctl" install_k0sctl
-    ensure_installed "sops" install_sops
+    ensure_installed "helm"    install_helm
+
+    # Kubernetes tools (pinned version)
+    install_if_needed "kubie"    "$KUBIE_VERSION"    install_kubie
+    install_if_needed "k9s"      "$K9S_VERSION"      install_k9s
+    install_if_needed "helmfile" "$HELMFILE_VERSION" install_helmfile
+    install_if_needed "k0sctl"   "$K0SCTL_VERSION"   install_k0sctl
+    install_if_needed "sops"     "$SOPS_VERSION"     install_sops
 
     log_info "=== Installation completed ==="
 }

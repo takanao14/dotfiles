@@ -1,6 +1,5 @@
 #echo "zprofile"
 
-{{ if eq .chezmoi.os "darwin" }}
+{{- if eq .chezmoi.os "darwin" }}
 eval "$(/opt/homebrew/bin/brew shellenv)"
-{{ else if eq .chezmoi.os "linux" }}
-{{ end }}
+{{- end }}

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # {{- if eq .chezmoi.os "linux" }}
 
@@ -7,9 +7,10 @@
 set -euo pipefail
 
 # Constants
-readonly UDEV_GOTHIC_VERSION="v2.2.0"
+# renovate: datasource=github-releases depName=yuru7/udev-gothic
+readonly UDEV_GOTHIC_VERSION="${UDEV_GOTHIC_VERSION:-2.2.0}"
 readonly FONTS_DIR="$HOME/.local/share/fonts/udev-gothic"
-readonly DOWNLOAD_URL="https://github.com/yuru7/udev-gothic/releases/download/${UDEV_GOTHIC_VERSION}/UDEVGothic_NF_${UDEV_GOTHIC_VERSION}.zip"
+readonly DOWNLOAD_URL="https://github.com/yuru7/udev-gothic/releases/download/v${UDEV_GOTHIC_VERSION}/UDEVGothic_NF_v${UDEV_GOTHIC_VERSION}.zip"
 
 # Color output
 readonly RED='\033[0;31m'
@@ -77,7 +78,9 @@ check_dependencies() {
 }
 
 is_font_installed() {
-    fc-list : family | grep -q "UDEV Gothic NF"
+    local cache_file="$HOME/.local/share/chezmoi-versions/udev-gothic"
+    [[ "$(cat "$cache_file" 2>/dev/null)" == "$UDEV_GOTHIC_VERSION" ]] && \
+        fc-list : family | grep -q "UDEV Gothic NF"
 }
 
 download_and_extract_font() {
@@ -153,7 +156,10 @@ install_udev_gothic() {
     if ! rebuild_font_cache; then
         return 1
     fi
-    
+
+    mkdir -p "$HOME/.local/share/chezmoi-versions"
+    echo "$UDEV_GOTHIC_VERSION" > "$HOME/.local/share/chezmoi-versions/udev-gothic"
+
     log_info "UDEV Gothic 35 installed successfully"
     return 0
 }
