@@ -30,15 +30,25 @@ readonly ARCH="$(uname -m)"
 readonly GOARCH="$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/')"
 
 # Version variables
+# renovate: datasource=github-releases depName=junegunn/fzf
 readonly FZF_VERSION="${FZF_VERSION:-0.68.0}"
+# renovate: datasource=github-releases depName=zellij-org/zellij
 readonly ZELLIJ_VERSION="${ZELLIJ_VERSION:-0.43.1}"
+# renovate: datasource=github-releases depName=sbstp/kubie
 readonly KUBIE_VERSION="${KUBIE_VERSION:-0.26.1}"
+# renovate: datasource=github-releases depName=derailed/k9s
 readonly K9S_VERSION="${K9S_VERSION:-0.50.18}"
+# renovate: datasource=github-releases depName=helmfile/helmfile
 readonly HELMFILE_VERSION="${HELMFILE_VERSION:-1.3.0}"
+# renovate: datasource=github-releases depName=k0sproject/k0sctl
 readonly K0SCTL_VERSION="${K0SCTL_VERSION:-0.28.0}"
+# renovate: datasource=github-releases depName=getsops/sops
 readonly SOPS_VERSION="${SOPS_VERSION:-3.12.2}"
+# renovate: datasource=github-releases depName=gruntwork-io/terragrunt
 readonly TERRAGRUNT_VERSION="${TERRAGRUNT_VERSION:-0.77.0}"
+# renovate: datasource=github-releases depName=opentofu/opentofu
 readonly OPENTOFU_VERSION="${OPENTOFU_VERSION:-1.11.7}"
+# renovate: datasource=github-releases depName=openbao/openbao
 readonly OPENBAO_VERSION="${OPENBAO_VERSION:-2.5.3}"
 
 # Ensure bin directory exists
