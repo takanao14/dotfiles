@@ -32,6 +32,7 @@ readonly KUBIE_VERSION="${KUBIE_VERSION:-0.26.1}"
 readonly K9S_VERSION="${K9S_VERSION:-0.50.18}"
 readonly HELMFILE_VERSION="${HELMFILE_VERSION:-1.3.0}"
 readonly K0SCTL_VERSION="${K0SCTL_VERSION:-0.28.0}"
+readonly SOPS_VERSION="${SOPS_VERSION:-3.12.2}"
 
 # Ensure bin directory exists
 mkdir -p "$BIN_DIR"
@@ -224,12 +225,12 @@ install_helm() {
     add_apt_repository "helm" \
         "https://packages.buildkite.com/helm-linux/helm-debian/gpgkey" \
         "deb [signed-by=/usr/share/keyrings/helm-keyring.gpg] https://packages.buildkite.com/helm-linux/helm-debian/any/ any main"
-
-    {{- else if eq .chezmoi.osRelease.id "rocky" }}
-
-    {{- end }}
-
+    update_package_cache
+    install_packages helm
     # {{- else if eq .chezmoi.osRelease.id "rocky" }}
+    add_dnf_repository "helm" \
+        "https://baltocdn.com/helm/stable/rpm/" \
+        "https://baltocdn.com/helm/signing.asc"
     update_package_cache
     install_packages helm
     # {{- end }}
@@ -260,10 +261,20 @@ install_k0sctl() {
 }
 
 install_sops() {
-    sudo apt-get install -y age
-    curl -fsSL "https://github.com/getsops/sops/releases/download/v3.12.2/sops_3.12.2_amd64.deb" -o /tmp/sops.deb
-    sudo dpkg -i /tmp/sops.deb
-    rm /tmp/sops.deb
+    log_info "Installing sops..."
+    # {{- if eq .chezmoi.osRelease.id "ubuntu" }}
+    install_packages age
+    local deb_file
+    deb_file="$(mktemp --suffix=.deb)"
+    curl -fsSL "https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops_${SOPS_VERSION}_amd64.deb" -o "$deb_file"
+    sudo dpkg -i "$deb_file"
+    rm -f "$deb_file"
+    # {{- else if eq .chezmoi.osRelease.id "rocky" }}
+    install_packages age
+    install_binary "sops" \
+        "https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux.amd64" \
+        "$BIN_DIR/sops"
+    # {{- end }}
 }
 
 # ============================================================================
