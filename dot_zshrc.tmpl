@@ -6,8 +6,6 @@ if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
   export PATH="$HOME/.local/bin:$PATH"
 fi
 
-autoload -Uz compinit && compinit
-
 export EDITOR="code --wait"
 
 eval "$(sheldon source)"
