@@ -48,7 +48,8 @@ elif [[ "$machine" == "Linux" ]]; then
 
   if ! command -v chezmoi &> /dev/null; then
     echo "install chezmoi"
-    sh -c "$(curl -fsLS chezmoi.io/get)" -- -b $HOME/.local/bin
+    sh -c "$(curl -fsLS chezmoi.io/get)" -- -b "$HOME/.local/bin"
+    export PATH="$HOME/.local/bin:$PATH"
   fi
 
   chezmoi init --apply takanao14/dotfiles
