@@ -53,6 +53,8 @@ readonly OPENTOFU_VERSION="${OPENTOFU_VERSION:-1.11.7}"
 readonly OPENBAO_VERSION="${OPENBAO_VERSION:-2.5.3}"
 # renovate: datasource=github-releases depName=helm/helm
 readonly HELM_VERSION="${HELM_VERSION:-3.20.2}"
+# renovate: datasource=github-releases depName=FiloSottile/age
+readonly AGE_VERSION="${AGE_VERSION:-1.2.1}"
 
 # Ensure bin directory exists
 mkdir -p "$BIN_DIR"
@@ -324,6 +326,17 @@ install_k0sctl() {
         "$BIN_DIR/k0sctl"
 }
 
+install_age_binary() {
+    log_info "Installing age ${AGE_VERSION}..."
+    local tmp_dir
+    tmp_dir="$(mktemp -d)"
+    trap "rm -rf '${tmp_dir}'" RETURN
+    curl -fsSL "https://github.com/FiloSottile/age/releases/download/v${AGE_VERSION}/age-v${AGE_VERSION}-linux-${GOARCH}.tar.gz" \
+        | tar xz -C "$tmp_dir"
+    install -m 0755 "$tmp_dir/age/age"       "$BIN_DIR/age"
+    install -m 0755 "$tmp_dir/age/age-keygen" "$BIN_DIR/age-keygen"
+}
+
 install_sops() {
     log_info "Installing sops..."
     # {{- if eq .chezmoi.osRelease.id "ubuntu" }}
@@ -334,7 +347,7 @@ install_sops() {
     sudo dpkg -i "$deb_file"
     rm -f "$deb_file"
     # {{- else if eq .chezmoi.osRelease.id "rocky" }}
-    install_packages age
+    ensure_installed "age" install_age_binary
     install_binary "sops" \
         "https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux.${GOARCH}" \
         "$BIN_DIR/sops"
