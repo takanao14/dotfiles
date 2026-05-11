@@ -38,6 +38,8 @@ readonly HELMFILE_VERSION="${HELMFILE_VERSION:-1.3.0}"
 readonly K0SCTL_VERSION="${K0SCTL_VERSION:-0.28.0}"
 readonly SOPS_VERSION="${SOPS_VERSION:-3.12.2}"
 readonly TERRAGRUNT_VERSION="${TERRAGRUNT_VERSION:-0.77.0}"
+readonly OPENTOFU_VERSION="${OPENTOFU_VERSION:-1.11.7}"
+readonly OPENBAO_VERSION="${OPENBAO_VERSION:-2.5.3}"
 
 # Ensure bin directory exists
 mkdir -p "$BIN_DIR"
@@ -197,6 +199,30 @@ install_terragrunt() {
         "$BIN_DIR/terragrunt"
 }
 
+install_opentofu() {
+    log_info "Installing opentofu..."
+    install_packages unzip
+    local tmp_dir
+    tmp_dir="$(mktemp -d)"
+    trap "rm -rf '${tmp_dir}'" RETURN
+    curl -fsSL "https://github.com/opentofu/opentofu/releases/download/v${OPENTOFU_VERSION}/tofu_${OPENTOFU_VERSION}_linux_${GOARCH}.zip" \
+        -o "${tmp_dir}/tofu.zip"
+    unzip -q "${tmp_dir}/tofu.zip" tofu -d "${tmp_dir}"
+    install -m 0755 "${tmp_dir}/tofu" "$BIN_DIR/tofu"
+}
+
+install_openbao() {
+    log_info "Installing openbao..."
+    install_packages unzip
+    local tmp_dir
+    tmp_dir="$(mktemp -d)"
+    trap "rm -rf '${tmp_dir}'" RETURN
+    curl -fsSL "https://github.com/openbao/openbao/releases/download/v${OPENBAO_VERSION}/bao_${OPENBAO_VERSION}_linux_${GOARCH}.zip" \
+        -o "${tmp_dir}/bao.zip"
+    unzip -q "${tmp_dir}/bao.zip" bao -d "${tmp_dir}"
+    install -m 0755 "${tmp_dir}/bao" "$BIN_DIR/bao"
+}
+
 # ============================================================================
 # Kubernetes Tools
 # ============================================================================
@@ -304,6 +330,10 @@ main() {
     ensure_installed "packer"    install_hashicorp_tools
     ensure_installed "vault"     install_hashicorp_tools
     ensure_installed "terragrunt" install_terragrunt
+
+    # OpenTofu / OpenBao
+    ensure_installed "tofu" install_opentofu
+    ensure_installed "bao"  install_openbao
 
     # Kubernetes tools
     ensure_installed "kubectl" install_kubectl
