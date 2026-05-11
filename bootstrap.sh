@@ -8,7 +8,7 @@ if [[ "$machine" == "Darwin" ]]; then
     # homebrew installer
     echo "Homebrew Install"
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    local brew_line='eval "$(/opt/homebrew/bin/brew shellenv)"'
+    brew_line='eval "$(/opt/homebrew/bin/brew shellenv)"'
     grep -qF "$brew_line" "$HOME/.zprofile" 2>/dev/null || echo "$brew_line" >> "$HOME/.zprofile"
     eval "$(/opt/homebrew/bin/brew shellenv)"
   fi
@@ -17,6 +17,8 @@ if [[ "$machine" == "Darwin" ]]; then
     echo "install chezmoi"
     brew install chezmoi
   fi
+
+  chezmoi init --apply takanao14/dotfiles
 
 elif [[ "$machine" == "Linux" ]]; then
   echo "Linux Initialize"
@@ -29,21 +31,26 @@ elif [[ "$machine" == "Linux" ]]; then
     distro="unknown"
   fi
 
-  if ! command -v zsh &> /dev/null; then
-    echo "install zsh"
-    if [[ "$distro" == "ubuntu" ]] || [[ "$distro" == "debian" ]]; then
-      sudo apt install zsh -y
-    elif [[ "$distro" == "rocky" ]] || [[ "$distro" == "rhel" ]] || [[ "$distro" == "centos" ]] || [[ "$distro" == "fedora" ]]; then
-      sudo dnf install zsh -y
-    else
-      echo "Unsupported Linux distribution: $distro"
-      exit 1
-    fi
+  if [[ "$distro" == "ubuntu" ]] || [[ "$distro" == "debian" ]]; then
+    pkgs=()
+    command -v git &> /dev/null || pkgs+=(git)
+    command -v zsh &> /dev/null || pkgs+=(zsh)
+    [[ ${#pkgs[@]} -gt 0 ]] && sudo apt install -y "${pkgs[@]}"
+  elif [[ "$distro" == "rocky" ]] || [[ "$distro" == "rhel" ]] || [[ "$distro" == "centos" ]] || [[ "$distro" == "fedora" ]]; then
+    pkgs=()
+    command -v git &> /dev/null || pkgs+=(git)
+    command -v zsh &> /dev/null || pkgs+=(zsh)
+    [[ ${#pkgs[@]} -gt 0 ]] && sudo dnf install -y "${pkgs[@]}"
+  else
+    echo "Unsupported Linux distribution: $distro"
+    exit 1
   fi
 
   if ! command -v chezmoi &> /dev/null; then
     echo "install chezmoi"
     sh -c "$(curl -fsLS chezmoi.io/get)" -- -b $HOME/.local/bin
   fi
+
+  chezmoi init --apply takanao14/dotfiles
 
 fi
