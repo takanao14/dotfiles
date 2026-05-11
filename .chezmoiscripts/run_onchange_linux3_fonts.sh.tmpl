@@ -78,7 +78,9 @@ check_dependencies() {
 }
 
 is_font_installed() {
-    fc-list : family | grep -q "UDEV Gothic NF"
+    local cache_file="$HOME/.local/share/chezmoi-versions/udev-gothic"
+    [[ "$(cat "$cache_file" 2>/dev/null)" == "$UDEV_GOTHIC_VERSION" ]] && \
+        fc-list : family | grep -q "UDEV Gothic NF"
 }
 
 download_and_extract_font() {
@@ -154,7 +156,10 @@ install_udev_gothic() {
     if ! rebuild_font_cache; then
         return 1
     fi
-    
+
+    mkdir -p "$HOME/.local/share/chezmoi-versions"
+    echo "$UDEV_GOTHIC_VERSION" > "$HOME/.local/share/chezmoi-versions/udev-gothic"
+
     log_info "UDEV Gothic 35 installed successfully"
     return 0
 }

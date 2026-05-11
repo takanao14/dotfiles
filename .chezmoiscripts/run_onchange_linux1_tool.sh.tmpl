@@ -24,6 +24,7 @@ log_error() {
 }
 
 readonly BIN_DIR="$HOME/.local/bin"
+readonly VERSION_CACHE_DIR="$HOME/.local/share/chezmoi-versions"
 
 # Architecture detection
 readonly ARCH="$(uname -m)"
@@ -124,13 +125,29 @@ gpgkey=${gpgkey_url}
 EOF
 }
 
-# Helper function to check and install tools
+# Helper function to check and install tools (no version tracking)
 ensure_installed() {
     local cmd="$1"
     local install_func="$2"
 
     if ! command -v "$cmd" &> /dev/null; then
         "$install_func"
+    fi
+}
+
+# Helper function to install or upgrade versioned tools
+install_if_needed() {
+    local cmd="$1"
+    local version="$2"
+    local install_func="$3"
+    local cache_file="$VERSION_CACHE_DIR/$cmd"
+
+    if ! command -v "$cmd" &>/dev/null || [[ "$(cat "$cache_file" 2>/dev/null)" != "$version" ]]; then
+        "$install_func"
+        mkdir -p "$VERSION_CACHE_DIR"
+        echo "$version" > "$cache_file"
+    else
+        log_info "$cmd $version is already up to date, skipping"
     fi
 }
 
@@ -333,32 +350,38 @@ install_sops() {
 main() {
     log_info "=== Linux Development Tools Installation ==="
 
-    # Shell enhancement tools
+    # Shell enhancement tools (no pinned version)
     ensure_installed "sheldon" install_sheldon
     ensure_installed "starship" install_starship
-    ensure_installed "direnv" install_direnv
-    ensure_installed "eza" install_eza
-    ensure_installed "fzf" install_fzf
-    ensure_installed "zellij" install_zellij
+    ensure_installed "direnv"  install_direnv
+    ensure_installed "eza"     install_eza
 
-    # HashiCorp tools
+    # Shell enhancement tools (pinned version)
+    install_if_needed "fzf"    "$FZF_VERSION"    install_fzf
+    install_if_needed "zellij" "$ZELLIJ_VERSION" install_zellij
+
+    # HashiCorp tools (package manager managed, no pinned version)
     ensure_installed "terraform" install_hashicorp_tools
     ensure_installed "packer"    install_hashicorp_tools
     ensure_installed "vault"     install_hashicorp_tools
-    ensure_installed "terragrunt" install_terragrunt
 
-    # OpenTofu / OpenBao
-    ensure_installed "tofu" install_opentofu
-    ensure_installed "bao"  install_openbao
+    # HashiCorp tools (pinned version)
+    install_if_needed "terragrunt" "$TERRAGRUNT_VERSION" install_terragrunt
 
-    # Kubernetes tools
+    # OpenTofu / OpenBao (pinned version)
+    install_if_needed "tofu" "$OPENTOFU_VERSION" install_opentofu
+    install_if_needed "bao"  "$OPENBAO_VERSION"  install_openbao
+
+    # Kubernetes tools (package manager managed, no pinned version)
     ensure_installed "kubectl" install_kubectl
-    ensure_installed "helm" install_helm
-    ensure_installed "kubie" install_kubie
-    ensure_installed "k9s" install_k9s
-    ensure_installed "helmfile" install_helmfile
-    ensure_installed "k0sctl" install_k0sctl
-    ensure_installed "sops" install_sops
+    ensure_installed "helm"    install_helm
+
+    # Kubernetes tools (pinned version)
+    install_if_needed "kubie"    "$KUBIE_VERSION"    install_kubie
+    install_if_needed "k9s"      "$K9S_VERSION"      install_k9s
+    install_if_needed "helmfile" "$HELMFILE_VERSION" install_helmfile
+    install_if_needed "k0sctl"   "$K0SCTL_VERSION"   install_k0sctl
+    install_if_needed "sops"     "$SOPS_VERSION"     install_sops
 
     log_info "=== Installation completed ==="
 }

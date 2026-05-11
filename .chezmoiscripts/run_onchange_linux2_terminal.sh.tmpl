@@ -60,9 +60,11 @@ check_system() {
         exit 0
     fi
     
-    # Skip if alacritty is already installed
-    if command -v alacritty &> /dev/null; then
-        log_info "Alacritty is already installed ($(alacritty --version))"
+    # Skip if already at target version
+    local cache_file="$HOME/.local/share/chezmoi-versions/alacritty"
+    if command -v alacritty &>/dev/null && \
+       [[ "$(cat "$cache_file" 2>/dev/null)" == "$ALACRITTY_VERSION" ]]; then
+        log_info "Alacritty ${ALACRITTY_VERSION} is already up to date"
         log_info "=== Installation completed successfully ==="
         exit 0
     fi
@@ -195,7 +197,10 @@ main() {
     install_terminfo
     install_completions
     verify_installation
-    
+
+    mkdir -p "$HOME/.local/share/chezmoi-versions"
+    echo "$ALACRITTY_VERSION" > "$HOME/.local/share/chezmoi-versions/alacritty"
+
     log_info "=== Installation completed successfully ==="
 }
 
