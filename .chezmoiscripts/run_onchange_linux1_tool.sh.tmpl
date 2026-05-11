@@ -59,11 +59,6 @@ readonly AGE_VERSION="${AGE_VERSION:-1.2.1}"
 # Ensure bin directory exists
 mkdir -p "$BIN_DIR"
 
-# Remove stale repo files no longer used by this script
-# {{- if eq .chezmoi.osRelease.id "rocky" }}
-[[ -f /etc/yum.repos.d/helm.repo ]] && sudo rm -f /etc/yum.repos.d/helm.repo
-# {{- end }}
-
 # Helper function to install binary from GitHub releases
 install_binary() {
     local name="$1"
