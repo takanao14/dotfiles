@@ -213,14 +213,20 @@ install_opentofu() {
 
 install_openbao() {
     log_info "Installing openbao..."
-    install_packages unzip
     local tmp_dir
     tmp_dir="$(mktemp -d)"
     trap "rm -rf '${tmp_dir}'" RETURN
-    curl -fsSL "https://github.com/openbao/openbao/releases/download/v${OPENBAO_VERSION}/bao_${OPENBAO_VERSION}_linux_${GOARCH}.zip" \
-        -o "${tmp_dir}/bao.zip"
-    unzip -q "${tmp_dir}/bao.zip" bao -d "${tmp_dir}"
-    install -m 0755 "${tmp_dir}/bao" "$BIN_DIR/bao"
+    # {{- if eq .chezmoi.osRelease.id "ubuntu" }}
+    local deb_file="${tmp_dir}/openbao.deb"
+    curl -fsSL "https://github.com/openbao/openbao/releases/download/v${OPENBAO_VERSION}/openbao_${OPENBAO_VERSION}_linux_${GOARCH}.deb" \
+        -o "${deb_file}"
+    sudo dpkg -i "${deb_file}"
+    # {{- else if eq .chezmoi.osRelease.id "rocky" }}
+    local rpm_file="${tmp_dir}/openbao.rpm"
+    curl -fsSL "https://github.com/openbao/openbao/releases/download/v${OPENBAO_VERSION}/openbao_${OPENBAO_VERSION}_linux_${GOARCH}.rpm" \
+        -o "${rpm_file}"
+    sudo rpm -i "${rpm_file}"
+    # {{- end }}
 }
 
 # ============================================================================
