@@ -55,6 +55,8 @@ readonly OPENBAO_VERSION="${OPENBAO_VERSION:-2.5.3}"
 readonly HELM_VERSION="${HELM_VERSION:-4.1.4}"
 # renovate: datasource=github-releases depName=FiloSottile/age
 readonly AGE_VERSION="${AGE_VERSION:-1.3.1}"
+# renovate: datasource=github-releases depName=cilium/cilium-cli
+readonly CILIUM_VERSION="${CILIUM_VERSION:-0.19.2}"
 
 # Ensure bin directory exists
 mkdir -p "$BIN_DIR"
@@ -332,6 +334,21 @@ install_age_binary() {
     install -m 0755 "$tmp_dir/age/age-keygen" "$BIN_DIR/age-keygen"
 }
 
+install_cilium() {
+    install_binary "cilium" \
+        "https://github.com/cilium/cilium-cli/releases/download/v${CILIUM_VERSION}/cilium-linux-${GOARCH}.tar.gz" \
+        "$BIN_DIR/cilium"
+}
+
+install_helm_diff_plugin() {
+    if helm plugin list 2>/dev/null | grep -q "^diff"; then
+        log_info "helm-diff plugin is already installed, skipping"
+        return
+    fi
+    log_info "Installing helm-diff plugin..."
+    helm plugin install https://github.com/databus23/helm-diff
+}
+
 install_sops() {
     log_info "Installing sops..."
     # {{- if eq .chezmoi.osRelease.id "ubuntu" }}
@@ -390,6 +407,8 @@ main() {
     install_if_needed "helmfile" "$HELMFILE_VERSION" install_helmfile
     install_if_needed "k0sctl"   "$K0SCTL_VERSION"   install_k0sctl
     install_if_needed "sops"     "$SOPS_VERSION"     install_sops
+    install_if_needed "cilium"   "$CILIUM_VERSION"   install_cilium
+    install_helm_diff_plugin
 
     log_info "=== Installation completed ==="
 }
