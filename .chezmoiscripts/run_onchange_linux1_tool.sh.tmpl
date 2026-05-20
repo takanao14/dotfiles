@@ -34,7 +34,7 @@ readonly GOARCH="$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/')"
 # renovate: datasource=github-releases depName=junegunn/fzf
 readonly FZF_VERSION="${FZF_VERSION:-0.72.0}"
 # renovate: datasource=github-releases depName=zellij-org/zellij
-readonly ZELLIJ_VERSION="${ZELLIJ_VERSION:-0.44.2}"
+readonly ZELLIJ_VERSION="${ZELLIJ_VERSION:-0.44.3}"
 # renovate: datasource=github-releases depName=sbstp/kubie
 readonly KUBIE_VERSION="${KUBIE_VERSION:-0.27.0}"
 # renovate: datasource=github-releases depName=derailed/k9s
@@ -44,13 +44,19 @@ readonly HELMFILE_VERSION="${HELMFILE_VERSION:-1.5.1}"
 # renovate: datasource=github-releases depName=k0sproject/k0sctl
 readonly K0SCTL_VERSION="${K0SCTL_VERSION:-0.30.1}"
 # renovate: datasource=github-releases depName=getsops/sops
-readonly SOPS_VERSION="${SOPS_VERSION:-3.13.0}"
+readonly SOPS_VERSION="${SOPS_VERSION:-3.13.1}"
 # renovate: datasource=github-releases depName=gruntwork-io/terragrunt
-readonly TERRAGRUNT_VERSION="${TERRAGRUNT_VERSION:-1.0.4}"
+readonly TERRAGRUNT_VERSION="${TERRAGRUNT_VERSION:-1.0.5}"
 # renovate: datasource=github-releases depName=opentofu/opentofu
-readonly OPENTOFU_VERSION="${OPENTOFU_VERSION:-1.11.7}"
+readonly OPENTOFU_VERSION="${OPENTOFU_VERSION:-1.12.0}"
 # renovate: datasource=github-releases depName=openbao/openbao
-readonly OPENBAO_VERSION="${OPENBAO_VERSION:-2.5.3}"
+readonly OPENBAO_VERSION="${OPENBAO_VERSION:-2.5.4}"
+# renovate: datasource=github-releases depName=helm/helm
+readonly HELM_VERSION="${HELM_VERSION:-4.2.0}"
+# renovate: datasource=github-releases depName=FiloSottile/age
+readonly AGE_VERSION="${AGE_VERSION:-1.3.1}"
+# renovate: datasource=github-releases depName=cilium/cilium-cli
+readonly CILIUM_VERSION="${CILIUM_VERSION:-0.19.4}"
 
 # Ensure bin directory exists
 mkdir -p "$BIN_DIR"
@@ -284,22 +290,13 @@ install_kubectl() {
 }
 
 install_helm() {
-    log_info "Installing helm..."
-    # Reference: https://helm.sh/docs/intro/install/
-
-    # {{- if eq .chezmoi.osRelease.id "ubuntu" }}
-    add_apt_repository "helm" \
-        "https://packages.buildkite.com/helm-linux/helm-debian/gpgkey" \
-        "deb [signed-by=/usr/share/keyrings/helm-keyring.gpg] https://packages.buildkite.com/helm-linux/helm-debian/any/ any main"
-    update_package_cache
-    install_packages helm
-    # {{- else if eq .chezmoi.osRelease.id "rocky" }}
-    add_dnf_repository "helm" \
-        "https://baltocdn.com/helm/stable/rpm/" \
-        "https://baltocdn.com/helm/signing.asc"
-    update_package_cache
-    install_packages helm
-    # {{- end }}
+    log_info "Installing helm ${HELM_VERSION}..."
+    local tmp_dir
+    tmp_dir="$(mktemp -d)"
+    trap "rm -rf '${tmp_dir}'" RETURN
+    curl -fsSL "https://get.helm.sh/helm-v${HELM_VERSION}-linux-${GOARCH}.tar.gz" \
+        | tar xz -C "$tmp_dir"
+    install -m 0755 "$tmp_dir/linux-${GOARCH}/helm" "$BIN_DIR/helm"
 }
 
 install_kubie() {
@@ -326,6 +323,32 @@ install_k0sctl() {
         "$BIN_DIR/k0sctl"
 }
 
+install_age_binary() {
+    log_info "Installing age ${AGE_VERSION}..."
+    local tmp_dir
+    tmp_dir="$(mktemp -d)"
+    trap "rm -rf '${tmp_dir}'" RETURN
+    curl -fsSL "https://github.com/FiloSottile/age/releases/download/v${AGE_VERSION}/age-v${AGE_VERSION}-linux-${GOARCH}.tar.gz" \
+        | tar xz -C "$tmp_dir"
+    install -m 0755 "$tmp_dir/age/age"       "$BIN_DIR/age"
+    install -m 0755 "$tmp_dir/age/age-keygen" "$BIN_DIR/age-keygen"
+}
+
+install_cilium() {
+    install_binary "cilium" \
+        "https://github.com/cilium/cilium-cli/releases/download/v${CILIUM_VERSION}/cilium-linux-${GOARCH}.tar.gz" \
+        "$BIN_DIR/cilium"
+}
+
+install_helm_diff_plugin() {
+    if helm plugin list 2>/dev/null | grep -q "^diff"; then
+        log_info "helm-diff plugin is already installed, skipping"
+        return
+    fi
+    log_info "Installing helm-diff plugin..."
+    helm plugin install --verify=false https://github.com/databus23/helm-diff
+}
+
 install_sops() {
     log_info "Installing sops..."
     # {{- if eq .chezmoi.osRelease.id "ubuntu" }}
@@ -336,7 +359,7 @@ install_sops() {
     sudo dpkg -i "$deb_file"
     rm -f "$deb_file"
     # {{- else if eq .chezmoi.osRelease.id "rocky" }}
-    install_packages age
+    ensure_installed "age" install_age_binary
     install_binary "sops" \
         "https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux.${GOARCH}" \
         "$BIN_DIR/sops"
@@ -374,7 +397,9 @@ main() {
 
     # Kubernetes tools (package manager managed, no pinned version)
     ensure_installed "kubectl" install_kubectl
-    ensure_installed "helm"    install_helm
+
+    # Kubernetes tools (pinned version)
+    install_if_needed "helm" "$HELM_VERSION" install_helm
 
     # Kubernetes tools (pinned version)
     install_if_needed "kubie"    "$KUBIE_VERSION"    install_kubie
@@ -382,6 +407,8 @@ main() {
     install_if_needed "helmfile" "$HELMFILE_VERSION" install_helmfile
     install_if_needed "k0sctl"   "$K0SCTL_VERSION"   install_k0sctl
     install_if_needed "sops"     "$SOPS_VERSION"     install_sops
+    install_if_needed "cilium"   "$CILIUM_VERSION"   install_cilium
+    install_helm_diff_plugin
 
     log_info "=== Installation completed ==="
 }
