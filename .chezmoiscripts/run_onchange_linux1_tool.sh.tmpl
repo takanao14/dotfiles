@@ -384,9 +384,9 @@ main() {
     install_if_needed "zellij" "$ZELLIJ_VERSION" install_zellij
 
     # HashiCorp tools (package manager managed, no pinned version)
-    ensure_installed "terraform" install_hashicorp_tools
-    ensure_installed "packer"    install_hashicorp_tools
-    ensure_installed "vault"     install_hashicorp_tools
+    if ! command -v terraform &>/dev/null || ! command -v packer &>/dev/null || ! command -v vault &>/dev/null; then
+        install_hashicorp_tools
+    fi
 
     # HashiCorp tools (pinned version)
     install_if_needed "terragrunt" "$TERRAGRUNT_VERSION" install_terragrunt
