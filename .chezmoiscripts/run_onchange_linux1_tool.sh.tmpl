@@ -28,7 +28,7 @@ readonly VERSION_CACHE_DIR="$HOME/.local/share/chezmoi-versions"
 
 # Architecture detection
 readonly ARCH="$(uname -m)"
-readonly GOARCH="$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/')"
+readonly BIN_ARCH="$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/')"
 
 # Version variables
 # renovate: datasource=github-releases depName=junegunn/fzf
@@ -186,7 +186,7 @@ install_eza() {
 
 install_fzf() {
     install_binary "fzf" \
-        "https://github.com/junegunn/fzf/releases/download/v${FZF_VERSION}/fzf-${FZF_VERSION}-linux_${GOARCH}.tar.gz" \
+        "https://github.com/junegunn/fzf/releases/download/v${FZF_VERSION}/fzf-${FZF_VERSION}-linux_${BIN_ARCH}.tar.gz" \
         "$BIN_DIR/fzf"
 }
 
@@ -228,7 +228,7 @@ install_hashicorp_tools() {
 install_terragrunt() {
     log_info "Installing terragrunt..."
     install_binary "terragrunt" \
-        "https://github.com/gruntwork-io/terragrunt/releases/download/v${TERRAGRUNT_VERSION}/terragrunt_linux_${GOARCH}" \
+        "https://github.com/gruntwork-io/terragrunt/releases/download/v${TERRAGRUNT_VERSION}/terragrunt_linux_${BIN_ARCH}" \
         "$BIN_DIR/terragrunt"
 }
 
@@ -238,7 +238,7 @@ install_opentofu() {
     local tmp_dir
     tmp_dir="$(mktemp -d)"
     trap "rm -rf '${tmp_dir}'" RETURN
-    curl -fsSL "https://github.com/opentofu/opentofu/releases/download/v${OPENTOFU_VERSION}/tofu_${OPENTOFU_VERSION}_linux_${GOARCH}.zip" \
+    curl -fsSL "https://github.com/opentofu/opentofu/releases/download/v${OPENTOFU_VERSION}/tofu_${OPENTOFU_VERSION}_linux_${BIN_ARCH}.zip" \
         -o "${tmp_dir}/tofu.zip"
     unzip -q "${tmp_dir}/tofu.zip" tofu -d "${tmp_dir}"
     install -m 0755 "${tmp_dir}/tofu" "$BIN_DIR/tofu"
@@ -251,12 +251,12 @@ install_openbao() {
     trap "rm -rf '${tmp_dir}'" RETURN
     # {{- if eq .chezmoi.osRelease.id "ubuntu" }}
     local deb_file="${tmp_dir}/openbao.deb"
-    curl -fsSL "https://github.com/openbao/openbao/releases/download/v${OPENBAO_VERSION}/openbao_${OPENBAO_VERSION}_linux_${GOARCH}.deb" \
+    curl -fsSL "https://github.com/openbao/openbao/releases/download/v${OPENBAO_VERSION}/openbao_${OPENBAO_VERSION}_linux_${BIN_ARCH}.deb" \
         -o "${deb_file}"
     sudo dpkg -i "${deb_file}"
     # {{- else if eq .chezmoi.osRelease.id "rocky" }}
     local rpm_file="${tmp_dir}/openbao.rpm"
-    curl -fsSL "https://github.com/openbao/openbao/releases/download/v${OPENBAO_VERSION}/openbao_${OPENBAO_VERSION}_linux_${GOARCH}.rpm" \
+    curl -fsSL "https://github.com/openbao/openbao/releases/download/v${OPENBAO_VERSION}/openbao_${OPENBAO_VERSION}_linux_${BIN_ARCH}.rpm" \
         -o "${rpm_file}"
     sudo rpm -i "${rpm_file}"
     # {{- end }}
@@ -294,32 +294,32 @@ install_helm() {
     local tmp_dir
     tmp_dir="$(mktemp -d)"
     trap "rm -rf '${tmp_dir}'" RETURN
-    curl -fsSL "https://get.helm.sh/helm-v${HELM_VERSION}-linux-${GOARCH}.tar.gz" \
+    curl -fsSL "https://get.helm.sh/helm-v${HELM_VERSION}-linux-${BIN_ARCH}.tar.gz" \
         | tar xz -C "$tmp_dir"
-    install -m 0755 "$tmp_dir/linux-${GOARCH}/helm" "$BIN_DIR/helm"
+    install -m 0755 "$tmp_dir/linux-${BIN_ARCH}/helm" "$BIN_DIR/helm"
 }
 
 install_kubie() {
     install_binary "kubie" \
-        "https://github.com/sbstp/kubie/releases/download/v${KUBIE_VERSION}/kubie-linux-${GOARCH}" \
+        "https://github.com/sbstp/kubie/releases/download/v${KUBIE_VERSION}/kubie-linux-${BIN_ARCH}" \
         "$BIN_DIR/kubie"
 }
 
 install_k9s() {
     install_binary "k9s" \
-        "https://github.com/derailed/k9s/releases/download/v${K9S_VERSION}/k9s_Linux_${GOARCH}.tar.gz" \
+        "https://github.com/derailed/k9s/releases/download/v${K9S_VERSION}/k9s_Linux_${BIN_ARCH}.tar.gz" \
         "$BIN_DIR/k9s"
 }
 
 install_helmfile() {
     install_binary "helmfile" \
-        "https://github.com/helmfile/helmfile/releases/download/v${HELMFILE_VERSION}/helmfile_${HELMFILE_VERSION}_linux_${GOARCH}.tar.gz" \
+        "https://github.com/helmfile/helmfile/releases/download/v${HELMFILE_VERSION}/helmfile_${HELMFILE_VERSION}_linux_${BIN_ARCH}.tar.gz" \
         "$BIN_DIR/helmfile"
 }
 
 install_k0sctl() {
     install_binary "k0sctl" \
-        "https://github.com/k0sproject/k0sctl/releases/download/v${K0SCTL_VERSION}/k0sctl-linux-${GOARCH}" \
+        "https://github.com/k0sproject/k0sctl/releases/download/v${K0SCTL_VERSION}/k0sctl-linux-${BIN_ARCH}" \
         "$BIN_DIR/k0sctl"
 }
 
@@ -328,7 +328,7 @@ install_age_binary() {
     local tmp_dir
     tmp_dir="$(mktemp -d)"
     trap "rm -rf '${tmp_dir}'" RETURN
-    curl -fsSL "https://github.com/FiloSottile/age/releases/download/v${AGE_VERSION}/age-v${AGE_VERSION}-linux-${GOARCH}.tar.gz" \
+    curl -fsSL "https://github.com/FiloSottile/age/releases/download/v${AGE_VERSION}/age-v${AGE_VERSION}-linux-${BIN_ARCH}.tar.gz" \
         | tar xz -C "$tmp_dir"
     install -m 0755 "$tmp_dir/age/age"       "$BIN_DIR/age"
     install -m 0755 "$tmp_dir/age/age-keygen" "$BIN_DIR/age-keygen"
@@ -336,7 +336,7 @@ install_age_binary() {
 
 install_cilium() {
     install_binary "cilium" \
-        "https://github.com/cilium/cilium-cli/releases/download/v${CILIUM_VERSION}/cilium-linux-${GOARCH}.tar.gz" \
+        "https://github.com/cilium/cilium-cli/releases/download/v${CILIUM_VERSION}/cilium-linux-${BIN_ARCH}.tar.gz" \
         "$BIN_DIR/cilium"
 }
 
@@ -355,13 +355,13 @@ install_sops() {
     install_packages age
     local deb_file
     deb_file="$(mktemp --suffix=.deb)"
-    curl -fsSL "https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops_${SOPS_VERSION}_amd64.deb" -o "$deb_file"
+    curl -fsSL "https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops_${SOPS_VERSION}_${BIN_ARCH}.deb" -o "$deb_file"
     sudo dpkg -i "$deb_file"
     rm -f "$deb_file"
     # {{- else if eq .chezmoi.osRelease.id "rocky" }}
     ensure_installed "age" install_age_binary
     install_binary "sops" \
-        "https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux.${GOARCH}" \
+        "https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux.${BIN_ARCH}" \
         "$BIN_DIR/sops"
     # {{- end }}
 }
