@@ -12,48 +12,9 @@ readonly UDEV_GOTHIC_VERSION="${UDEV_GOTHIC_VERSION:-2.2.0}"
 readonly FONTS_DIR="$HOME/.local/share/fonts/udev-gothic"
 readonly DOWNLOAD_URL="https://github.com/yuru7/udev-gothic/releases/download/v${UDEV_GOTHIC_VERSION}/UDEVGothic_NF_v${UDEV_GOTHIC_VERSION}.zip"
 
-# Color output
-readonly RED='\033[0;31m'
-readonly GREEN='\033[0;32m'
-readonly YELLOW='\033[1;33m'
-readonly NC='\033[0m'
+{{ template "log_functions.sh" . -}}
 
-log_info() {
-    echo -e "${GREEN}[INFO]${NC} $*"
-}
-
-log_warn() {
-    echo -e "${YELLOW}[WARN]${NC} $*"
-}
-
-log_error() {
-    echo -e "${RED}[ERROR]${NC} $*"
-}
-
-check_system() {
-    log_info "Checking system requirements..."
-    
-    # Check if GUI session is available (xrdp or Wayland)
-    local has_gui=false
-    
-    # Check for xrdp
-    if systemctl is-active --quiet xrdp 2>/dev/null; then
-        log_info "xrdp service detected"
-        has_gui=true
-    fi
-    
-    # Check for Wayland compositor processes
-    if pgrep -E "^(weston|sway|wayfire|labwc|river|hyprland)$" >/dev/null 2>&1; then
-        log_info "Wayland compositor detected"
-        has_gui=true
-    fi
-    
-    if [[ "$has_gui" == "false" ]]; then
-        log_warn "No GUI session detected (xrdp or Wayland required)"
-        log_warn "Skipping font installation"
-        exit 0
-    fi
-}
+{{ template "check_gui.sh" "Skipping font installation" -}}
 
 check_dependencies() {
     local missing_deps=()
@@ -167,7 +128,7 @@ install_udev_gothic() {
 main() {
     log_info "=== Font Installation Script ==="
     
-    check_system
+    check_gui
     
     if ! install_udev_gothic; then
         log_error "Font installation failed"

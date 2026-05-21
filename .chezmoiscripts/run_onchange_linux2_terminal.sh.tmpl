@@ -11,23 +11,7 @@ readonly BUILD_DIR="$(mktemp -d)"
 # renovate: datasource=github-releases depName=alacritty/alacritty
 readonly ALACRITTY_VERSION="${ALACRITTY_VERSION:-0.17.0}"
 
-# Color output
-readonly RED='\033[0;31m'
-readonly GREEN='\033[0;32m'
-readonly YELLOW='\033[1;33m'
-readonly NC='\033[0m'
-
-log_info() {
-    echo -e "${GREEN}[INFO]${NC} $*"
-}
-
-log_warn() {
-    echo -e "${YELLOW}[WARN]${NC} $*"
-}
-
-log_error() {
-    echo -e "${RED}[ERROR]${NC} $*"
-}
+{{ template "log_functions.sh" . -}}
 
 cleanup() {
     rm -rf "$BUILD_DIR"
@@ -35,31 +19,11 @@ cleanup() {
 
 trap cleanup EXIT
 
+{{ template "check_gui.sh" "Skipping Alacritty installation" -}}
+
 check_system() {
-    log_info "Checking system requirements..."
-    
-    # Check if GUI session is available (xrdp or Wayland)
-    local has_gui=false
-    
-    # Check for xrdp
-    if systemctl is-active --quiet xrdp 2>/dev/null; then
-        log_info "xrdp service detected"
-        has_gui=true
-    fi
-    
-    # Check for Wayland compositor processes
-    if pgrep -E "^(weston|sway|wayfire|labwc|river|hyprland)$" >/dev/null 2>&1; then
-        log_info "Wayland compositor detected"
-        has_gui=true
-    fi
-    
-    if [[ "$has_gui" == "false" ]]; then
-        log_warn "No GUI session detected (xrdp or Wayland required)"
-        log_warn "Skipping Alacritty installation"
-        log_info "=== Installation completed successfully ==="
-        exit 0
-    fi
-    
+    check_gui
+
     # Skip if already at target version
     local cache_file="$HOME/.local/share/chezmoi-versions/alacritty"
     if command -v alacritty &>/dev/null && \
