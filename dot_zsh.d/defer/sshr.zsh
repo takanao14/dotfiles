@@ -5,6 +5,6 @@ sshr() {
     fi
     param="$1"
     host=${param#*@}
-    echo "remove: $host"
+    echo "Removing known hosts entry for: $host"
     ssh-keygen -R "$host"
 }
