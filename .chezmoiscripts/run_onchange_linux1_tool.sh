@@ -41,6 +41,7 @@ readonly ARCH="$(uname -m)"
 readonly BIN_ARCH="$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/')"
 
 mkdir -p "$BIN_DIR" "$VERSION_CACHE_DIR"
+export PATH="${BIN_DIR}:${PATH}"
 
 # ============================================================================
 # Logging
