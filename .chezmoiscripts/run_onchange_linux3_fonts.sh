@@ -8,6 +8,7 @@ readonly OS_ID="${ID}"
 
 # renovate: datasource=github-releases depName=yuru7/udev-gothic
 readonly UDEV_GOTHIC_VERSION="${UDEV_GOTHIC_VERSION:-2.2.0}"
+readonly VERSION_CACHE_DIR="$HOME/.local/share/tool-versions"
 readonly FONTS_DIR="$HOME/.local/share/fonts/udev-gothic"
 readonly DOWNLOAD_URL="https://github.com/yuru7/udev-gothic/releases/download/v${UDEV_GOTHIC_VERSION}/UDEVGothic_NF_v${UDEV_GOTHIC_VERSION}.zip"
 
@@ -65,7 +66,7 @@ check_dependencies() {
 }
 
 is_font_installed() {
-    local cache_file="$HOME/.local/share/chezmoi-versions/udev-gothic"
+    local cache_file="${VERSION_CACHE_DIR}/udev-gothic"
     [[ "$(cat "$cache_file" 2>/dev/null)" == "$UDEV_GOTHIC_VERSION" ]] && \
         fc-list : family | grep -q "UDEV Gothic NF"
 }
@@ -103,8 +104,8 @@ install_udev_gothic() {
     download_and_extract_font "$tmp_dir"
     install_font_files "$tmp_dir"
     rebuild_font_cache
-    mkdir -p "$HOME/.local/share/chezmoi-versions"
-    echo "$UDEV_GOTHIC_VERSION" > "$HOME/.local/share/chezmoi-versions/udev-gothic"
+    mkdir -p "$VERSION_CACHE_DIR"
+    echo "$UDEV_GOTHIC_VERSION" > "${VERSION_CACHE_DIR}/udev-gothic"
     log_info "UDEV Gothic NF installed successfully"
 }
 

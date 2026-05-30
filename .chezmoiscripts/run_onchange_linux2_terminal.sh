@@ -7,7 +7,7 @@ set -euo pipefail
 readonly KITTY_VERSION="${KITTY_VERSION:-0.40.0}"
 
 readonly BIN_DIR="$HOME/.local/bin"
-readonly VERSION_CACHE_DIR="$HOME/.local/share/chezmoi-versions"
+readonly VERSION_CACHE_DIR="$HOME/.local/share/tool-versions"
 
 # ============================================================================
 # Logging

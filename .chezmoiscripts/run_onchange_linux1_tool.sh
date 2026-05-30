@@ -36,7 +36,7 @@ readonly CILIUM_VERSION="${CILIUM_VERSION:-0.19.4}"
 readonly KUBECTL_VERSION="${KUBECTL_VERSION:-1.36}"
 
 readonly BIN_DIR="$HOME/.local/bin"
-readonly VERSION_CACHE_DIR="$HOME/.local/share/chezmoi-versions"
+readonly VERSION_CACHE_DIR="$HOME/.local/share/tool-versions"
 readonly ARCH="$(uname -m)"
 readonly BIN_ARCH="$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/')"
 
