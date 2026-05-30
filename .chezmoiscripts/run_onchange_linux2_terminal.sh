@@ -3,12 +3,11 @@ set -euo pipefail
 
 [[ "$(uname)" == "Linux" ]] || exit 0
 
-. /etc/os-release
-readonly OS_ID="${ID}"
+# renovate: datasource=github-releases depName=kovidgoyal/kitty
+readonly KITTY_VERSION="${KITTY_VERSION:-0.40.0}"
 
-readonly BUILD_DIR="$(mktemp -d)"
-# renovate: datasource=github-releases depName=alacritty/alacritty
-readonly ALACRITTY_VERSION="${ALACRITTY_VERSION:-0.17.0}"
+readonly BIN_DIR="$HOME/.local/bin"
+readonly VERSION_CACHE_DIR="$HOME/.local/share/chezmoi-versions"
 
 # ============================================================================
 # Logging
@@ -46,131 +45,45 @@ check_gui() {
     fi
 }
 
-cleanup() {
-    rm -rf "$BUILD_DIR"
-}
+# ============================================================================
+# Kitty
+# ============================================================================
 
-trap cleanup EXIT
+install_kitty() {
+    log_info "Installing kitty ${KITTY_VERSION}..."
 
-check_system() {
-    check_gui "Skipping Alacritty installation"
+    curl -fsSL https://sw.kovidgoyal.net/kitty/installer.sh \
+        | sh /dev/stdin launch=n version="${KITTY_VERSION}"
 
-    local cache_file="$HOME/.local/share/chezmoi-versions/alacritty"
-    if command -v alacritty &>/dev/null && \
-       [[ "$(cat "$cache_file" 2>/dev/null)" == "$ALACRITTY_VERSION" ]]; then
-        log_info "Alacritty ${ALACRITTY_VERSION} is already up to date"
-        log_info "=== Installation completed successfully ==="
-        exit 0
-    fi
-}
+    mkdir -p "$BIN_DIR"
+    ln -sf "$HOME/.local/kitty.app/bin/kitty"  "$BIN_DIR/kitty"
+    ln -sf "$HOME/.local/kitty.app/bin/kitten" "$BIN_DIR/kitten"
 
-install_dependencies() {
-    log_info "Installing build dependencies and required tools..."
-    case "$OS_ID" in
-        ubuntu)
-            sudo apt-get update
-            sudo apt-get install -y \
-                cmake g++ pkg-config \
-                libfontconfig1-dev libxcb-xfixes0-dev libxkbcommon-dev \
-                python3 git curl scdoc ncurses-bin
-            ;;
-        rocky)
-            sudo dnf install -y \
-                cmake freetype-devel fontconfig-devel \
-                libxcb-devel libxkbcommon-devel scdoc
-            sudo dnf group install -y "Development Tools"
-            ;;
-        *)
-            log_error "Unsupported distribution: ${OS_ID}"
-            exit 1
-            ;;
-    esac
-}
+    mkdir -p "$HOME/.local/share/applications"
+    cp "$HOME/.local/kitty.app/share/applications/kitty.desktop" \
+        "$HOME/.local/share/applications/kitty.desktop"
+    sed -i "s|Icon=kitty|Icon=$HOME/.local/kitty.app/share/icons/hicolor/256x256/apps/kitty.png|g" \
+        "$HOME/.local/share/applications/kitty.desktop"
 
-install_rust() {
-    log_info "Setting up Rust toolchain..."
-    if ! command -v cargo &>/dev/null; then
-        log_info "Installing Rust..."
-        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-        source "$HOME/.cargo/env"
-    else
-        log_info "Rust/Cargo already installed"
-    fi
-    rustup override set stable
-    rustup update stable
-}
+    mkdir -p "$VERSION_CACHE_DIR"
+    echo "$KITTY_VERSION" > "$VERSION_CACHE_DIR/kitty"
 
-build_alacritty() {
-    log_info "Building Alacritty ${ALACRITTY_VERSION}..."
-    git clone --depth 1 --branch "v${ALACRITTY_VERSION}" https://github.com/alacritty/alacritty.git "$BUILD_DIR/alacritty"
-    (cd "$BUILD_DIR/alacritty" && cargo build --release)
-}
-
-install_binary() {
-    log_info "Installing binary and desktop entry..."
-    local src_binary="$BUILD_DIR/alacritty/target/release/alacritty"
-    if [[ ! -f "$src_binary" ]]; then
-        log_error "Binary not found: $src_binary"
-        exit 1
-    fi
-    sudo mkdir -p /usr/local/bin /usr/share/pixmaps
-    sudo cp "$src_binary" /usr/local/bin/alacritty
-    sudo cp "$BUILD_DIR/alacritty/extra/logo/alacritty-term.svg" /usr/share/pixmaps/Alacritty.svg
-    local desktop_file="$BUILD_DIR/alacritty/extra/linux/Alacritty.desktop"
-    if [[ -f "$desktop_file" ]]; then
-        sudo desktop-file-install "$desktop_file"
-        sudo update-desktop-database
-    fi
-}
-
-install_man_pages() {
-    log_info "Installing man pages..."
-    local src_dir="$BUILD_DIR/alacritty"
-    sudo mkdir -p /usr/local/share/man/man1 /usr/local/share/man/man5
-    scdoc < "$src_dir/extra/man/alacritty.1.scd"         | gzip -c | sudo tee /usr/local/share/man/man1/alacritty.1.gz > /dev/null
-    scdoc < "$src_dir/extra/man/alacritty-msg.1.scd"     | gzip -c | sudo tee /usr/local/share/man/man1/alacritty-msg.1.gz > /dev/null
-    scdoc < "$src_dir/extra/man/alacritty.5.scd"         | gzip -c | sudo tee /usr/local/share/man/man5/alacritty.5.gz > /dev/null
-    scdoc < "$src_dir/extra/man/alacritty-bindings.5.scd"| gzip -c | sudo tee /usr/local/share/man/man5/alacritty-bindings.5.gz > /dev/null
-}
-
-install_terminfo() {
-    if infocmp alacritty &>/dev/null; then
-        log_info "Terminfo already installed"
-        return
-    fi
-    log_info "Installing terminfo database..."
-    sudo tic -xe alacritty,alacritty-direct "$BUILD_DIR/alacritty/extra/alacritty.info"
-}
-
-install_completions() {
-    log_info "Installing shell completions..."
-    mkdir -p "$HOME/.zfunc"
-    cp "$BUILD_DIR/alacritty/extra/completions/_alacritty" "$HOME/.zfunc/_alacritty"
-}
-
-verify_installation() {
-    log_info "Verifying installation..."
-    if ! command -v alacritty &>/dev/null; then
-        log_error "Alacritty not found in PATH"
-        exit 1
-    fi
-    alacritty --version
+    log_info "kitty ${KITTY_VERSION} installed"
 }
 
 main() {
-    log_info "=== Alacritty Installation Script ==="
-    check_system
-    install_dependencies
-    install_rust
-    build_alacritty
-    install_binary
-    install_man_pages
-    install_terminfo
-    install_completions
-    verify_installation
+    log_info "=== Terminal Installation Script ==="
 
-    mkdir -p "$HOME/.local/share/chezmoi-versions"
-    echo "$ALACRITTY_VERSION" > "$HOME/.local/share/chezmoi-versions/alacritty"
+    check_gui "Skipping kitty installation"
+
+    local cache_file="$VERSION_CACHE_DIR/kitty"
+    if command -v kitty &>/dev/null && \
+       [[ "$(cat "$cache_file" 2>/dev/null)" == "$KITTY_VERSION" ]]; then
+        log_info "kitty ${KITTY_VERSION} is already up to date, skipping"
+        exit 0
+    fi
+
+    install_kitty
 
     log_info "=== Installation completed successfully ==="
 }
