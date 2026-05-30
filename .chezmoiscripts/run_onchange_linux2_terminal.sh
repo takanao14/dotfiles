@@ -52,8 +52,23 @@ check_gui() {
 install_kitty() {
     log_info "Installing kitty ${KITTY_VERSION}..."
 
-    curl -fsSL https://sw.kovidgoyal.net/kitty/installer.sh \
-        | sh /dev/stdin launch=n version="${KITTY_VERSION}"
+    local arch
+    case "$(uname -m)" in
+        x86_64)  arch="x86_64" ;;
+        aarch64) arch="arm64" ;;
+        *) log_error "Unsupported architecture: $(uname -m)"; exit 1 ;;
+    esac
+
+    local tmp_dir
+    tmp_dir="$(mktemp -d)"
+    trap "rm -rf '${tmp_dir}'" RETURN
+
+    curl -fsSL "https://github.com/kovidgoyal/kitty/releases/download/v${KITTY_VERSION}/kitty-${KITTY_VERSION}-${arch}.txz" \
+        -o "${tmp_dir}/kitty.txz"
+
+    rm -rf "$HOME/.local/kitty.app"
+    mkdir -p "$HOME/.local/kitty.app"
+    tar xJf "${tmp_dir}/kitty.txz" -C "$HOME/.local/kitty.app"
 
     mkdir -p "$BIN_DIR"
     ln -sf "$HOME/.local/kitty.app/bin/kitty"  "$BIN_DIR/kitty"
