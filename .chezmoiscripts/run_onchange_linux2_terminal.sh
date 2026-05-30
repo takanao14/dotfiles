@@ -1,17 +1,50 @@
 #!/usr/bin/env bash
-
-# {{- if eq .chezmoi.os "linux" }}
-
-# Alacritty installation script for Linux (Ubuntu 24.04 / Rocky 9.x) using Cargo
-# Reference: https://github.com/alacritty/alacritty/blob/master/INSTALL.md
-
 set -euo pipefail
+
+[[ "$(uname)" == "Linux" ]] || exit 0
+
+. /etc/os-release
+readonly OS_ID="${ID}"
 
 readonly BUILD_DIR="$(mktemp -d)"
 # renovate: datasource=github-releases depName=alacritty/alacritty
 readonly ALACRITTY_VERSION="${ALACRITTY_VERSION:-0.17.0}"
 
-{{ template "log_functions.sh" . -}}
+# ============================================================================
+# Logging
+# ============================================================================
+
+readonly RED='\033[0;31m'
+readonly GREEN='\033[0;32m'
+readonly YELLOW='\033[1;33m'
+readonly NC='\033[0m'
+
+log_info()  { echo -e "${GREEN}[INFO]${NC} $*"; }
+log_warn()  { echo -e "${YELLOW}[WARN]${NC} $*"; }
+log_error() { echo -e "${RED}[ERROR]${NC} $*" >&2; }
+
+# ============================================================================
+# Helpers
+# ============================================================================
+
+check_gui() {
+    local skip_msg="${1:-}"
+    log_info "Checking system requirements..."
+    local has_gui=false
+    if systemctl is-active --quiet xrdp 2>/dev/null; then
+        log_info "xrdp service detected"
+        has_gui=true
+    fi
+    if pgrep -E "^(weston|sway|wayfire|labwc|river|hyprland)$" >/dev/null 2>&1; then
+        log_info "Wayland compositor detected"
+        has_gui=true
+    fi
+    if [[ "$has_gui" == "false" ]]; then
+        log_warn "No GUI session detected (xrdp or Wayland required)"
+        [[ -n "$skip_msg" ]] && log_warn "$skip_msg"
+        exit 0
+    fi
+}
 
 cleanup() {
     rm -rf "$BUILD_DIR"
@@ -19,12 +52,9 @@ cleanup() {
 
 trap cleanup EXIT
 
-{{ template "check_gui.sh" "Skipping Alacritty installation" -}}
-
 check_system() {
-    check_gui
+    check_gui "Skipping Alacritty installation"
 
-    # Skip if already at target version
     local cache_file="$HOME/.local/share/chezmoi-versions/alacritty"
     if command -v alacritty &>/dev/null && \
        [[ "$(cat "$cache_file" 2>/dev/null)" == "$ALACRITTY_VERSION" ]]; then
@@ -36,72 +66,56 @@ check_system() {
 
 install_dependencies() {
     log_info "Installing build dependencies and required tools..."
-    
-    # {{- if eq .chezmoi.osRelease.id "ubuntu" }}
-    sudo apt-get update
-    sudo apt-get install -y \
-        cmake \
-        g++ \
-        pkg-config \
-        libfontconfig1-dev \
-        libxcb-xfixes0-dev \
-        libxkbcommon-dev \
-        python3 \
-        git \
-        curl \
-        scdoc \
-        ncurses-bin
-    # {{- else if eq .chezmoi.osRelease.id "rocky" }}
-    sudo dnf install -y \
-        cmake \
-        freetype-devel \
-        fontconfig-devel \
-        libxcb-devel \
-        libxkbcommon-devel \
-        scdoc
-    sudo dnf group install -y "Development Tools"
-    # {{- else }}
-    log_error "Unsupported distribution: {{ .chezmoi.osRelease.id }}"
-    exit 1
-    # {{- end }}
+    case "$OS_ID" in
+        ubuntu)
+            sudo apt-get update
+            sudo apt-get install -y \
+                cmake g++ pkg-config \
+                libfontconfig1-dev libxcb-xfixes0-dev libxkbcommon-dev \
+                python3 git curl scdoc ncurses-bin
+            ;;
+        rocky)
+            sudo dnf install -y \
+                cmake freetype-devel fontconfig-devel \
+                libxcb-devel libxkbcommon-devel scdoc
+            sudo dnf group install -y "Development Tools"
+            ;;
+        *)
+            log_error "Unsupported distribution: ${OS_ID}"
+            exit 1
+            ;;
+    esac
 }
 
 install_rust() {
     log_info "Setting up Rust toolchain..."
-    
-    if ! command -v cargo &> /dev/null; then
+    if ! command -v cargo &>/dev/null; then
         log_info "Installing Rust..."
         curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
         source "$HOME/.cargo/env"
     else
         log_info "Rust/Cargo already installed"
     fi
-    
     rustup override set stable
     rustup update stable
 }
 
 build_alacritty() {
     log_info "Building Alacritty ${ALACRITTY_VERSION}..."
-
     git clone --depth 1 --branch "v${ALACRITTY_VERSION}" https://github.com/alacritty/alacritty.git "$BUILD_DIR/alacritty"
-
     (cd "$BUILD_DIR/alacritty" && cargo build --release)
 }
 
 install_binary() {
     log_info "Installing binary and desktop entry..."
-
     local src_binary="$BUILD_DIR/alacritty/target/release/alacritty"
     if [[ ! -f "$src_binary" ]]; then
         log_error "Binary not found: $src_binary"
         exit 1
     fi
-
     sudo mkdir -p /usr/local/bin /usr/share/pixmaps
     sudo cp "$src_binary" /usr/local/bin/alacritty
     sudo cp "$BUILD_DIR/alacritty/extra/logo/alacritty-term.svg" /usr/share/pixmaps/Alacritty.svg
-
     local desktop_file="$BUILD_DIR/alacritty/extra/linux/Alacritty.desktop"
     if [[ -f "$desktop_file" ]]; then
         sudo desktop-file-install "$desktop_file"
@@ -111,47 +125,40 @@ install_binary() {
 
 install_man_pages() {
     log_info "Installing man pages..."
-
     local src_dir="$BUILD_DIR/alacritty"
     sudo mkdir -p /usr/local/share/man/man1 /usr/local/share/man/man5
-
-    scdoc < "$src_dir/extra/man/alacritty.1.scd" | gzip -c | sudo tee /usr/local/share/man/man1/alacritty.1.gz > /dev/null
-    scdoc < "$src_dir/extra/man/alacritty-msg.1.scd" | gzip -c | sudo tee /usr/local/share/man/man1/alacritty-msg.1.gz > /dev/null
-    scdoc < "$src_dir/extra/man/alacritty.5.scd" | gzip -c | sudo tee /usr/local/share/man/man5/alacritty.5.gz > /dev/null
-    scdoc < "$src_dir/extra/man/alacritty-bindings.5.scd" | gzip -c | sudo tee /usr/local/share/man/man5/alacritty-bindings.5.gz > /dev/null
+    scdoc < "$src_dir/extra/man/alacritty.1.scd"         | gzip -c | sudo tee /usr/local/share/man/man1/alacritty.1.gz > /dev/null
+    scdoc < "$src_dir/extra/man/alacritty-msg.1.scd"     | gzip -c | sudo tee /usr/local/share/man/man1/alacritty-msg.1.gz > /dev/null
+    scdoc < "$src_dir/extra/man/alacritty.5.scd"         | gzip -c | sudo tee /usr/local/share/man/man5/alacritty.5.gz > /dev/null
+    scdoc < "$src_dir/extra/man/alacritty-bindings.5.scd"| gzip -c | sudo tee /usr/local/share/man/man5/alacritty-bindings.5.gz > /dev/null
 }
 
 install_terminfo() {
-    if infocmp alacritty &> /dev/null; then
+    if infocmp alacritty &>/dev/null; then
         log_info "Terminfo already installed"
         return
     fi
-
     log_info "Installing terminfo database..."
     sudo tic -xe alacritty,alacritty-direct "$BUILD_DIR/alacritty/extra/alacritty.info"
 }
 
 install_completions() {
     log_info "Installing shell completions..."
-
     mkdir -p "$HOME/.zfunc"
     cp "$BUILD_DIR/alacritty/extra/completions/_alacritty" "$HOME/.zfunc/_alacritty"
 }
 
 verify_installation() {
     log_info "Verifying installation..."
-    
-    if ! command -v alacritty &> /dev/null; then
+    if ! command -v alacritty &>/dev/null; then
         log_error "Alacritty not found in PATH"
         exit 1
     fi
-    
     alacritty --version
 }
 
 main() {
     log_info "=== Alacritty Installation Script ==="
-    
     check_system
     install_dependencies
     install_rust
@@ -169,5 +176,3 @@ main() {
 }
 
 main "$@"
-
-# {{- end }}

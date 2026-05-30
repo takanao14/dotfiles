@@ -1,8 +1,6 @@
 #!/usr/bin/env zsh
 
-# {{- if eq .chezmoi.os "darwin" }}
+[[ "$(uname)" == "Darwin" ]] || exit 0
 
 echo "macos script"
 brew bundle --global
-
-# {{- end }}

@@ -3,7 +3,7 @@
   "extends": ["config:base"],
   "regexManagers": [
     {
-      "fileMatch": ["(^|/)\\.chezmoiscripts/.*\\.sh\\.tmpl$"],
+      "fileMatch": ["(^|/)\\.chezmoiscripts/.*\\.sh$"],
       "matchStrings": [
         "# renovate: datasource=(?<datasource>[^\\s]+) depName=(?<depName>[^\\s]+)\\nreadonly \\w+=\"\\$\\{\\w+:-(?<currentValue>[^}]+)\\}\""
       ],
