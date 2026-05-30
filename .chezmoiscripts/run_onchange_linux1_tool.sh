@@ -145,7 +145,7 @@ install_binary() {
 
 ensure_installed() {
     local cmd="$1" install_func="$2"
-    if ! command -v "$cmd" &>/dev/null; then
+    if ! command -v "$cmd" &>/dev/null && [[ ! -x "${BIN_DIR}/${cmd}" ]]; then
         "$install_func"
     fi
 }
