@@ -77,8 +77,14 @@ install_kitty() {
     mkdir -p "$HOME/.local/share/applications"
     cp "$HOME/.local/kitty.app/share/applications/kitty.desktop" \
         "$HOME/.local/share/applications/kitty.desktop"
+    cp "$HOME/.local/kitty.app/share/applications/kitty-open.desktop" \
+        "$HOME/.local/share/applications/kitty-open.desktop"
     sed -i "s|Icon=kitty|Icon=$HOME/.local/kitty.app/share/icons/hicolor/256x256/apps/kitty.png|g" \
-        "$HOME/.local/share/applications/kitty.desktop"
+        "$HOME/.local/share/applications/kitty.desktop" \
+        "$HOME/.local/share/applications/kitty-open.desktop"
+    sed -i "s|Exec=kitty|Exec=$HOME/.local/kitty.app/bin/kitty|g" \
+        "$HOME/.local/share/applications/kitty.desktop" \
+        "$HOME/.local/share/applications/kitty-open.desktop"
 
     mkdir -p "$VERSION_CACHE_DIR"
     echo "$KITTY_VERSION" > "$VERSION_CACHE_DIR/kitty"
