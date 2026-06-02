@@ -4,7 +4,7 @@ set -euo pipefail
 [[ "$(uname)" == "Linux" ]] || exit 0
 
 # renovate: datasource=github-releases depName=kovidgoyal/kitty
-readonly KITTY_VERSION="${KITTY_VERSION:-0.40.0}"
+readonly KITTY_VERSION="${KITTY_VERSION:-0.47.1}"
 
 readonly BIN_DIR="$HOME/.local/bin"
 readonly VERSION_CACHE_DIR="$HOME/.local/share/tool-versions"
