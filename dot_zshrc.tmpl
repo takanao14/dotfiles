@@ -4,6 +4,10 @@ if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
   export PATH="$HOME/.local/bin:$PATH"
 fi
 
+if [[ ":$PATH:" != *":${XDG_DATA_HOME:-$HOME/.local/share}/aqua/bin:"* ]]; then
+  export PATH="${XDG_DATA_HOME:-$HOME/.local/share}/aqua/bin:$PATH"
+fi
+
 export EDITOR="code --wait"
 
 eval "$(sheldon source)"
