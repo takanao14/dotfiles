@@ -394,7 +394,9 @@ install_helm_diff_plugin() {
         return
     fi
     log_info "Installing helm-diff plugin..."
-    helm plugin install https://github.com/databus23/helm-diff
+    # helm v4 verifies plugin provenance by default; the git source does not
+    # support verification, so verification must be skipped explicitly.
+    helm plugin install --verify=false https://github.com/databus23/helm-diff
 }
 
 # ============================================================================
