@@ -35,8 +35,12 @@ readonly CILIUM_VERSION="${CILIUM_VERSION:-0.19.4}"
 # renovate: datasource=github-releases depName=kubernetes/kubernetes
 readonly KUBECTL_VERSION="${KUBECTL_VERSION:-1.36}"
 
-readonly BIN_DIR="$HOME/.local/bin"
-readonly VERSION_CACHE_DIR="$HOME/.local/share/tool-versions"
+# Install location. Defaults to a per-user prefix. Set TOOL_BIN_DIR (and
+# TOOL_VERSION_CACHE_DIR) to a system-wide path such as /usr/local/bin to make
+# the tools available to every user (e.g. for a shared / golden-image VM). A
+# system-wide target requires running this script as root.
+readonly BIN_DIR="${TOOL_BIN_DIR:-$HOME/.local/bin}"
+readonly VERSION_CACHE_DIR="${TOOL_VERSION_CACHE_DIR:-$HOME/.local/share/tool-versions}"
 readonly ARCH="$(uname -m)"
 readonly BIN_ARCH="$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/')"
 
@@ -378,6 +382,13 @@ install_sops() {
 }
 
 install_helm_diff_plugin() {
+    # helm plugins live under HELM_DATA_HOME (per-user by default). For a
+    # shared install, set TOOL_HELM_DATA_HOME to a system-wide path; users must
+    # then export HELM_DATA_HOME to the same path (e.g. via /etc/profile.d).
+    if [[ -n "${TOOL_HELM_DATA_HOME:-}" ]]; then
+        export HELM_DATA_HOME="$TOOL_HELM_DATA_HOME"
+        mkdir -p "$HELM_DATA_HOME"
+    fi
     if helm plugin list 2>/dev/null | grep -q "^diff"; then
         log_info "helm-diff plugin is already installed, skipping"
         return
