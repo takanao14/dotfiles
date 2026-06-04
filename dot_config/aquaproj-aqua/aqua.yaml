@@ -8,8 +8,8 @@ packages:
   # Shell Enhancement Tools
   - name: eza-community/eza@v0.23.4
   - name: direnv/direnv@v2.37.1
-  - name: starship-rs/starship@v1.25.1
-  - name: rossmacarthur/sheldon@v0.8.5
+  - name: starship/starship@v1.25.1
+  - name: rossmacarthur/sheldon@0.8.5
   - name: ajeetdsouza/zoxide@v0.9.9
   - name: junegunn/fzf@v0.73.1
   - name: zellij-org/zellij@v0.44.3
