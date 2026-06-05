@@ -20,12 +20,14 @@ curl -fsSL https://raw.githubusercontent.com/takanao14/dotfiles/main/bootstrap.s
 dotfiles/
 ├── bootstrap.sh                   # Setup script for new machines
 ├── dot_Brewfile                   # Homebrew package list (macOS)
-├── dot_zshrc.tmpl                 # ~/.zshrc
-├── dot_zprofile.tmpl              # ~/.zprofile (Homebrew path config)
+├── dot_zshrc                      # ~/.zshrc
+├── dot_zprofile                   # ~/.zprofile (Homebrew path config)
 ├── dot_tmux.conf                  # ~/.tmux.conf
 ├── dot_zsh.d/
 │   ├── source/                    # Loaded immediately at zsh startup
+│   │   ├── editor.zsh             # Editor environment variable
 │   │   ├── fpath.zsh              # Completion path configuration
+│   │   ├── ssh.zsh                # SSH TERM fallback for kitty
 │   │   └── starship.zsh           # Starship prompt initialization
 │   └── defer/                     # Lazily loaded via zsh-defer
 │       ├── alias.zsh              # Aliases (kubectl, etc.)
@@ -44,10 +46,10 @@ dotfiles/
 ├── dot_kube/
 │   └── kubie.yaml                 # kubie (kubectl context manager) configuration
 └── .chezmoiscripts/               # Setup scripts auto-executed by chezmoi
-    ├── run_macos.sh.tmpl           # macOS: apply Brewfile
-    ├── run_linux1_tool.sh.tmpl     # Linux: install development tools
-    ├── run_linux2_terminal.sh.tmpl # Linux: build and install Alacritty
-    └── run_linux3_fonts.sh.tmpl    # Linux: install UDEV Gothic fonts
+    ├── run_onchange_macos.sh      # macOS: apply Brewfile
+    ├── run_onchange_linux1_tool.sh # Linux: install development tools
+    ├── run_onchange_linux2_terminal.sh # Linux: install kitty
+    └── run_onchange_linux3_fonts.sh # Linux: install UDEV Gothic fonts
 ```
 
 ## Key Tools
@@ -67,3 +69,9 @@ To keep startup fast, [zsh-defer](https://github.com/romkatv/zsh-defer) splits c
 
 - `dot_zsh.d/source/` — loaded immediately at startup (e.g. completion path setup that cannot be deferred)
 - `dot_zsh.d/defer/` — lazily loaded in the background (aliases, tool initializations)
+
+## Chezmoi Policy
+
+Chezmoi templates are avoided unless the rendered file content must differ by OS, host, architecture, or secret data. Prefer normal shell/runtime guards for simple portability.
+
+Repository-only files such as `README.md`, `bootstrap.sh`, and `renovate.json` are excluded from the target home directory via `.chezmoiignore`.
