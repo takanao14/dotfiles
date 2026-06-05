@@ -82,7 +82,9 @@ install_packages() {
 
 add_apt_repository() {
     local repo_name="$1" gpg_url="$2" repo_line="$3"
-    local keyring_path="/usr/share/keyrings/${repo_name}-keyring.gpg"
+    # Optional 4th arg overrides the keyring path so we can match the upstream
+    # project's official name (keep it in sync with the signed-by= in repo_line).
+    local keyring_path="${4:-/usr/share/keyrings/${repo_name}-keyring.gpg}"
     log_info "Adding ${repo_name} repository..."
     curl -fsSL "$gpg_url" | gpg --dearmor | sudo tee "$keyring_path" > /dev/null
     sudo chmod 644 "$keyring_path"
@@ -218,7 +220,8 @@ install_hashicorp_tools() {
             local codename="${UBUNTU_CODENAME:-$(lsb_release -cs)}"
             add_apt_repository "hashicorp" \
                 "https://apt.releases.hashicorp.com/gpg" \
-                "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-keyring.gpg] https://apt.releases.hashicorp.com ${codename} main"
+                "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com ${codename} main" \
+                "/usr/share/keyrings/hashicorp-archive-keyring.gpg"
             ;;
         rocky)
             install_packages yum-utils
@@ -288,7 +291,8 @@ install_kubectl() {
             sudo mkdir -p -m 755 /etc/apt/keyrings
             add_apt_repository "kubernetes" \
                 "https://pkgs.k8s.io/core:/stable:/v${KUBECTL_VERSION}/deb/Release.key" \
-                "deb [signed-by=/usr/share/keyrings/kubernetes-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v${KUBECTL_VERSION}/deb/ /"
+                "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v${KUBECTL_VERSION}/deb/ /" \
+                "/etc/apt/keyrings/kubernetes-apt-keyring.gpg"
             ;;
         rocky)
             add_dnf_repository "kubernetes" \
