@@ -34,6 +34,14 @@ readonly AGE_VERSION="${AGE_VERSION:-1.3.1}"
 readonly CILIUM_VERSION="${CILIUM_VERSION:-0.19.4}"
 # renovate: datasource=github-releases depName=kubernetes/kubernetes
 readonly KUBECTL_VERSION="${KUBECTL_VERSION:-1.36}"
+# renovate: datasource=github-releases depName=eza-community/eza
+readonly EZA_VERSION="${EZA_VERSION:-0.23.4}"
+# renovate: datasource=github-releases depName=starship/starship
+readonly STARSHIP_VERSION="${STARSHIP_VERSION:-1.25.1}"
+# renovate: datasource=github-releases depName=rossmacarthur/sheldon
+readonly SHELDON_VERSION="${SHELDON_VERSION:-0.8.5}"
+# renovate: datasource=github-releases depName=direnv/direnv
+readonly DIRENV_VERSION="${DIRENV_VERSION:-2.37.1}"
 
 # Install location. Defaults to a per-user prefix. Set TOOL_BIN_DIR (and
 # TOOL_VERSION_CACHE_DIR) to a system-wide path such as /usr/local/bin to make
@@ -149,13 +157,6 @@ install_binary() {
     fi
 }
 
-ensure_installed() {
-    local cmd="$1" install_func="$2"
-    if ! command -v "$cmd" &>/dev/null && [[ ! -x "${BIN_DIR}/${cmd}" ]]; then
-        "$install_func"
-    fi
-}
-
 install_if_needed() {
     local cmd="$1" version="$2" install_func="$3"
     local cache_file="${VERSION_CACHE_DIR}/${cmd}"
@@ -172,25 +173,27 @@ install_if_needed() {
 # ============================================================================
 
 install_sheldon() {
-    log_info "Installing sheldon..."
+    log_info "Installing sheldon ${SHELDON_VERSION}..."
+    # sheldon release tags have no 'v' prefix.
     curl --proto '=https' -fsSL https://rossmacarthur.github.io/install/crate.sh \
-        | bash -s -- --repo rossmacarthur/sheldon --to "$BIN_DIR"
+        | bash -s -- --repo rossmacarthur/sheldon --tag "${SHELDON_VERSION}" --to "$BIN_DIR"
 }
 
 install_starship() {
-    log_info "Installing starship..."
-    curl -fsSL https://starship.rs/install.sh | sh -s -- --bin-dir "$BIN_DIR" -y
+    log_info "Installing starship ${STARSHIP_VERSION}..."
+    curl -fsSL https://starship.rs/install.sh \
+        | sh -s -- --version "v${STARSHIP_VERSION}" --bin-dir "$BIN_DIR" -y
 }
 
 install_direnv() {
-    log_info "Installing direnv..."
-    export bin_path="$BIN_DIR"
-    curl -fsSL https://direnv.net/install.sh | bash
+    install_binary "direnv" \
+        "https://github.com/direnv/direnv/releases/download/v${DIRENV_VERSION}/direnv.linux-${BIN_ARCH}" \
+        "$BIN_DIR/direnv"
 }
 
 install_eza() {
     install_binary "eza" \
-        "https://github.com/eza-community/eza/releases/latest/download/eza_${ARCH}-unknown-linux-gnu.tar.gz" \
+        "https://github.com/eza-community/eza/releases/download/v${EZA_VERSION}/eza_${ARCH}-unknown-linux-gnu.tar.gz" \
         "$BIN_DIR/eza"
 }
 
@@ -377,7 +380,7 @@ install_sops() {
             rm -f "$deb_file"
             ;;
         rocky)
-            ensure_installed "age" install_age
+            install_if_needed "age" "$AGE_VERSION" install_age
             install_binary "sops" \
                 "https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux.${BIN_ARCH}" \
                 "$BIN_DIR/sops"
@@ -410,10 +413,10 @@ install_helm_diff_plugin() {
 main() {
     log_info "=== Linux Development Tools Installation ==="
 
-    ensure_installed "sheldon" install_sheldon
-    ensure_installed "starship" install_starship
-    ensure_installed "direnv"  install_direnv
-    ensure_installed "eza"     install_eza
+    install_if_needed "sheldon"  "$SHELDON_VERSION"  install_sheldon
+    install_if_needed "starship" "$STARSHIP_VERSION" install_starship
+    install_if_needed "direnv"   "$DIRENV_VERSION"   install_direnv
+    install_if_needed "eza"      "$EZA_VERSION"      install_eza
 
     install_if_needed "fzf"    "$FZF_VERSION"    install_fzf
     install_if_needed "zellij" "$ZELLIJ_VERSION" install_zellij
@@ -426,7 +429,7 @@ main() {
     install_if_needed "tofu"       "$OPENTOFU_VERSION"   install_opentofu
     install_if_needed "bao"        "$OPENBAO_VERSION"    install_openbao
 
-    ensure_installed "kubectl" install_kubectl
+    install_if_needed "kubectl" "$KUBECTL_VERSION" install_kubectl
 
     install_if_needed "helm"     "$HELM_VERSION"     install_helm
     install_helm_diff_plugin
