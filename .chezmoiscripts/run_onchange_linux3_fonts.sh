@@ -13,6 +13,9 @@ readonly UDEV_GOTHIC_VERSION="${UDEV_GOTHIC_VERSION:-2.2.0}"
 # every user (e.g. for a shared / golden-image VM); that requires running as
 # root. fontconfig scans /usr/local/share/fonts by default.
 readonly VERSION_CACHE_DIR="${TOOL_VERSION_CACHE_DIR:-$HOME/.local/share/tool-versions}"
+# A per-user install defers to a current system-wide baseline (golden image),
+# so it does not shadow it with a duplicate in $HOME/.local.
+readonly SYSTEM_CACHE_DIR="/usr/local/share/tool-versions"
 readonly FONTS_DIR="${TOOL_FONT_DIR:-$HOME/.local/share/fonts}/udev-gothic"
 readonly DOWNLOAD_URL="https://github.com/yuru7/udev-gothic/releases/download/v${UDEV_GOTHIC_VERSION}/UDEVGothic_NF_v${UDEV_GOTHIC_VERSION}.zip"
 
@@ -101,8 +104,20 @@ rebuild_font_cache() {
     fc-cache -f "$FONTS_DIR"
 }
 
+# True when a system-wide baseline already provides KEY at VERSION. Only
+# meaningful for a per-user install (our cache dir is not the system one).
+baseline_satisfies() {
+    local key="$1" version="$2"
+    [[ "$VERSION_CACHE_DIR" != "$SYSTEM_CACHE_DIR" ]] || return 1
+    [[ "$(cat "${SYSTEM_CACHE_DIR}/${key}" 2>/dev/null)" == "$version" ]]
+}
+
 install_udev_gothic() {
     log_info "Installing UDEV Gothic NF font..."
+    if baseline_satisfies "udev-gothic" "$UDEV_GOTHIC_VERSION"; then
+        log_info "UDEV Gothic NF ${UDEV_GOTHIC_VERSION} provided system-wide, skipping per-user install"
+        return 0
+    fi
     if is_font_installed; then
         log_info "UDEV Gothic NF ${UDEV_GOTHIC_VERSION} is already installed"
         return 0

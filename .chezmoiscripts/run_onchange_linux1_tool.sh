@@ -49,6 +49,11 @@ readonly DIRENV_VERSION="${DIRENV_VERSION:-2.37.1}"
 # system-wide target requires running this script as root.
 readonly BIN_DIR="${TOOL_BIN_DIR:-$HOME/.local/bin}"
 readonly VERSION_CACHE_DIR="${TOOL_VERSION_CACHE_DIR:-$HOME/.local/share/tool-versions}"
+# A system-wide baseline (golden-image VM) records installed versions here. A
+# per-user install defers to it when it already provides the desired version, so
+# running this via chezmoi / provision.sh on a baked image does not shadow a
+# current baseline with a duplicate in $HOME/.local.
+readonly SYSTEM_CACHE_DIR="/usr/local/share/tool-versions"
 readonly ARCH="$(uname -m)"
 readonly BIN_ARCH="$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/')"
 
@@ -157,8 +162,20 @@ install_binary() {
     fi
 }
 
+# True when a system-wide baseline already provides KEY at VERSION. Only
+# meaningful for a per-user install (our cache dir is not the system one).
+baseline_satisfies() {
+    local key="$1" version="$2"
+    [[ "$VERSION_CACHE_DIR" != "$SYSTEM_CACHE_DIR" ]] || return 1
+    [[ "$(cat "${SYSTEM_CACHE_DIR}/${key}" 2>/dev/null)" == "$version" ]]
+}
+
 install_if_needed() {
     local cmd="$1" version="$2" install_func="$3"
+    if baseline_satisfies "$cmd" "$version"; then
+        log_info "${cmd} ${version} provided system-wide, skipping per-user install"
+        return
+    fi
     local cache_file="${VERSION_CACHE_DIR}/${cmd}"
     if ! command -v "$cmd" &>/dev/null || [[ "$(cat "$cache_file" 2>/dev/null)" != "$version" ]]; then
         "$install_func"

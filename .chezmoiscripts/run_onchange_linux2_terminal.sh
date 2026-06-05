@@ -11,6 +11,9 @@ readonly KITTY_VERSION="${KITTY_VERSION:-0.47.1}"
 # make kitty available to every user (golden-image VM); requires running as root.
 readonly BIN_DIR="${TOOL_BIN_DIR:-$HOME/.local/bin}"
 readonly VERSION_CACHE_DIR="${TOOL_VERSION_CACHE_DIR:-$HOME/.local/share/tool-versions}"
+# A per-user install defers to a current system-wide baseline (golden image),
+# so it does not shadow it with a duplicate in $HOME/.local.
+readonly SYSTEM_CACHE_DIR="/usr/local/share/tool-versions"
 readonly KITTY_PREFIX="${TOOL_KITTY_PREFIX:-$HOME/.local}"
 readonly APPS_DIR="${TOOL_APPS_DIR:-$HOME/.local/share/applications}"
 readonly KITTY_APP="${KITTY_PREFIX}/kitty.app"
@@ -104,10 +107,23 @@ install_kitty() {
     log_info "kitty ${KITTY_VERSION} installed"
 }
 
+# True when a system-wide baseline already provides KEY at VERSION. Only
+# meaningful for a per-user install (our cache dir is not the system one).
+baseline_satisfies() {
+    local key="$1" version="$2"
+    [[ "$VERSION_CACHE_DIR" != "$SYSTEM_CACHE_DIR" ]] || return 1
+    [[ "$(cat "${SYSTEM_CACHE_DIR}/${key}" 2>/dev/null)" == "$version" ]]
+}
+
 main() {
     log_info "=== Terminal Installation Script ==="
 
     check_gui "Skipping kitty installation"
+
+    if baseline_satisfies "kitty" "$KITTY_VERSION"; then
+        log_info "kitty ${KITTY_VERSION} provided system-wide, skipping per-user install"
+        exit 0
+    fi
 
     local cache_file="$VERSION_CACHE_DIR/kitty"
     if command -v kitty &>/dev/null && \
