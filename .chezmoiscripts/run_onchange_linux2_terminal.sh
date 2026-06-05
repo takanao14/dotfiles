@@ -7,8 +7,11 @@ set -euo pipefail
 readonly KITTY_VERSION="${KITTY_VERSION:-0.47.1}"
 
 # Install location. Defaults to a per-user prefix. Override TOOL_BIN_DIR /
-# TOOL_KITTY_PREFIX / TOOL_APPS_DIR with system-wide paths (e.g. /usr/local) to
-# make kitty available to every user (golden-image VM); requires running as root.
+# TOOL_KITTY_PREFIX / TOOL_APPS_DIR / TOOL_VERSION_CACHE_DIR with system-wide
+# paths (e.g. /usr/local) to make kitty available to every user (golden-image
+# VM); requires running as root. Point TOOL_VERSION_CACHE_DIR at
+# /usr/local/share/tool-versions so the baseline marker is recorded where
+# per-user installs look for it; otherwise the deferral below silently no-ops.
 readonly BIN_DIR="${TOOL_BIN_DIR:-$HOME/.local/bin}"
 readonly VERSION_CACHE_DIR="${TOOL_VERSION_CACHE_DIR:-$HOME/.local/share/tool-versions}"
 # A per-user install defers to a current system-wide baseline (golden image),
@@ -120,7 +123,7 @@ main() {
 
     check_gui "Skipping kitty installation"
 
-    if baseline_satisfies "kitty" "$KITTY_VERSION"; then
+    if baseline_satisfies "kitty" "$KITTY_VERSION" && command -v kitty &>/dev/null; then
         log_info "kitty ${KITTY_VERSION} provided system-wide, skipping per-user install"
         exit 0
     fi

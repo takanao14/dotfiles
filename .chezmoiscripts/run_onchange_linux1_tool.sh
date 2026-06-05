@@ -172,7 +172,7 @@ baseline_satisfies() {
 
 install_if_needed() {
     local cmd="$1" version="$2" install_func="$3"
-    if baseline_satisfies "$cmd" "$version"; then
+    if baseline_satisfies "$cmd" "$version" && command -v "$cmd" &>/dev/null; then
         log_info "${cmd} ${version} provided system-wide, skipping per-user install"
         return
     fi

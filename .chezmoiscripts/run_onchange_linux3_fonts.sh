@@ -11,7 +11,10 @@ readonly UDEV_GOTHIC_VERSION="${UDEV_GOTHIC_VERSION:-2.2.0}"
 # Install location. Defaults to a per-user prefix. Set TOOL_FONT_DIR to a
 # system-wide path such as /usr/local/share/fonts to make the font available to
 # every user (e.g. for a shared / golden-image VM); that requires running as
-# root. fontconfig scans /usr/local/share/fonts by default.
+# root. fontconfig scans /usr/local/share/fonts by default. Also set
+# TOOL_VERSION_CACHE_DIR=/usr/local/share/tool-versions so the baseline marker is
+# recorded where per-user installs look for it; otherwise the deferral below
+# silently no-ops (the marker lands in $HOME instead of SYSTEM_CACHE_DIR).
 readonly VERSION_CACHE_DIR="${TOOL_VERSION_CACHE_DIR:-$HOME/.local/share/tool-versions}"
 # A per-user install defers to a current system-wide baseline (golden image),
 # so it does not shadow it with a duplicate in $HOME/.local.
@@ -114,7 +117,8 @@ baseline_satisfies() {
 
 install_udev_gothic() {
     log_info "Installing UDEV Gothic NF font..."
-    if baseline_satisfies "udev-gothic" "$UDEV_GOTHIC_VERSION"; then
+    if baseline_satisfies "udev-gothic" "$UDEV_GOTHIC_VERSION" && \
+       fc-list : family | grep -q "UDEV Gothic NF"; then
         log_info "UDEV Gothic NF ${UDEV_GOTHIC_VERSION} provided system-wide, skipping per-user install"
         return 0
     fi
