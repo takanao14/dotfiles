@@ -8,8 +8,12 @@ readonly OS_ID="${ID}"
 
 # renovate: datasource=github-releases depName=yuru7/udev-gothic
 readonly UDEV_GOTHIC_VERSION="${UDEV_GOTHIC_VERSION:-2.2.0}"
-readonly VERSION_CACHE_DIR="$HOME/.local/share/tool-versions"
-readonly FONTS_DIR="$HOME/.local/share/fonts/udev-gothic"
+# Install location. Defaults to a per-user prefix. Set TOOL_FONT_DIR to a
+# system-wide path such as /usr/local/share/fonts to make the font available to
+# every user (e.g. for a shared / golden-image VM); that requires running as
+# root. fontconfig scans /usr/local/share/fonts by default.
+readonly VERSION_CACHE_DIR="${TOOL_VERSION_CACHE_DIR:-$HOME/.local/share/tool-versions}"
+readonly FONTS_DIR="${TOOL_FONT_DIR:-$HOME/.local/share/fonts}/udev-gothic"
 readonly DOWNLOAD_URL="https://github.com/yuru7/udev-gothic/releases/download/v${UDEV_GOTHIC_VERSION}/UDEVGothic_NF_v${UDEV_GOTHIC_VERSION}.zip"
 
 # ============================================================================
@@ -32,6 +36,12 @@ log_error() { echo -e "${RED}[ERROR]${NC} $*" >&2; }
 check_gui() {
     local skip_msg="${1:-}"
     log_info "Checking system requirements..."
+    # Golden-image builds (e.g. Packer) install the font before the xrdp
+    # service runs; TOOL_FORCE_GUI_INSTALL=1 bypasses the live-GUI check.
+    if [[ "${TOOL_FORCE_GUI_INSTALL:-}" == "1" ]]; then
+        log_info "TOOL_FORCE_GUI_INSTALL=1; installing regardless of GUI session"
+        return 0
+    fi
     local has_gui=false
     if systemctl is-active --quiet xrdp 2>/dev/null; then
         log_info "xrdp service detected"
@@ -56,12 +66,12 @@ check_dependencies() {
         fi
     done
     if [[ ${#missing_deps[@]} -gt 0 ]]; then
-        log_error "Missing required dependencies: ${missing_deps[*]}"
+        log_info "Installing missing dependencies: ${missing_deps[*]}"
         case "$OS_ID" in
-            ubuntu) log_info "Install them with: sudo apt-get install -y fontconfig unzip curl" ;;
-            rocky)  log_info "Install them with: sudo dnf install -y fontconfig unzip curl" ;;
+            ubuntu) sudo apt-get update -qq && sudo apt-get install -y fontconfig unzip curl ;;
+            rocky)  sudo dnf install -y fontconfig unzip curl ;;
+            *) log_error "Unsupported OS: ${OS_ID}"; return 1 ;;
         esac
-        return 1
     fi
 }
 

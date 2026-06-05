@@ -6,8 +6,14 @@ set -euo pipefail
 # renovate: datasource=github-releases depName=kovidgoyal/kitty
 readonly KITTY_VERSION="${KITTY_VERSION:-0.47.1}"
 
-readonly BIN_DIR="$HOME/.local/bin"
-readonly VERSION_CACHE_DIR="$HOME/.local/share/tool-versions"
+# Install location. Defaults to a per-user prefix. Override TOOL_BIN_DIR /
+# TOOL_KITTY_PREFIX / TOOL_APPS_DIR with system-wide paths (e.g. /usr/local) to
+# make kitty available to every user (golden-image VM); requires running as root.
+readonly BIN_DIR="${TOOL_BIN_DIR:-$HOME/.local/bin}"
+readonly VERSION_CACHE_DIR="${TOOL_VERSION_CACHE_DIR:-$HOME/.local/share/tool-versions}"
+readonly KITTY_PREFIX="${TOOL_KITTY_PREFIX:-$HOME/.local}"
+readonly APPS_DIR="${TOOL_APPS_DIR:-$HOME/.local/share/applications}"
+readonly KITTY_APP="${KITTY_PREFIX}/kitty.app"
 
 # ============================================================================
 # Logging
@@ -29,6 +35,12 @@ log_error() { echo -e "${RED}[ERROR]${NC} $*" >&2; }
 check_gui() {
     local skip_msg="${1:-}"
     log_info "Checking system requirements..."
+    # Golden-image builds (e.g. Packer) install before the xrdp service runs;
+    # TOOL_FORCE_GUI_INSTALL=1 bypasses the live-GUI check.
+    if [[ "${TOOL_FORCE_GUI_INSTALL:-}" == "1" ]]; then
+        log_info "TOOL_FORCE_GUI_INSTALL=1; installing regardless of GUI session"
+        return 0
+    fi
     local has_gui=false
     if systemctl is-active --quiet xrdp 2>/dev/null; then
         log_info "xrdp service detected"
@@ -66,25 +78,25 @@ install_kitty() {
     curl -fsSL "https://github.com/kovidgoyal/kitty/releases/download/v${KITTY_VERSION}/kitty-${KITTY_VERSION}-${arch}.txz" \
         -o "${tmp_dir}/kitty.txz"
 
-    rm -rf "$HOME/.local/kitty.app"
-    mkdir -p "$HOME/.local/kitty.app"
-    tar xJf "${tmp_dir}/kitty.txz" -C "$HOME/.local/kitty.app"
+    rm -rf "$KITTY_APP"
+    mkdir -p "$KITTY_APP"
+    tar xJf "${tmp_dir}/kitty.txz" -C "$KITTY_APP"
 
     mkdir -p "$BIN_DIR"
-    ln -sf "$HOME/.local/kitty.app/bin/kitty"  "$BIN_DIR/kitty"
-    ln -sf "$HOME/.local/kitty.app/bin/kitten" "$BIN_DIR/kitten"
+    ln -sf "$KITTY_APP/bin/kitty"  "$BIN_DIR/kitty"
+    ln -sf "$KITTY_APP/bin/kitten" "$BIN_DIR/kitten"
 
-    mkdir -p "$HOME/.local/share/applications"
-    cp "$HOME/.local/kitty.app/share/applications/kitty.desktop" \
-        "$HOME/.local/share/applications/kitty.desktop"
-    cp "$HOME/.local/kitty.app/share/applications/kitty-open.desktop" \
-        "$HOME/.local/share/applications/kitty-open.desktop"
-    sed -i "s|Icon=kitty|Icon=$HOME/.local/kitty.app/share/icons/hicolor/256x256/apps/kitty.png|g" \
-        "$HOME/.local/share/applications/kitty.desktop" \
-        "$HOME/.local/share/applications/kitty-open.desktop"
-    sed -i "s|Exec=kitty|Exec=$HOME/.local/kitty.app/bin/kitty|g" \
-        "$HOME/.local/share/applications/kitty.desktop" \
-        "$HOME/.local/share/applications/kitty-open.desktop"
+    mkdir -p "$APPS_DIR"
+    cp "$KITTY_APP/share/applications/kitty.desktop" \
+        "$APPS_DIR/kitty.desktop"
+    cp "$KITTY_APP/share/applications/kitty-open.desktop" \
+        "$APPS_DIR/kitty-open.desktop"
+    sed -i "s|Icon=kitty|Icon=$KITTY_APP/share/icons/hicolor/256x256/apps/kitty.png|g" \
+        "$APPS_DIR/kitty.desktop" \
+        "$APPS_DIR/kitty-open.desktop"
+    sed -i "s|Exec=kitty|Exec=$KITTY_APP/bin/kitty|g" \
+        "$APPS_DIR/kitty.desktop" \
+        "$APPS_DIR/kitty-open.desktop"
 
     mkdir -p "$VERSION_CACHE_DIR"
     echo "$KITTY_VERSION" > "$VERSION_CACHE_DIR/kitty"
