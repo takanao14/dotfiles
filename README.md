@@ -1,6 +1,6 @@
 # dotfiles
 
-Personal dotfiles managed with [chezmoi](https://www.chezmoi.io/). Supports macOS and Linux (Ubuntu / Rocky Linux).
+Personal dotfiles managed with [chezmoi](https://www.chezmoi.io/). Supports macOS and Linux (Ubuntu / Debian / Rocky Linux).
 
 ## Setup
 

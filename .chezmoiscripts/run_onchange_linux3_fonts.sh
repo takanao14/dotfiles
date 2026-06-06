@@ -74,7 +74,7 @@ check_dependencies() {
     if [[ ${#missing_deps[@]} -gt 0 ]]; then
         log_info "Installing missing dependencies: ${missing_deps[*]}"
         case "$OS_ID" in
-            ubuntu) sudo apt-get update -qq && sudo apt-get install -y fontconfig unzip curl ;;
+            ubuntu|debian) sudo apt-get update -qq && sudo apt-get install -y fontconfig unzip curl ;;
             rocky)  sudo dnf install -y fontconfig unzip curl ;;
             *) log_error "Unsupported OS: ${OS_ID}"; return 1 ;;
         esac

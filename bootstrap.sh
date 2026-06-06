@@ -56,7 +56,7 @@ elif [[ "$machine" == "Linux" ]]; then
       sudo apt-get update
       sudo apt-get install -y "${pkgs[@]}"
     fi
-  elif [[ "$distro" == "rocky" ]] || [[ "$distro" == "rhel" ]] || [[ "$distro" == "centos" ]] || [[ "$distro" == "fedora" ]]; then
+  elif [[ "$distro" == "rocky" ]]; then
     pkgs=()
     command -v git &> /dev/null || pkgs+=(git)
     command -v zsh &> /dev/null || pkgs+=(zsh)

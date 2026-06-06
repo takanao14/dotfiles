@@ -79,7 +79,7 @@ log_error() { echo -e "${RED}[ERROR]${NC} $*" >&2; }
 
 update_package_cache() {
     case "$OS_ID" in
-        ubuntu) sudo apt-get update -qq ;;
+        ubuntu|debian) sudo apt-get update -qq ;;
         rocky)  sudo dnf makecache --refresh -q ;;
         *) log_error "Unsupported OS: ${OS_ID}"; exit 1 ;;
     esac
@@ -87,7 +87,7 @@ update_package_cache() {
 
 install_packages() {
     case "$OS_ID" in
-        ubuntu) sudo apt-get install -y "$@" ;;
+        ubuntu|debian) sudo apt-get install -y "$@" ;;
         rocky)  sudo dnf install -y "$@" ;;
         *) log_error "Unsupported OS: ${OS_ID}"; exit 1 ;;
     esac
@@ -234,10 +234,10 @@ install_hashicorp_tools() {
     log_info "Installing HashiCorp tools (Terraform, Packer, Vault)..."
     update_package_cache
     case "$OS_ID" in
-        ubuntu)
+        ubuntu|debian)
             install_packages gnupg software-properties-common
             . /etc/os-release
-            local codename="${UBUNTU_CODENAME:-$(lsb_release -cs)}"
+            local codename="${VERSION_CODENAME:-${UBUNTU_CODENAME:-$(lsb_release -cs)}}"
             add_apt_repository "hashicorp" \
                 "https://apt.releases.hashicorp.com/gpg" \
                 "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com ${codename} main" \
@@ -282,7 +282,7 @@ install_openbao() {
     tmp_dir="$(mktemp -d)"
     trap "rm -rf '${tmp_dir}'" RETURN
     case "$OS_ID" in
-        ubuntu)
+        ubuntu|debian)
             local pkg_name="openbao_${OPENBAO_VERSION}_linux_${BIN_ARCH}.deb"
             curl -fsSL "https://github.com/openbao/openbao/releases/download/v${OPENBAO_VERSION}/${pkg_name}" \
                 -o "${tmp_dir}/${pkg_name}"
@@ -306,7 +306,7 @@ install_kubectl() {
     update_package_cache
     install_packages ca-certificates curl gnupg
     case "$OS_ID" in
-        ubuntu)
+        ubuntu|debian)
             sudo apt-get install -y apt-transport-https
             sudo mkdir -p -m 755 /etc/apt/keyrings
             add_apt_repository "kubernetes" \
@@ -388,7 +388,7 @@ install_cilium() {
 install_sops() {
     log_info "Installing sops..."
     case "$OS_ID" in
-        ubuntu)
+        ubuntu|debian)
             install_packages age
             local deb_file
             deb_file="$(mktemp --suffix=.deb)"
