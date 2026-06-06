@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
 # if os is darwin
 machine="$(uname)"
@@ -74,4 +75,7 @@ elif [[ "$machine" == "Linux" ]]; then
 
   chezmoi init --apply takanao14/dotfiles
 
+else
+  echo "Unsupported OS: $machine" >&2
+  exit 1
 fi
