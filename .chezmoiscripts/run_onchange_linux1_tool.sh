@@ -93,6 +93,23 @@ install_packages() {
     esac
 }
 
+install_base_dependencies() {
+    log_info "Installing baseline dependencies..."
+    update_package_cache
+    case "$OS_ID" in
+        ubuntu|debian)
+            install_packages ca-certificates curl coreutils file findutils gnupg gzip tar unzip xz-utils
+            ;;
+        rocky)
+            install_packages ca-certificates curl coreutils file findutils gnupg2 gzip tar unzip xz
+            ;;
+        *)
+            log_error "Unsupported OS: ${OS_ID}"
+            exit 1
+            ;;
+    esac
+}
+
 add_apt_repository() {
     local repo_name="$1" gpg_url="$2" repo_line="$3"
     # Optional 4th arg overrides the keyring path so we can match the upstream
@@ -429,6 +446,8 @@ install_helm_diff_plugin() {
 
 main() {
     log_info "=== Linux Development Tools Installation ==="
+
+    install_base_dependencies
 
     install_if_needed "sheldon"  "$SHELDON_VERSION"  install_sheldon
     install_if_needed "starship" "$STARSHIP_VERSION" install_starship
