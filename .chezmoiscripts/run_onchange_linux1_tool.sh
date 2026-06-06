@@ -42,6 +42,8 @@ readonly STARSHIP_VERSION="${STARSHIP_VERSION:-1.25.1}"
 readonly SHELDON_VERSION="${SHELDON_VERSION:-0.8.5}"
 # renovate: datasource=github-releases depName=direnv/direnv
 readonly DIRENV_VERSION="${DIRENV_VERSION:-2.37.1}"
+# renovate: datasource=github-releases depName=kubernetes-sigs/krew
+readonly KREW_VERSION="${KREW_VERSION:-0.5.0}"
 
 # Install location. Defaults to a per-user prefix. Set TOOL_BIN_DIR (and
 # TOOL_VERSION_CACHE_DIR) to a system-wide path such as /usr/local/bin to make
@@ -109,10 +111,10 @@ install_base_dependencies() {
     update_package_cache
     case "$OS_ID" in
         ubuntu|debian)
-            install_packages ca-certificates curl coreutils file findutils gnupg gzip tar unzip xz-utils
+            install_packages ca-certificates curl coreutils file findutils git gnupg gzip tar unzip xz-utils
             ;;
         rocky)
-            install_packages ca-certificates curl coreutils file findutils gnupg2 gzip tar unzip xz
+            install_packages ca-certificates curl coreutils file findutils git gnupg2 gzip tar unzip xz
             ;;
         *)
             log_error "Unsupported OS: ${OS_ID}"
@@ -221,6 +223,10 @@ baseline_satisfies() {
     local key="$1" version="$2"
     [[ "$VERSION_CACHE_DIR" != "$SYSTEM_CACHE_DIR" ]] || return 1
     [[ "$(cat "${SYSTEM_CACHE_DIR}/${key}" 2>/dev/null)" == "$version" ]]
+}
+
+is_system_wide_install() {
+    [[ "$VERSION_CACHE_DIR" == "$SYSTEM_CACHE_DIR" || "$BIN_DIR" == "/usr/local/bin" ]]
 }
 
 install_if_needed() {
@@ -410,6 +416,32 @@ install_helmfile() {
         "https://github.com/helmfile/helmfile/releases/download/v${HELMFILE_VERSION}/helmfile_${HELMFILE_VERSION}_checksums.txt"
 }
 
+install_krew_if_needed() {
+    if is_system_wide_install; then
+        log_info "Skipping krew during system-wide install; krew is user-scoped"
+        return
+    fi
+
+    local krew_root krew_bin cache_file tmp_dir archive_name
+    krew_root="${KREW_ROOT:-$HOME/.krew}"
+    krew_bin="${krew_root}/bin/kubectl-krew"
+    cache_file="${VERSION_CACHE_DIR}/krew"
+
+    if [[ -x "$krew_bin" && "$(cat "$cache_file" 2>/dev/null)" == "$KREW_VERSION" ]]; then
+        log_info "krew ${KREW_VERSION} is already up to date, skipping"
+        return
+    fi
+
+    log_info "Installing krew ${KREW_VERSION}..."
+    make_tmp_dir tmp_dir
+    archive_name="krew-linux_${BIN_ARCH}.tar.gz"
+    curl -fsSL "https://github.com/kubernetes-sigs/krew/releases/download/v${KREW_VERSION}/${archive_name}" \
+        -o "${tmp_dir}/${archive_name}"
+    tar xz -C "$tmp_dir" -f "${tmp_dir}/${archive_name}"
+    "${tmp_dir}/krew-linux_${BIN_ARCH}" install krew
+    echo "$KREW_VERSION" > "$cache_file"
+}
+
 install_k0sctl() {
     install_binary "k0sctl" \
         "https://github.com/k0sproject/k0sctl/releases/download/v${K0SCTL_VERSION}/k0sctl-linux-${BIN_ARCH}" \
@@ -507,6 +539,7 @@ main() {
 
     install_if_needed "helm"     "$HELM_VERSION"     install_helm
     install_helm_diff_plugin
+    install_krew_if_needed
     install_if_needed "kubie"    "$KUBIE_VERSION"    install_kubie
     install_if_needed "k9s"      "$K9S_VERSION"      install_k9s
     install_if_needed "helmfile" "$HELMFILE_VERSION" install_helmfile
