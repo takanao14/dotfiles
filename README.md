@@ -36,7 +36,7 @@ dotfiles/
 │       ├── terraform.zsh          # Terraform completion
 │       ├── terragrunt.zsh         # Terragrunt completion
 │       ├── krew.zsh               # kubectl krew path
-│       └── sshr.zsh               # sshr configuration
+│       └── sshr.zsh               # known_hosts cleanup helper
 ├── dot_config/
 │   ├── ghostty/config             # Ghostty terminal configuration
 │   ├── alacritty/alacritty.toml   # Alacritty terminal configuration
