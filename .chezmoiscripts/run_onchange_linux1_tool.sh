@@ -73,6 +73,17 @@ log_info()  { echo -e "${GREEN}[INFO]${NC} $*"; }
 log_warn()  { echo -e "${YELLOW}[WARN]${NC} $*"; }
 log_error() { echo -e "${RED}[ERROR]${NC} $*" >&2; }
 
+TMP_PATHS=()
+
+cleanup_tmp_paths() {
+    local path
+    for path in "${TMP_PATHS[@]}"; do
+        rm -rf "$path"
+    done
+}
+
+trap cleanup_tmp_paths EXIT
+
 # ============================================================================
 # Helpers
 # ============================================================================
@@ -110,6 +121,24 @@ install_base_dependencies() {
     esac
 }
 
+make_tmp_dir() {
+    local __var_name="$1" path
+    path="$(mktemp -d)"
+    TMP_PATHS+=("$path")
+    printf -v "$__var_name" '%s' "$path"
+}
+
+make_tmp_file() {
+    local __var_name="$1" suffix="${2:-}" path
+    if [[ -n "$suffix" ]]; then
+        path="$(mktemp --suffix="$suffix")"
+    else
+        path="$(mktemp)"
+    fi
+    TMP_PATHS+=("$path")
+    printf -v "$__var_name" '%s' "$path"
+}
+
 add_apt_repository() {
     local repo_name="$1" gpg_url="$2" repo_line="$3"
     # Optional 4th arg overrides the keyring path so we can match the upstream
@@ -138,8 +167,7 @@ EOF
 verify_sha256() {
     local file="$1" checksum_url="$2" checksum_name="${3:-$(basename "$1")}"
     local sum_file
-    sum_file="$(mktemp)"
-    trap "rm -f '${sum_file}'" RETURN
+    make_tmp_file sum_file
     curl -fsSL "$checksum_url" -o "$sum_file"
     local expected actual
     if grep -qE "[[:space:]]${checksum_name}$" "$sum_file"; then
@@ -161,8 +189,7 @@ install_binary() {
     local name="$1" url="$2" output_file="$3" checksum_url="${4:-}"
     log_info "Installing ${name}..."
     local tmp_dir
-    tmp_dir=$(mktemp -d)
-    trap "rm -rf '${tmp_dir}'" RETURN
+    make_tmp_dir tmp_dir
     local archive_name
     archive_name="$(basename "$url")"
     if [[ "$url" == *.tar.gz ]]; then
@@ -281,8 +308,7 @@ install_opentofu() {
     log_info "Installing opentofu..."
     install_packages unzip
     local tmp_dir zip_name
-    tmp_dir="$(mktemp -d)"
-    trap "rm -rf '${tmp_dir}'" RETURN
+    make_tmp_dir tmp_dir
     zip_name="tofu_${OPENTOFU_VERSION}_linux_${BIN_ARCH}.zip"
     curl -fsSL "https://github.com/opentofu/opentofu/releases/download/v${OPENTOFU_VERSION}/${zip_name}" \
         -o "${tmp_dir}/tofu.zip"
@@ -296,8 +322,7 @@ install_opentofu() {
 install_openbao() {
     log_info "Installing openbao..."
     local tmp_dir
-    tmp_dir="$(mktemp -d)"
-    trap "rm -rf '${tmp_dir}'" RETURN
+    make_tmp_dir tmp_dir
     case "$OS_ID" in
         ubuntu|debian)
             local pkg_name="openbao_${OPENBAO_VERSION}_linux_${BIN_ARCH}.deb"
@@ -344,8 +369,7 @@ install_kubectl() {
 install_helm() {
     log_info "Installing helm ${HELM_VERSION}..."
     local tmp_dir archive_name
-    tmp_dir="$(mktemp -d)"
-    trap "rm -rf '${tmp_dir}'" RETURN
+    make_tmp_dir tmp_dir
     archive_name="helm-v${HELM_VERSION}-linux-${BIN_ARCH}.tar.gz"
     curl -fsSL "https://get.helm.sh/${archive_name}" -o "${tmp_dir}/${archive_name}"
     verify_sha256 "${tmp_dir}/${archive_name}" \
@@ -384,8 +408,7 @@ install_k0sctl() {
 install_age() {
     log_info "Installing age ${AGE_VERSION}..."
     local tmp_dir archive_name
-    tmp_dir="$(mktemp -d)"
-    trap "rm -rf '${tmp_dir}'" RETURN
+    make_tmp_dir tmp_dir
     archive_name="age-v${AGE_VERSION}-linux-${BIN_ARCH}.tar.gz"
     curl -fsSL "https://github.com/FiloSottile/age/releases/download/v${AGE_VERSION}/${archive_name}" \
         -o "${tmp_dir}/${archive_name}"
@@ -408,10 +431,9 @@ install_sops() {
         ubuntu|debian)
             install_packages age
             local deb_file
-            deb_file="$(mktemp --suffix=.deb)"
+            make_tmp_file deb_file .deb
             curl -fsSL "https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops_${SOPS_VERSION}_${BIN_ARCH}.deb" -o "$deb_file"
             sudo dpkg -i "$deb_file"
-            rm -f "$deb_file"
             ;;
         rocky)
             install_if_needed "age" "$AGE_VERSION" install_age

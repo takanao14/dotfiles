@@ -35,9 +35,27 @@ log_info()  { echo -e "${GREEN}[INFO]${NC} $*"; }
 log_warn()  { echo -e "${YELLOW}[WARN]${NC} $*"; }
 log_error() { echo -e "${RED}[ERROR]${NC} $*" >&2; }
 
+TMP_PATHS=()
+
+cleanup_tmp_paths() {
+    local path
+    for path in "${TMP_PATHS[@]}"; do
+        rm -rf "$path"
+    done
+}
+
+trap cleanup_tmp_paths EXIT
+
 # ============================================================================
 # Helpers
 # ============================================================================
+
+make_tmp_dir() {
+    local __var_name="$1" path
+    path="$(mktemp -d)"
+    TMP_PATHS+=("$path")
+    printf -v "$__var_name" '%s' "$path"
+}
 
 check_gui() {
     local skip_msg="${1:-}"
@@ -128,8 +146,7 @@ install_udev_gothic() {
     fi
     check_dependencies
     local tmp_dir
-    tmp_dir="$(mktemp -d)"
-    trap "rm -rf '$tmp_dir'" RETURN
+    make_tmp_dir tmp_dir
     download_and_extract_font "$tmp_dir"
     install_font_files "$tmp_dir"
     rebuild_font_cache
