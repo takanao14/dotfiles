@@ -170,10 +170,19 @@ verify_sha256() {
     make_tmp_file sum_file
     curl -fsSL "$checksum_url" -o "$sum_file"
     local expected actual
-    if grep -qE "[[:space:]]${checksum_name}$" "$sum_file"; then
-        expected="$(grep -E "[[:space:]]${checksum_name}$" "$sum_file" | awk '{print $1}')"
-    else
-        expected="$(awk '{print $1}' "$sum_file")"
+    expected="$(awk -v name="$checksum_name" '
+        {
+            candidate = $NF
+            sub(/^\*/, "", candidate)
+            sub(/^.*\//, "", candidate)
+            if (candidate == name) {
+                print $1
+                exit
+            }
+        }
+    ' "$sum_file")"
+    if [[ -z "$expected" ]]; then
+        expected="$(awk 'NF > 0 {print $1; exit}' "$sum_file")"
     fi
     actual="$(sha256sum "$file" | awk '{print $1}')"
     if [[ "$expected" != "$actual" ]]; then
@@ -265,9 +274,11 @@ install_fzf() {
 }
 
 install_zellij() {
+    local archive_name="zellij-${ARCH}-unknown-linux-musl.tar.gz"
     install_binary "zellij" \
-        "https://github.com/zellij-org/zellij/releases/download/v${ZELLIJ_VERSION}/zellij-${ARCH}-unknown-linux-musl.tar.gz" \
-        "$BIN_DIR/zellij"
+        "https://github.com/zellij-org/zellij/releases/download/v${ZELLIJ_VERSION}/${archive_name}" \
+        "$BIN_DIR/zellij" \
+        "https://github.com/zellij-org/zellij/releases/download/v${ZELLIJ_VERSION}/${archive_name%.tar.gz}.sha256sum"
 }
 
 # ============================================================================
@@ -430,16 +441,21 @@ install_sops() {
     case "$OS_ID" in
         ubuntu|debian)
             install_packages age
-            local deb_file
+            local deb_file pkg_name
             make_tmp_file deb_file .deb
-            curl -fsSL "https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops_${SOPS_VERSION}_${BIN_ARCH}.deb" -o "$deb_file"
+            pkg_name="sops_${SOPS_VERSION}_${BIN_ARCH}.deb"
+            curl -fsSL "https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/${pkg_name}" -o "$deb_file"
+            verify_sha256 "$deb_file" \
+                "https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.checksums.txt" \
+                "$pkg_name"
             sudo dpkg -i "$deb_file"
             ;;
         rocky)
             install_if_needed "age" "$AGE_VERSION" install_age
             install_binary "sops" \
                 "https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux.${BIN_ARCH}" \
-                "$BIN_DIR/sops"
+                "$BIN_DIR/sops" \
+                "https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.checksums.txt"
             ;;
     esac
 }
