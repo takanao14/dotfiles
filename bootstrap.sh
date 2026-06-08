@@ -43,8 +43,9 @@ elif [[ "$machine" == "Linux" ]]; then
 
   # Detect Linux distribution
   if [ -f /etc/os-release ]; then
+    # shellcheck disable=SC1091
     . /etc/os-release
-    distro=$ID
+    distro=${ID:-unknown}
   else
     distro="unknown"
   fi
