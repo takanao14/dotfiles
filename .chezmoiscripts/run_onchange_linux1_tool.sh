@@ -13,7 +13,7 @@ readonly ZELLIJ_VERSION="${ZELLIJ_VERSION:-0.44.3}"
 # renovate: datasource=github-releases depName=sbstp/kubie
 readonly KUBIE_VERSION="${KUBIE_VERSION:-0.28.0}"
 # renovate: datasource=github-releases depName=derailed/k9s
-readonly K9S_VERSION="${K9S_VERSION:-0.50.18}"
+readonly K9S_VERSION="${K9S_VERSION:-0.51.0}"
 # renovate: datasource=github-releases depName=helmfile/helmfile
 readonly HELMFILE_VERSION="${HELMFILE_VERSION:-1.5.2}"
 # renovate: datasource=github-releases depName=k0sproject/k0sctl
