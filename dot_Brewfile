@@ -1,5 +1,6 @@
 tap "hashicorp/tap"
 brew "chezmoi"
+brew "dnscontrol"
 brew "direnv"
 brew "eza"
 brew "fzf"

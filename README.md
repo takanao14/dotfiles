@@ -61,7 +61,7 @@ dotfiles/
 | Multiplexer | [Zellij](https://zellij.dev/), tmux |
 | Kubernetes | kubectl, [kubie](https://github.com/sbstp/kubie), [k9s](https://k9scli.io/), helm, helmfile, krew |
 | IaC | Terraform, Packer, Vault, Terragrunt |
-| Other | [direnv](https://direnv.net/), [fzf](https://github.com/junegunn/fzf), [eza](https://github.com/eza-community/eza), [zoxide](https://github.com/ajeetdsouza/zoxide), SOPS |
+| Other | [DNSControl](https://dnscontrol.org/), [direnv](https://direnv.net/), [fzf](https://github.com/junegunn/fzf), [eza](https://github.com/eza-community/eza), [zoxide](https://github.com/ajeetdsouza/zoxide), SOPS |
 
 ## zsh Loading Strategy
 
