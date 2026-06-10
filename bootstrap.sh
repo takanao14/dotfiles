@@ -53,6 +53,7 @@ elif [[ "$machine" == "Linux" ]]; then
   if [[ "$distro" == "ubuntu" ]] || [[ "$distro" == "debian" ]]; then
     pkgs=()
     command -v git &> /dev/null || pkgs+=(git)
+    command -v make &> /dev/null || pkgs+=(make)
     command -v zsh &> /dev/null || pkgs+=(zsh)
     if [[ ${#pkgs[@]} -gt 0 ]]; then
       sudo apt-get update
@@ -61,6 +62,7 @@ elif [[ "$machine" == "Linux" ]]; then
   elif [[ "$distro" == "rocky" ]]; then
     pkgs=()
     command -v git &> /dev/null || pkgs+=(git)
+    command -v make &> /dev/null || pkgs+=(make)
     command -v zsh &> /dev/null || pkgs+=(zsh)
     [[ ${#pkgs[@]} -gt 0 ]] && sudo dnf install -y "${pkgs[@]}"
   else
