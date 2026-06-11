@@ -2,6 +2,10 @@
 
 Personal dotfiles managed with [chezmoi](https://www.chezmoi.io/). Supports macOS and Linux (Ubuntu / Debian / Rocky Linux).
 
+Linux tool installation requires Python 3.12 or newer for the pinned Ansible
+toolchain. Use a release or configured package repository that provides
+`python3.12` when the distribution default is older.
+
 ## Setup
 
 ```bash
