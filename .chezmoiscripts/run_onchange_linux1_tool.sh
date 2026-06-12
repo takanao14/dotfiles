@@ -23,6 +23,8 @@ readonly TERRAGRUNT_VERSION="${TERRAGRUNT_VERSION:-1.0.7}"
 readonly OPENTOFU_VERSION="${OPENTOFU_VERSION:-1.12.1}"
 # renovate: datasource=github-releases depName=helm/helm
 readonly HELM_VERSION="${HELM_VERSION:-4.2.0}"
+# renovate: datasource=github-releases depName=argoproj/argo-cd
+readonly ARGOCD_VERSION="${ARGOCD_VERSION:-3.4.3}"
 # renovate: datasource=github-releases depName=FiloSottile/age
 readonly AGE_VERSION="${AGE_VERSION:-1.3.1}"
 # renovate: datasource=github-releases depName=cilium/cilium-cli
@@ -314,6 +316,13 @@ install_helm() {
     install -m 0755 "$tmp_dir/linux-${BIN_ARCH}/helm" "$BIN_DIR/helm"
 }
 
+install_argocd() {
+    install_binary "argocd" \
+        "https://github.com/argoproj/argo-cd/releases/download/v${ARGOCD_VERSION}/argocd-linux-${BIN_ARCH}" \
+        "$BIN_DIR/argocd" \
+        "https://github.com/argoproj/argo-cd/releases/download/v${ARGOCD_VERSION}/cli_checksums.txt"
+}
+
 install_kubie() {
     install_binary "kubie" \
         "https://github.com/sbstp/kubie/releases/download/v${KUBIE_VERSION}/kubie-linux-${BIN_ARCH}" \
@@ -563,6 +572,7 @@ main() {
     install_if_needed "tofu"       "$OPENTOFU_VERSION"   install_opentofu
 
     install_if_needed "helm"     "$HELM_VERSION"     install_helm
+    install_if_needed "argocd"   "$ARGOCD_VERSION"   install_argocd
     install_helm_diff_plugin
     install_krew_if_needed
     install_if_needed "kubie"    "$KUBIE_VERSION"    install_kubie
