@@ -18,11 +18,11 @@ readonly K0SCTL_VERSION="${K0SCTL_VERSION:-0.30.1}"
 # renovate: datasource=github-releases depName=getsops/sops
 readonly SOPS_VERSION="${SOPS_VERSION:-3.13.1}"
 # renovate: datasource=github-releases depName=gruntwork-io/terragrunt
-readonly TERRAGRUNT_VERSION="${TERRAGRUNT_VERSION:-1.0.7}"
+readonly TERRAGRUNT_VERSION="${TERRAGRUNT_VERSION:-1.0.8}"
 # renovate: datasource=github-releases depName=opentofu/opentofu
-readonly OPENTOFU_VERSION="${OPENTOFU_VERSION:-1.12.1}"
+readonly OPENTOFU_VERSION="${OPENTOFU_VERSION:-1.12.2}"
 # renovate: datasource=github-releases depName=helm/helm
-readonly HELM_VERSION="${HELM_VERSION:-4.2.0}"
+readonly HELM_VERSION="${HELM_VERSION:-4.2.1}"
 # renovate: datasource=github-releases depName=argoproj/argo-cd
 readonly ARGOCD_VERSION="${ARGOCD_VERSION:-3.4.3}"
 # renovate: datasource=github-releases depName=FiloSottile/age
@@ -46,7 +46,7 @@ readonly ANSIBLE_CORE_VERSION="${ANSIBLE_CORE_VERSION:-2.21.0}"
 # renovate: datasource=pypi depName=ansible-lint
 readonly ANSIBLE_LINT_VERSION="${ANSIBLE_LINT_VERSION:-26.4.0}"
 # renovate: datasource=github-tags depName=aws/aws-cli
-readonly AWS_CLI_VERSION="${AWS_CLI_VERSION:-2.35.2}"
+readonly AWS_CLI_VERSION="${AWS_CLI_VERSION:-2.35.4}"
 # renovate: datasource=github-releases depName=rclone/rclone
 readonly RCLONE_VERSION="${RCLONE_VERSION:-1.74.3}"
 
