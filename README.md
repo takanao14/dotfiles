@@ -50,7 +50,7 @@ dotfiles/
 ├── dot_kube/
 │   └── kubie.yaml                 # kubie (kubectl context manager) configuration
 └── .chezmoiscripts/               # Setup scripts auto-executed by chezmoi
-    ├── run_onchange_macos.sh      # macOS: apply Brewfile
+    ├── run_onchange_after_macos.sh.tmpl # macOS: apply Brewfile when it changes
     ├── run_onchange_linux1_tool.sh # Linux: install development tools
     ├── run_onchange_linux2_terminal.sh # Linux: install kitty
     └── run_onchange_linux3_fonts.sh # Linux: install UDEV Gothic fonts

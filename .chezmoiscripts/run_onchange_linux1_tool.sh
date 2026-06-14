@@ -47,6 +47,8 @@ readonly ANSIBLE_CORE_VERSION="${ANSIBLE_CORE_VERSION:-2.21.0}"
 readonly ANSIBLE_LINT_VERSION="${ANSIBLE_LINT_VERSION:-26.4.0}"
 # renovate: datasource=github-tags depName=aws/aws-cli
 readonly AWS_CLI_VERSION="${AWS_CLI_VERSION:-2.35.2}"
+# renovate: datasource=github-releases depName=rclone/rclone
+readonly RCLONE_VERSION="${RCLONE_VERSION:-1.74.3}"
 
 # Install location. Defaults to a per-user prefix. Set TOOL_BIN_DIR (and
 # TOOL_VERSION_CACHE_DIR) to a system-wide path such as /usr/local/bin to make
@@ -499,6 +501,29 @@ AWS_CLI_PGP_KEY
 }
 
 # ============================================================================
+# Cloud Storage Tools
+# ============================================================================
+
+# rclone ships as a zip with the binary nested in a versioned subdirectory, and
+# its SHA256SUMS lists the zip by name -- so it can't use the generic
+# install_binary (tar.gz/raw only). Verify the zip, then extract just the binary.
+# Used by homelab's packer/push.sh to upload custom images to the SeaweedFS S3
+# bucket.
+install_rclone() {
+    log_info "Installing rclone ${RCLONE_VERSION}..."
+    local tmp_dir zip_name
+    make_tmp_dir tmp_dir
+    zip_name="rclone-v${RCLONE_VERSION}-linux-${BIN_ARCH}.zip"
+    curl -fsSL "https://github.com/rclone/rclone/releases/download/v${RCLONE_VERSION}/${zip_name}" \
+        -o "${tmp_dir}/rclone.zip"
+    verify_sha256 "${tmp_dir}/rclone.zip" \
+        "https://github.com/rclone/rclone/releases/download/v${RCLONE_VERSION}/SHA256SUMS" \
+        "$zip_name"
+    unzip -j -q "${tmp_dir}/rclone.zip" "*/rclone" -d "${tmp_dir}"
+    install -m 0755 "${tmp_dir}/rclone" "$BIN_DIR/rclone"
+}
+
+# ============================================================================
 # Python Tools (pipx)
 # ============================================================================
 
@@ -584,6 +609,7 @@ main() {
     install_if_needed "dnscontrol" "$DNSCONTROL_VERSION" install_dnscontrol
 
     install_if_needed "aws" "$AWS_CLI_VERSION" install_aws_cli
+    install_if_needed "rclone" "$RCLONE_VERSION" install_rclone
 
     install_if_needed "ansible"      "$ANSIBLE_CORE_VERSION" install_ansible
     install_if_needed "ansible-lint" "$ANSIBLE_LINT_VERSION" install_ansible_lint
