@@ -18,7 +18,7 @@ readonly K0SCTL_VERSION="${K0SCTL_VERSION:-0.30.1}"
 # renovate: datasource=github-releases depName=getsops/sops
 readonly SOPS_VERSION="${SOPS_VERSION:-3.13.1}"
 # renovate: datasource=github-releases depName=gruntwork-io/terragrunt
-readonly TERRAGRUNT_VERSION="${TERRAGRUNT_VERSION:-1.0.7}"
+readonly TERRAGRUNT_VERSION="${TERRAGRUNT_VERSION:-1.0.8}"
 # renovate: datasource=github-releases depName=opentofu/opentofu
 readonly OPENTOFU_VERSION="${OPENTOFU_VERSION:-1.12.1}"
 # renovate: datasource=github-releases depName=helm/helm
