@@ -12,19 +12,19 @@ readonly KUBIE_VERSION="${KUBIE_VERSION:-0.28.0}"
 # renovate: datasource=github-releases depName=derailed/k9s
 readonly K9S_VERSION="${K9S_VERSION:-0.51.0}"
 # renovate: datasource=github-releases depName=helmfile/helmfile
-readonly HELMFILE_VERSION="${HELMFILE_VERSION:-1.5.3}"
+readonly HELMFILE_VERSION="${HELMFILE_VERSION:-1.5.5}"
 # renovate: datasource=github-releases depName=k0sproject/k0sctl
-readonly K0SCTL_VERSION="${K0SCTL_VERSION:-0.30.1}"
+readonly K0SCTL_VERSION="${K0SCTL_VERSION:-0.31.0}"
 # renovate: datasource=github-releases depName=getsops/sops
 readonly SOPS_VERSION="${SOPS_VERSION:-3.13.1}"
 # renovate: datasource=github-releases depName=gruntwork-io/terragrunt
 readonly TERRAGRUNT_VERSION="${TERRAGRUNT_VERSION:-1.0.8}"
 # renovate: datasource=github-releases depName=opentofu/opentofu
-readonly OPENTOFU_VERSION="${OPENTOFU_VERSION:-1.12.2}"
+readonly OPENTOFU_VERSION="${OPENTOFU_VERSION:-1.12.3}"
 # renovate: datasource=github-releases depName=helm/helm
-readonly HELM_VERSION="${HELM_VERSION:-4.2.1}"
+readonly HELM_VERSION="${HELM_VERSION:-4.2.2}"
 # renovate: datasource=github-releases depName=argoproj/argo-cd
-readonly ARGOCD_VERSION="${ARGOCD_VERSION:-3.4.3}"
+readonly ARGOCD_VERSION="${ARGOCD_VERSION:-3.4.4}"
 # renovate: datasource=github-releases depName=FiloSottile/age
 readonly AGE_VERSION="${AGE_VERSION:-1.3.1}"
 # renovate: datasource=github-releases depName=cilium/cilium-cli
@@ -40,13 +40,13 @@ readonly DIRENV_VERSION="${DIRENV_VERSION:-2.37.1}"
 # renovate: datasource=github-releases depName=kubernetes-sigs/krew
 readonly KREW_VERSION="${KREW_VERSION:-0.5.0}"
 # renovate: datasource=github-releases depName=DNSControl/dnscontrol
-readonly DNSCONTROL_VERSION="${DNSCONTROL_VERSION:-4.41.0}"
+readonly DNSCONTROL_VERSION="${DNSCONTROL_VERSION:-4.42.0}"
 # renovate: datasource=pypi depName=ansible-core
-readonly ANSIBLE_CORE_VERSION="${ANSIBLE_CORE_VERSION:-2.21.0}"
+readonly ANSIBLE_CORE_VERSION="${ANSIBLE_CORE_VERSION:-2.21.1}"
 # renovate: datasource=pypi depName=ansible-lint
 readonly ANSIBLE_LINT_VERSION="${ANSIBLE_LINT_VERSION:-26.4.0}"
 # renovate: datasource=github-tags depName=aws/aws-cli
-readonly AWS_CLI_VERSION="${AWS_CLI_VERSION:-2.35.4}"
+readonly AWS_CLI_VERSION="${AWS_CLI_VERSION:-2.35.8}"
 # renovate: datasource=github-releases depName=rclone/rclone
 readonly RCLONE_VERSION="${RCLONE_VERSION:-1.74.3}"
 
