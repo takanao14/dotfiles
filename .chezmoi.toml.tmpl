@@ -1,0 +1,9 @@
+{{- /* Shared detection: macOS AND 1Password CLI (op) present */ -}}
+{{- $has1password := and (eq .chezmoi.os "darwin") (lookPath "op") -}}
+
+{{- /* Resolve git email without committing it to the repo (prompted once, stored in local config) */ -}}
+{{- $email := promptStringOnce . "email" "Git email" -}}
+
+[data]
+    has1password = {{ if $has1password }}true{{ else }}false{{ end }}
+    email = {{ $email | quote }}
