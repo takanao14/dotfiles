@@ -32,7 +32,7 @@ readonly CILIUM_VERSION="${CILIUM_VERSION:-0.19.5}"
 # renovate: datasource=github-releases depName=eza-community/eza
 readonly EZA_VERSION="${EZA_VERSION:-0.23.4}"
 # renovate: datasource=github-releases depName=starship/starship
-readonly STARSHIP_VERSION="${STARSHIP_VERSION:-1.25.1}"
+readonly STARSHIP_VERSION="${STARSHIP_VERSION:-1.26.0}"
 # renovate: datasource=github-releases depName=rossmacarthur/sheldon
 readonly SHELDON_VERSION="${SHELDON_VERSION:-0.8.5}"
 # renovate: datasource=github-releases depName=direnv/direnv
