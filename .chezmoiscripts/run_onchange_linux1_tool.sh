@@ -44,7 +44,7 @@ readonly DNSCONTROL_VERSION="${DNSCONTROL_VERSION:-4.42.0}"
 # renovate: datasource=pypi depName=ansible-core
 readonly ANSIBLE_CORE_VERSION="${ANSIBLE_CORE_VERSION:-2.21.1}"
 # renovate: datasource=pypi depName=ansible-lint
-readonly ANSIBLE_LINT_VERSION="${ANSIBLE_LINT_VERSION:-26.4.0}"
+readonly ANSIBLE_LINT_VERSION="${ANSIBLE_LINT_VERSION:-26.6.0}"
 # renovate: datasource=github-tags depName=aws/aws-cli
 readonly AWS_CLI_VERSION="${AWS_CLI_VERSION:-2.35.13}"
 # renovate: datasource=github-releases depName=rclone/rclone
