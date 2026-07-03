@@ -223,7 +223,7 @@ install_openbao() {
             local pkg_name="openbao_${OPENBAO_VERSION}_linux_${BIN_ARCH}.deb"
             curl -fsSL "https://github.com/openbao/openbao/releases/download/v${OPENBAO_VERSION}/${pkg_name}" \
                 -o "${tmp_dir}/${pkg_name}"
-            sudo dpkg -i "${tmp_dir}/${pkg_name}"
+            sudo apt-get install -y "${tmp_dir}/${pkg_name}"
             ;;
         rocky)
             local pkg_name="openbao_${OPENBAO_VERSION}_linux_${BIN_ARCH}.rpm"
