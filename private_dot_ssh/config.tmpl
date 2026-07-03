@@ -9,7 +9,12 @@ Host *
 {{- end }}
      SetEnv TERM=xterm-256color
 
-ForwardAgent yes
+# ForwardAgent is intentionally not set here for Host * (forwarding the agent
+# to every host, including untrusted ones, lets a compromised remote root
+# authenticate elsewhere as you). Enable it per trusted host instead, e.g. in
+# ~/.ssh/config.d/*.conf:
+#   Host trusted-host
+#       ForwardAgent yes
 #ForwardX11 yes
 
 Include ~/.ssh/config.d/*.conf
