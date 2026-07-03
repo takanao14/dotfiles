@@ -24,11 +24,14 @@ curl -fsSL https://raw.githubusercontent.com/takanao14/dotfiles/main/bootstrap.s
 dotfiles/
 ├── bootstrap.sh                   # Setup script for new machines
 ├── dot_Brewfile                   # Homebrew package list (macOS)
+├── dot_gitconfig.tmpl             # ~/.gitconfig (email templated per machine)
 ├── dot_zshrc                      # ~/.zshrc
 ├── dot_zprofile                   # ~/.zprofile (Homebrew path config)
 ├── dot_tmux.conf                  # ~/.tmux.conf
+├── .chezmoi.toml.tmpl             # chezmoi data (1Password detection, prompted email)
 ├── dot_zsh.d/
 │   ├── source/                    # Loaded immediately at zsh startup
+│   │   ├── bashcompinit.zsh       # bashcompinit (must run before defer/ completions)
 │   │   ├── editor.zsh             # Editor environment variable
 │   │   ├── fpath.zsh              # Completion path configuration
 │   │   ├── ssh.zsh                # SSH TERM fallback for kitty
@@ -39,6 +42,10 @@ dotfiles/
 │       ├── zoxide.zsh             # zoxide initialization
 │       ├── terraform.zsh          # Terraform completion
 │       ├── terragrunt.zsh         # Terragrunt completion
+│       ├── opentofu.zsh           # OpenTofu completion
+│       ├── openbao.zsh            # OpenBao completion
+│       ├── sops.zsh               # SOPS age key env var + completion
+│       ├── orbstack.zsh           # OrbStack shell init (Linux VMs)
 │       ├── krew.zsh               # kubectl krew path
 │       └── sshr.zsh               # known_hosts cleanup helper
 ├── dot_config/
@@ -49,11 +56,14 @@ dotfiles/
 │   └── zellij/config.kdl          # Zellij multiplexer configuration
 ├── dot_kube/
 │   └── kubie.yaml                 # kubie (kubectl context manager) configuration
+├── private_dot_ssh/
+│   └── config.tmpl                # ~/.ssh/config (OrbStack include, 1Password agent)
 └── .chezmoiscripts/               # Setup scripts auto-executed by chezmoi
     ├── run_onchange_after_macos.sh.tmpl # macOS: apply Brewfile when it changes
-    ├── run_onchange_linux1_tool.sh # Linux: install development tools
-    ├── run_onchange_linux2_terminal.sh # Linux: install kitty
-    └── run_onchange_linux3_fonts.sh # Linux: install UDEV Gothic fonts
+    ├── run_onchange_linux0_package.sh   # Linux: sudo-only OS package installs (base deps, HashiCorp repo, kubectl, openbao, pipx/python3.12)
+    ├── run_onchange_linux1_tool.sh      # Linux: install development tools (no sudo)
+    ├── run_onchange_linux2_terminal.sh  # Linux: install kitty (no sudo)
+    └── run_onchange_linux3_fonts.sh     # Linux: install UDEV Gothic fonts (no sudo)
 ```
 
 ## Key Tools
@@ -79,4 +89,4 @@ To keep startup fast, [zsh-defer](https://github.com/romkatv/zsh-defer) splits c
 
 Chezmoi templates are avoided unless the rendered file content must differ by OS, host, architecture, or secret data. Prefer normal shell/runtime guards for simple portability.
 
-Repository-only files such as `README.md`, `bootstrap.sh`, and `renovate.json` are excluded from the target home directory via `.chezmoiignore`.
+Repository-only files such as `README.md`, `bootstrap.sh`, `renovate.json`, and `docs/` are excluded from the target home directory via `.chezmoiignore`.
