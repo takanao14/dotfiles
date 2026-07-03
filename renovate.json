@@ -13,6 +13,11 @@
     {
       "matchUpdateTypes": ["major"],
       "automerge": false
+    },
+    {
+      "description": "kubectl is pinned to a minor (pkgs.k8s.io repo paths are per-minor); collapse stable releases to major.minor so patch releases never rewrite the pin",
+      "matchDepNames": ["kubernetes/kubernetes"],
+      "extractVersion": "^v?(?<version>\\d+\\.\\d+)\\.\\d+$"
     }
   ],
   "customManagers": [
