@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Enable the local ssh-agent user unit; re-runs whenever the unit changes.
+# Enable the local ssh-agent user unit after chezmoi writes the unit file.
+# Re-runs whenever the unit changes.
 # ssh-agent.service hash: {{ include "dot_config/systemd/user/ssh-agent.service" | sha256sum }}
 set -euo pipefail
 
