@@ -7,6 +7,11 @@ Host *
 {{- if .has1password }}
      IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
 {{- end }}
+{{- if eq .chezmoi.os "linux" }}
+     # Load the key into the running agent on first use, so the passphrase
+     # is typed once per agent lifetime instead of per connection.
+     AddKeysToAgent yes
+{{- end }}
      SetEnv TERM=xterm-256color
 
 # ForwardAgent is intentionally not set here for Host * (forwarding the agent

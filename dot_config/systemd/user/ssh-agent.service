@@ -1,0 +1,13 @@
+[Unit]
+Description=OpenSSH key agent (local fallback for sessions without agent forwarding)
+
+[Service]
+Type=simple
+# Fixed socket path (%t = XDG_RUNTIME_DIR) so shells can find the agent
+# without parsing ssh-agent output. Selection between this socket and a
+# forwarded one happens in ~/.zsh.d/source/ssh_agent.zsh.
+Environment=SSH_AUTH_SOCK=%t/ssh-agent.socket
+ExecStart=/usr/bin/ssh-agent -D -a $SSH_AUTH_SOCK
+
+[Install]
+WantedBy=default.target

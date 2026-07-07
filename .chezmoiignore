@@ -3,3 +3,6 @@ bootstrap.sh
 renovate.json
 .github
 docs
+{{ if ne .chezmoi.os "linux" }}
+.config/systemd
+{{ end }}

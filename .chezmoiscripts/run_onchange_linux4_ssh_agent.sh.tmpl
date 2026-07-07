@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Enable the local ssh-agent user unit; re-runs whenever the unit changes.
+# ssh-agent.service hash: {{ include "dot_config/systemd/user/ssh-agent.service" | sha256sum }}
+set -euo pipefail
+
+[[ "$(uname)" == "Linux" ]] || exit 0
+
+# A user systemd instance needs a session (pam_systemd); when chezmoi runs
+# outside one (e.g. cloud-init, cron) skip instead of failing the apply.
+if ! systemctl --user show-environment &>/dev/null; then
+    echo "[WARN] systemd user instance unavailable; run manually later:"
+    echo "[WARN]   systemctl --user enable --now ssh-agent.service"
+    exit 0
+fi
+
+systemctl --user daemon-reload
+systemctl --user enable ssh-agent.service
+# restart (not start) so a changed unit definition takes effect; keys loaded
+# via ssh-add are lost on restart and re-added on first use (AddKeysToAgent).
+systemctl --user restart ssh-agent.service
