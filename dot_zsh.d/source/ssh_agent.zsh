@@ -20,10 +20,15 @@ if [[ "$OSTYPE" == linux* ]]; then
   if [[ -S "$SSH_AUTH_SOCK" && "$SSH_AUTH_SOCK" != "$_agent_link" ]]; then
     # A live externally-provided socket (agent forwarding): adopt it.
     ln -sf "$SSH_AUTH_SOCK" "$_agent_link"
-  elif [[ -S "$_agent_local" ]]; then
-    # No agent was forwarded into this shell: use the local agent even if a
-    # previous forwarded socket is still alive from another session.
-    ln -sf "$_agent_local" "$_agent_link"
+  else
+    if [[ ! -S "$_agent_local" ]] && command -v systemctl >/dev/null 2>&1; then
+      systemctl --user start ssh-agent.service >/dev/null 2>&1
+    fi
+    if [[ -S "$_agent_local" ]]; then
+      # No agent was forwarded into this shell: use the local agent even if a
+      # previous forwarded socket is still alive from another session.
+      ln -sf "$_agent_local" "$_agent_link"
+    fi
   fi
 
   if [[ -S "$_agent_link" ]]; then
