@@ -49,6 +49,8 @@ readonly ANSIBLE_LINT_VERSION="${ANSIBLE_LINT_VERSION:-26.6.0}"
 readonly AWS_CLI_VERSION="${AWS_CLI_VERSION:-2.35.16}"
 # renovate: datasource=github-releases depName=rclone/rclone
 readonly RCLONE_VERSION="${RCLONE_VERSION:-1.74.3}"
+# renovate: datasource=github-releases depName=rhysd/actionlint
+readonly ACTIONLINT_VERSION="${ACTIONLINT_VERSION:-1.7.12}"
 
 # Install location. Defaults to a per-user prefix. Set TOOL_BIN_DIR (and
 # TOOL_VERSION_CACHE_DIR) to a system-wide path such as /usr/local/bin to make
@@ -524,6 +526,18 @@ install_rclone() {
 }
 
 # ============================================================================
+# GitHub Actions Tools
+# ============================================================================
+
+install_actionlint() {
+    local archive_name="actionlint_${ACTIONLINT_VERSION}_linux_${BIN_ARCH}.tar.gz"
+    install_binary "actionlint" \
+        "https://github.com/rhysd/actionlint/releases/download/v${ACTIONLINT_VERSION}/${archive_name}" \
+        "$BIN_DIR/actionlint" \
+        "https://github.com/rhysd/actionlint/releases/download/v${ACTIONLINT_VERSION}/actionlint_${ACTIONLINT_VERSION}_checksums.txt"
+}
+
+# ============================================================================
 # Python Tools (pipx)
 # ============================================================================
 
@@ -610,6 +624,7 @@ main() {
 
     install_if_needed "aws" "$AWS_CLI_VERSION" install_aws_cli
     install_if_needed "rclone" "$RCLONE_VERSION" install_rclone
+    install_if_needed "actionlint" "$ACTIONLINT_VERSION" install_actionlint
 
     install_if_needed "ansible"      "$ANSIBLE_CORE_VERSION" install_ansible
     install_if_needed "ansible-lint" "$ANSIBLE_LINT_VERSION" install_ansible_lint
