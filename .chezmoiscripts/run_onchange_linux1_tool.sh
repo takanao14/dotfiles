@@ -48,7 +48,7 @@ readonly ANSIBLE_LINT_VERSION="${ANSIBLE_LINT_VERSION:-26.6.0}"
 # renovate: datasource=github-tags depName=aws/aws-cli
 readonly AWS_CLI_VERSION="${AWS_CLI_VERSION:-2.35.18}"
 # renovate: datasource=github-releases depName=rclone/rclone
-readonly RCLONE_VERSION="${RCLONE_VERSION:-1.74.3}"
+readonly RCLONE_VERSION="${RCLONE_VERSION:-1.74.4}"
 # renovate: datasource=github-releases depName=rhysd/actionlint
 readonly ACTIONLINT_VERSION="${ACTIONLINT_VERSION:-1.7.12}"
 
