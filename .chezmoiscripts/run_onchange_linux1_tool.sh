@@ -24,7 +24,7 @@ readonly OPENTOFU_VERSION="${OPENTOFU_VERSION:-1.12.3}"
 # renovate: datasource=github-releases depName=helm/helm
 readonly HELM_VERSION="${HELM_VERSION:-4.2.2}"
 # renovate: datasource=github-releases depName=argoproj/argo-cd
-readonly ARGOCD_VERSION="${ARGOCD_VERSION:-3.4.4}"
+readonly ARGOCD_VERSION="${ARGOCD_VERSION:-3.4.5}"
 # renovate: datasource=github-releases depName=FiloSottile/age
 readonly AGE_VERSION="${AGE_VERSION:-1.3.1}"
 # renovate: datasource=github-releases depName=cilium/cilium-cli
