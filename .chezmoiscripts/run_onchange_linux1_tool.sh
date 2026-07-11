@@ -22,7 +22,7 @@ readonly TERRAGRUNT_VERSION="${TERRAGRUNT_VERSION:-1.1.0}"
 # renovate: datasource=github-releases depName=opentofu/opentofu
 readonly OPENTOFU_VERSION="${OPENTOFU_VERSION:-1.12.3}"
 # renovate: datasource=github-releases depName=helm/helm
-readonly HELM_VERSION="${HELM_VERSION:-4.2.2}"
+readonly HELM_VERSION="${HELM_VERSION:-4.2.3}"
 # renovate: datasource=github-releases depName=argoproj/argo-cd
 readonly ARGOCD_VERSION="${ARGOCD_VERSION:-3.4.5}"
 # renovate: datasource=github-releases depName=FiloSottile/age
