@@ -84,7 +84,7 @@ dotfiles/
 | IaC | Terraform, Packer, Vault, Terragrunt, [Ansible](https://www.ansible.com/), [ansible-lint](https://ansible.readthedocs.io/projects/lint/) |
 | Cloud / S3 | [AWS CLI](https://aws.amazon.com/cli/) (v2; S3-compatible storage such as SeaweedFS) |
 | Containers | [Podman](https://podman.io/) (Linux) |
-| Other | [DNSControl](https://dnscontrol.org/), [direnv](https://direnv.net/), [fzf](https://github.com/junegunn/fzf), [eza](https://github.com/eza-community/eza), [zoxide](https://github.com/ajeetdsouza/zoxide), SOPS |
+| Other | [GitHub CLI](https://cli.github.com/), [bat](https://github.com/sharkdp/bat), [ripgrep](https://github.com/BurntSushi/ripgrep), [procs](https://github.com/dalance/procs), [DNSControl](https://dnscontrol.org/), [direnv](https://direnv.net/), [fzf](https://github.com/junegunn/fzf), [eza](https://github.com/eza-community/eza), [zoxide](https://github.com/ajeetdsouza/zoxide), SOPS |
 
 ## zsh Loading Strategy
 
@@ -116,9 +116,10 @@ used.
   `dot_zsh.d/defer/`, or `dot_zshrc`.
 
 The post-apply script currently generates completions for Sheldon, Starship,
-Zellij, Helm, Argo CD, Kubie, K9s, Helmfile, k0sctl, Cilium, SOPS, DNSControl,
-Rclone, Ansible, and ansible-lint. The Linux installer exposes Ansible's
-`register-python-argcomplete` dependency solely for this generation step.
+Zellij, Helm, Argo CD, Kubie, K9s, Helmfile, k0sctl, Cilium, GitHub CLI, bat,
+ripgrep, procs, SOPS, DNSControl, Rclone, Ansible, and ansible-lint. The Linux
+installer exposes Ansible's `register-python-argcomplete` dependency solely for
+this generation step.
 
 Static definitions are committed for actionlint, age/age-keygen, direnv, and
 eza. AWS CLI, Terraform, OpenTofu, Terragrunt, and OpenBao use lazy adapters.

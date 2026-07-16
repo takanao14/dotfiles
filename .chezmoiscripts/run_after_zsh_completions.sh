@@ -59,6 +59,10 @@ generate_completion k0sctl   _k0sctl   _k0sctl_zsh_autocomplete k0sctl completio
 generate_completion cilium   _cilium   '' cilium completion zsh
 
 # Other manually installed tools
+generate_completion gh         _gh         '' gh completion -s zsh
+generate_completion bat        _bat        '' bat --completion zsh
+generate_completion rg         _rg         '' rg --generate complete-zsh
+generate_completion procs      _procs      '' procs --gen-completion-out zsh
 generate_completion sops       _sops       _cli_zsh_autocomplete sops completion zsh
 generate_completion dnscontrol _dnscontrol '' dnscontrol shell-completion zsh
 generate_completion rclone     _rclone     '' rclone completion zsh -

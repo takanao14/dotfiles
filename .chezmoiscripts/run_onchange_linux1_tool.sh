@@ -51,6 +51,14 @@ readonly AWS_CLI_VERSION="${AWS_CLI_VERSION:-2.35.23}"
 readonly RCLONE_VERSION="${RCLONE_VERSION:-1.74.4}"
 # renovate: datasource=github-releases depName=rhysd/actionlint
 readonly ACTIONLINT_VERSION="${ACTIONLINT_VERSION:-1.7.12}"
+# renovate: datasource=github-releases depName=cli/cli
+readonly GH_VERSION="${GH_VERSION:-2.96.0}"
+# renovate: datasource=github-releases depName=sharkdp/bat
+readonly BAT_VERSION="${BAT_VERSION:-0.26.1}"
+# renovate: datasource=github-releases depName=BurntSushi/ripgrep
+readonly RIPGREP_VERSION="${RIPGREP_VERSION:-15.2.0}"
+# renovate: datasource=github-releases depName=dalance/procs
+readonly PROCS_VERSION="${PROCS_VERSION:-0.14.12}"
 
 # Install location. Defaults to a per-user prefix. Set TOOL_BIN_DIR (and
 # TOOL_VERSION_CACHE_DIR) to a system-wide path such as /usr/local/bin to make
@@ -116,7 +124,7 @@ trap cleanup_tmp_paths EXIT
 # fail fast with a clear pointer rather than failing deep inside an install.
 local_preflight() {
     local missing=() cmd
-    for cmd in curl tar gzip unzip gpg git sha256sum awk install mktemp pipx; do
+    for cmd in curl tar gzip unzip gpg git find sha256sum awk install mktemp pipx; do
         command -v "$cmd" &>/dev/null || missing+=("$cmd")
     done
     if ! command -v python3.12 &>/dev/null && \
@@ -186,12 +194,23 @@ install_binary() {
     make_tmp_dir tmp_dir
     local archive_name
     archive_name="$(basename "$url")"
-    if [[ "$url" == *.tar.gz ]]; then
+    if [[ "$url" == *.tar.gz || "$url" == *.zip ]]; then
         local archive="${tmp_dir}/${archive_name}"
         curl -fsSL "$url" -o "$archive"
         [[ -n "$checksum_url" ]] && verify_sha256 "$archive" "$checksum_url" "$archive_name"
-        tar xz -C "$tmp_dir" -f "$archive"
-        install -m 0755 "$tmp_dir/${name}" "$output_file"
+        if [[ "$url" == *.tar.gz ]]; then
+            tar xz -C "$tmp_dir" -f "$archive"
+        else
+            unzip -q "$archive" -d "$tmp_dir"
+        fi
+
+        local extracted
+        extracted="$(find "$tmp_dir" -type f -name "$name" -print -quit)"
+        if [[ -z "$extracted" ]]; then
+            log_error "${name} not found in ${archive_name}"
+            exit 1
+        fi
+        install -m 0755 "$extracted" "$output_file"
     else
         local bin="${tmp_dir}/${archive_name}"
         curl -fsSL "$url" -o "$bin"
@@ -230,6 +249,36 @@ install_if_needed() {
 # ============================================================================
 # Shell Enhancement Tools
 # ============================================================================
+
+install_gh() {
+    local archive_name="gh_${GH_VERSION}_linux_${BIN_ARCH}.tar.gz"
+    install_binary "gh" \
+        "https://github.com/cli/cli/releases/download/v${GH_VERSION}/${archive_name}" \
+        "$BIN_DIR/gh" \
+        "https://github.com/cli/cli/releases/download/v${GH_VERSION}/gh_${GH_VERSION}_checksums.txt"
+}
+
+install_bat() {
+    install_binary "bat" \
+        "https://github.com/sharkdp/bat/releases/download/v${BAT_VERSION}/bat-v${BAT_VERSION}-${ARCH}-unknown-linux-gnu.tar.gz" \
+        "$BIN_DIR/bat"
+}
+
+install_ripgrep() {
+    # x86_64 GNU archives are no longer published; the musl build is static and
+    # available for both supported architectures.
+    local archive_name="ripgrep-${RIPGREP_VERSION}-${ARCH}-unknown-linux-musl.tar.gz"
+    install_binary "rg" \
+        "https://github.com/BurntSushi/ripgrep/releases/download/${RIPGREP_VERSION}/${archive_name}" \
+        "$BIN_DIR/rg" \
+        "https://github.com/BurntSushi/ripgrep/releases/download/${RIPGREP_VERSION}/${archive_name}.sha256"
+}
+
+install_procs() {
+    install_binary "procs" \
+        "https://github.com/dalance/procs/releases/download/v${PROCS_VERSION}/procs-v${PROCS_VERSION}-${ARCH}-linux.zip" \
+        "$BIN_DIR/procs"
+}
 
 install_sheldon() {
     log_info "Installing sheldon ${SHELDON_VERSION}..."
@@ -616,6 +665,10 @@ main() {
     install_if_needed "starship" "$STARSHIP_VERSION" install_starship
     install_if_needed "direnv"   "$DIRENV_VERSION"   install_direnv
     install_if_needed "eza"      "$EZA_VERSION"      install_eza
+    install_if_needed "gh"       "$GH_VERSION"       install_gh
+    install_if_needed "bat"      "$BAT_VERSION"      install_bat
+    install_if_needed "rg"       "$RIPGREP_VERSION"  install_ripgrep
+    install_if_needed "procs"    "$PROCS_VERSION"    install_procs
 
     install_if_needed "fzf"    "$FZF_VERSION"    install_fzf
     install_if_needed "zellij" "$ZELLIJ_VERSION" install_zellij
