@@ -44,7 +44,26 @@ generate_completion() {
     echo "Updated zsh completion: ${destination}"
 }
 
-generate_completion sops _sops _cli_zsh_autocomplete sops completion zsh
+# Shell tools
+generate_completion sheldon  _sheldon  '' sheldon completions --shell zsh
+generate_completion starship _starship '' starship completions zsh
+generate_completion zellij   _zellij   '' zellij setup --generate-completion zsh
+
+# Kubernetes and infrastructure tools
+generate_completion helm     _helm     '' helm completion zsh
+generate_completion argocd   _argocd   '' argocd completion zsh
+generate_completion kubie    _kubie    '' kubie generate-completion zsh
+generate_completion k9s      _k9s      '' k9s completion zsh
+generate_completion helmfile _helmfile '' helmfile completion zsh
+generate_completion k0sctl   _k0sctl   _k0sctl_zsh_autocomplete k0sctl completion zsh
+generate_completion cilium   _cilium   '' cilium completion zsh
+
+# Other manually installed tools
+generate_completion sops       _sops       _cli_zsh_autocomplete sops completion zsh
+generate_completion dnscontrol _dnscontrol '' dnscontrol shell-completion zsh
+generate_completion rclone     _rclone     '' rclone completion zsh -
+generate_completion register-python-argcomplete _ansible      '' register-python-argcomplete --shell zsh ansible
+generate_completion register-python-argcomplete _ansible-lint '' register-python-argcomplete --shell zsh ansible-lint
 
 # compinit's dump does not track content changes to individual completion
 # files. Remove it after generation so the next shell scans ~/.zfunc again.

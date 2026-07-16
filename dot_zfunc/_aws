@@ -1,0 +1,4 @@
+#compdef aws
+
+autoload -Uz _bash_cli_complete
+_bash_cli_complete aws_completer

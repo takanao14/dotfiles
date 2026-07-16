@@ -43,8 +43,13 @@ dotfiles/
 │       ├── orbstack.zsh           # OrbStack shell init (Linux VMs)
 │       ├── krew.zsh               # kubectl krew path
 │       └── sshr.zsh               # known_hosts cleanup helper
-├── dot_zfunc/                      # Autoloaded zsh completion adapters
-│   ├── _bash_cli_complete           # Lazy bash-style CLI completion bridge
+├── dot_zfunc/                      # Committed zsh completions and lazy adapters
+│   ├── _actionlint                 # Static actionlint completion
+│   ├── _age                        # Static age / age-keygen completion
+│   ├── _aws                        # AWS CLI completion adapter
+│   ├── _bash_cli_complete          # Lazy bash-style CLI completion bridge
+│   ├── _direnv                     # Static direnv completion
+│   ├── _eza                        # Static eza completion
 │   ├── _terraform                  # Terraform completion adapter
 │   ├── _tofu                       # OpenTofu completion adapter
 │   ├── _terragrunt                 # Terragrunt completion adapter
@@ -109,6 +114,17 @@ used.
   the first completion request.
 - Do not run completion generators from `dot_zsh.d/source/`,
   `dot_zsh.d/defer/`, or `dot_zshrc`.
+
+The post-apply script currently generates completions for Sheldon, Starship,
+Zellij, Helm, Argo CD, Kubie, K9s, Helmfile, k0sctl, Cilium, SOPS, DNSControl,
+Rclone, Ansible, and ansible-lint. The Linux installer exposes Ansible's
+`register-python-argcomplete` dependency solely for this generation step.
+
+Static definitions are committed for actionlint, age/age-keygen, direnv, and
+eza. AWS CLI, Terraform, OpenTofu, Terragrunt, and OpenBao use lazy adapters.
+fzf completion selection is already provided by the Sheldon-managed fzf-tab
+plugin. Krew has no separate completion generator; kubectl handles discovery of
+the `krew` plugin itself.
 
 ## Chezmoi Policy
 

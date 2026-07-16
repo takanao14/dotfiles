@@ -588,6 +588,21 @@ install_ansible_lint() {
     pipx_install "ansible-lint==${ANSIBLE_LINT_VERSION}"
 }
 
+# argcomplete is an ansible-core dependency, but pipx does not expose dependency
+# entrypoints by default. Publish only its completion generator so the post-apply
+# completion script can generate native zsh definitions for Ansible commands.
+ensure_argcomplete_generator() {
+    command -v register-python-argcomplete &>/dev/null && return
+
+    local generator="${PIPX_HOME_DIR}/venvs/ansible-core/bin/register-python-argcomplete"
+    if [[ ! -x "$generator" ]]; then
+        log_warn "register-python-argcomplete not found in the ansible-core venv"
+        return
+    fi
+
+    ln -sf "$generator" "$BIN_DIR/register-python-argcomplete"
+}
+
 # ============================================================================
 # Main
 # ============================================================================
@@ -628,6 +643,7 @@ main() {
 
     install_if_needed "ansible"      "$ANSIBLE_CORE_VERSION" install_ansible
     install_if_needed "ansible-lint" "$ANSIBLE_LINT_VERSION" install_ansible_lint
+    ensure_argcomplete_generator
 
     log_info "=== Installation completed ==="
 }

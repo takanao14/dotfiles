@@ -1,0 +1,17 @@
+#compdef actionlint
+
+_arguments -s -S \
+    '(-color)-no-color[disable colorful output]' \
+    '(-no-color)-color[always enable colorful output]' \
+    '-config-file=[path to configuration file]:configuration file:_files' \
+    '-debug[enable debug output]' \
+    '-format=[custom Go template for error messages]:format' \
+    '*-ignore=[regular expression matching messages to ignore]:regular expression' \
+    '-init-config[generate the default configuration file]' \
+    '-oneline[use one line per error]' \
+    '-pyflakes=[pyflakes command name or path]:pyflakes command:_command_names' \
+    '-shellcheck=[shellcheck command name or path]:shellcheck command:_command_names' \
+    '-stdin-filename=[file name to use when reading stdin]:file name' \
+    '-verbose[enable verbose output]' \
+    '-version[show version and installation details]' \
+    '*:workflow file:_files -g "*.(yaml|yml)"'
