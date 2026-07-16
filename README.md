@@ -98,7 +98,11 @@ used.
   `sops completion zsh`), add it to
   `.chezmoiscripts/run_after_zsh_completions.sh`. The script regenerates the
   corresponding `~/.zfunc/_<command>` after `chezmoi apply`, and only replaces
-  the file when its content changed.
+  the file when its content changed. Generated output is normalized for zsh
+  autoloading: `#compdef` must be the first line, and a generator that defines
+  a differently named entrypoint must pass that function name to
+  `generate_completion`. The generation script invalidates `.zcompdump` so the
+  next shell discovers additions and changes.
 - If a CLI has no completion generator, commit its completion definition or a
   lazy adapter under `dot_zfunc/`. Bash-style `complete -C` integrations use
   `_bash_cli_complete`, which defers `bashcompinit` and the CLI invocation until
