@@ -66,8 +66,8 @@ generate_completion procs      _procs      '' procs --gen-completion-out zsh
 generate_completion sops       _sops       _cli_zsh_autocomplete sops completion zsh
 generate_completion dnscontrol _dnscontrol '' dnscontrol shell-completion zsh
 generate_completion rclone     _rclone     '' rclone completion zsh -
-generate_completion register-python-argcomplete _ansible      '' register-python-argcomplete --shell zsh ansible
-generate_completion register-python-argcomplete _ansible-lint '' register-python-argcomplete --shell zsh ansible-lint
+generate_completion register-python-argcomplete _ansible          '' register-python-argcomplete --shell zsh ansible
+generate_completion register-python-argcomplete _ansible-lint     '' register-python-argcomplete --shell zsh ansible-lint
 
 # compinit's dump does not track content changes to individual completion
 # files. Remove it after generation so the next shell scans ~/.zfunc again.

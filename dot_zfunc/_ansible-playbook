@@ -1,0 +1,41 @@
+#compdef ansible-playbook
+
+_arguments -s -S \
+  '(-h --help)'{-h,--help}'[show help]' \
+  '--version[show version and configuration information]' \
+  '*'{-v,--verbose}'[increase output verbosity]' \
+  '(-i --inventory --inventory-file)'{-i+,--inventory=,--inventory-file=}'[specify inventory source]:inventory:_files' \
+  '(-l --limit)'{-l+,--limit=}'[limit selected hosts]:host pattern' \
+  '(-u --user)'{-u+,--user=}'[connect as this user]:remote user:_users' \
+  '(-c --connection)'{-c+,--connection=}'[specify connection type]:connection type:(ssh paramiko local docker podman)' \
+  '(-T --timeout)'{-T+,--timeout=}'[override connection timeout]:seconds' \
+  '--private-key=[use this file to authenticate the connection]:private key:_files' \
+  '--key-file=[use this file to authenticate the connection]:private key:_files' \
+  '--ssh-common-args=[specify common arguments for SSH tools]:SSH arguments' \
+  '--ssh-extra-args=[specify extra arguments for SSH]:SSH arguments' \
+  '--scp-extra-args=[specify extra arguments for scp]:scp arguments' \
+  '--sftp-extra-args=[specify extra arguments for sftp]:sftp arguments' \
+  '(-k --ask-pass)'{-k,--ask-pass}'[ask for connection password]' \
+  '(-b --become)'{-b,--become}'[run operations with privilege escalation]' \
+  '(-K --ask-become-pass)'{-K,--ask-become-pass}'[ask for privilege escalation password]' \
+  '--become-method=[specify privilege escalation method]:method:(sudo su doas dzdo ksu runas)' \
+  '--become-user=[run operations as this user]:user:_users' \
+  '(-C --check)'{-C,--check}'[run in check mode]' \
+  '(-D --diff)'{-D,--diff}'[show differences when files change]' \
+  '(-f --forks)'{-f+,--forks=}'[specify number of parallel processes]:processes' \
+  '(-M --module-path)'{-M+,--module-path=}'[prepend directories to the module library path]:module path:_dir_list' \
+  '(-e --extra-vars)'{-e+,--extra-vars=}'[set additional variables]:key=value, YAML/JSON, or @file' \
+  '(-t --tags)'{-t+,--tags=}'[only run plays and tasks with these tags]:tag' \
+  '--skip-tags=[skip plays and tasks with these tags]:tag' \
+  '--vault-id=[specify vault identity]:vault identity' \
+  '--vault-password-file=[specify vault password file]:vault password file:_files' \
+  '--vault-pass-file=[specify vault password file]:vault password file:_files' \
+  '--force-handlers[run handlers even if a task fails]' \
+  '--flush-cache[clear the fact cache for every host]' \
+  '--list-hosts[list matching hosts]' \
+  '--list-tags[list available tags]' \
+  '--list-tasks[list tasks that would be executed]' \
+  '--syntax-check[perform a syntax check without executing]' \
+  '--step[confirm each task before running]' \
+  '--start-at-task=[start at the specified task]:task name' \
+  '*:playbook:_files -g "(#i)*.y(|a)ml"'

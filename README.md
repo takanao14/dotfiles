@@ -121,8 +121,9 @@ ripgrep, procs, SOPS, DNSControl, Rclone, Ansible, and ansible-lint. The Linux
 installer exposes Ansible's `register-python-argcomplete` dependency solely for
 this generation step.
 
-Static definitions are committed for actionlint, age/age-keygen, direnv, and
-eza. AWS CLI, Terraform, OpenTofu, Terragrunt, and OpenBao use lazy adapters.
+Static definitions are committed for actionlint, age/age-keygen,
+ansible-playbook, direnv, and eza. AWS CLI, Terraform, OpenTofu, Terragrunt,
+and OpenBao use lazy adapters.
 fzf completion selection is already provided by the Sheldon-managed fzf-tab
 plugin. Krew has no separate completion generator; kubectl handles discovery of
 the `krew` plugin itself.
