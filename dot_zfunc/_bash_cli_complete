@@ -1,0 +1,13 @@
+# Lazy bridge for CLIs that expose Bash's `complete -C` protocol but do not
+# provide a generated zsh completion definition.
+
+local command_name="$1"
+local command_path="${commands[$command_name]:-}"
+[[ -n "$command_path" ]] || return 1
+
+if (( ! $+functions[_bash_complete] )); then
+  autoload -Uz bashcompinit
+  bashcompinit
+fi
+
+_bash_complete -o nospace -C "$command_path"

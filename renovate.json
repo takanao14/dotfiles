@@ -23,7 +23,9 @@
   "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": ["(^|/)\\.chezmoiscripts/.*\\.sh(\\.tmpl)?$"],
+      "managerFilePatterns": [
+        "/(^|/)\\.chezmoiscripts/.*\\.sh(\\.tmpl)?$/"
+      ],
       "matchStrings": [
         "# renovate: datasource=(?<datasource>[^\\s]+) depName=(?<depName>[^\\s]+)\\nreadonly \\w+=\"\\$\\{\\w+:-(?<currentValue>[^}]+)\\}\""
       ],
