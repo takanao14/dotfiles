@@ -28,6 +28,7 @@ dotfiles/
 ├── dot_zshrc                      # ~/.zshrc
 ├── dot_zprofile                   # ~/.zprofile (Homebrew path config)
 ├── dot_tmux.conf                  # ~/.tmux.conf
+├── dot_vimrc                      # ~/.vimrc (portable Vim defaults)
 ├── .chezmoi.toml.tmpl             # chezmoi data (1Password detection, prompted email)
 ├── dot_zsh.d/
 │   ├── source/                    # Loaded immediately at zsh startup
