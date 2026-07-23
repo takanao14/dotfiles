@@ -1,0 +1,63 @@
+" Basic Vim configuration
+
+" General
+set nocompatible
+set encoding=utf-8
+set hidden
+set mouse=a
+set backspace=indent,eol,start
+set history=1000
+
+" Display
+syntax enable
+set number
+set ruler
+set showcmd
+set showmatch
+set cursorline
+set laststatus=2
+set wildmenu
+set scrolloff=3
+set sidescrolloff=5
+set nowrap
+
+" Search
+set ignorecase
+set smartcase
+set incsearch
+set hlsearch
+
+" Indentation
+filetype plugin indent on
+set autoindent
+set smartindent
+set expandtab
+set tabstop=4
+set softtabstop=4
+set shiftwidth=4
+
+" Files
+set autoread
+set nobackup
+set nowritebackup
+set noswapfile
+
+" Prefer the system clipboard when Vim supports it.
+if has('clipboard')
+  set clipboard=unnamedplus
+  if has('macunix')
+    set clipboard=unnamed
+  endif
+endif
+
+" Keep split navigation and placement predictable.
+set splitbelow
+set splitright
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
+
+" Clear highlighted search results with Escape.
+nnoremap <Esc><Esc> :nohlsearch<CR>
+
