@@ -16,7 +16,7 @@ readonly HELMFILE_VERSION="${HELMFILE_VERSION:-1.7.1}"
 # renovate: datasource=github-releases depName=k0sproject/k0sctl
 readonly K0SCTL_VERSION="${K0SCTL_VERSION:-0.32.1}"
 # renovate: datasource=github-releases depName=getsops/sops
-readonly SOPS_VERSION="${SOPS_VERSION:-3.13.2}"
+readonly SOPS_VERSION="${SOPS_VERSION:-3.13.3}"
 # renovate: datasource=github-releases depName=gruntwork-io/terragrunt
 readonly TERRAGRUNT_VERSION="${TERRAGRUNT_VERSION:-1.1.1}"
 # renovate: datasource=github-releases depName=opentofu/opentofu
