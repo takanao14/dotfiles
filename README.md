@@ -81,7 +81,7 @@ dotfiles/
 | Shell | zsh, [sheldon](https://github.com/rossmacarthur/sheldon), [starship](https://starship.rs/) |
 | Terminal | [Ghostty](https://ghostty.org/) (macOS), [Alacritty](https://alacritty.org/) (Linux) |
 | Multiplexer | [Zellij](https://zellij.dev/), tmux |
-| Kubernetes | kubectl, [Argo CD CLI](https://argo-cd.readthedocs.io/en/stable/user-guide/commands/argocd/), [kubie](https://github.com/sbstp/kubie), [k9s](https://k9scli.io/), helm, helmfile, krew |
+| Kubernetes | kubectl, [Argo CD CLI](https://argo-cd.readthedocs.io/en/stable/user-guide/commands/argocd/), [kubie](https://github.com/sbstp/kubie), [k9s](https://k9scli.io/), [KDash](https://kdash-rs.github.io/), helm, helmfile, krew |
 | IaC | Terraform, Packer, Vault, Terragrunt, [Ansible](https://www.ansible.com/), [ansible-lint](https://ansible.readthedocs.io/projects/lint/) |
 | Cloud / S3 | [AWS CLI](https://aws.amazon.com/cli/) (v2; S3-compatible storage such as SeaweedFS) |
 | Containers | [Podman](https://podman.io/) (Linux) |

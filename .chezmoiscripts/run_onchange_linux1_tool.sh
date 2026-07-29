@@ -11,6 +11,8 @@ readonly ZELLIJ_VERSION="${ZELLIJ_VERSION:-0.44.3}"
 readonly KUBIE_VERSION="${KUBIE_VERSION:-0.28.0}"
 # renovate: datasource=github-releases depName=derailed/k9s
 readonly K9S_VERSION="${K9S_VERSION:-0.51.0}"
+# renovate: datasource=github-releases depName=kdash-rs/kdash
+readonly KDASH_VERSION="${KDASH_VERSION:-2.1.1}"
 # renovate: datasource=github-releases depName=helmfile/helmfile
 readonly HELMFILE_VERSION="${HELMFILE_VERSION:-1.7.1}"
 # renovate: datasource=github-releases depName=k0sproject/k0sctl
@@ -389,6 +391,22 @@ install_k9s() {
         "https://github.com/derailed/k9s/releases/download/v${K9S_VERSION}/checksums.sha256"
 }
 
+install_kdash() {
+    local asset_name
+    case "$ARCH" in
+        x86_64) asset_name="kdash-linux" ;;
+        aarch64) asset_name="kdash-aarch64-gnu" ;;
+        *)
+            log_error "Unsupported architecture for kdash: ${ARCH}"
+            exit 1
+            ;;
+    esac
+    install_binary "kdash" \
+        "https://github.com/kdash-rs/kdash/releases/download/v${KDASH_VERSION}/${asset_name}.tar.gz" \
+        "$BIN_DIR/kdash" \
+        "https://github.com/kdash-rs/kdash/releases/download/v${KDASH_VERSION}/${asset_name}.sha256"
+}
+
 install_helmfile() {
     install_binary "helmfile" \
         "https://github.com/helmfile/helmfile/releases/download/v${HELMFILE_VERSION}/helmfile_${HELMFILE_VERSION}_linux_${BIN_ARCH}.tar.gz" \
@@ -684,6 +702,7 @@ main() {
     install_krew_if_needed
     install_if_needed "kubie"    "$KUBIE_VERSION"    install_kubie
     install_if_needed "k9s"      "$K9S_VERSION"      install_k9s
+    install_if_needed "kdash"    "$KDASH_VERSION"    install_kdash
     install_if_needed "helmfile" "$HELMFILE_VERSION" install_helmfile
     install_if_needed "k0sctl"   "$K0SCTL_VERSION"   install_k0sctl
     install_if_needed "sops"     "$SOPS_VERSION"     install_sops
