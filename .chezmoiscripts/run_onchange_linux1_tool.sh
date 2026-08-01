@@ -54,7 +54,7 @@ readonly RCLONE_VERSION="${RCLONE_VERSION:-1.74.4}"
 # renovate: datasource=github-releases depName=rhysd/actionlint
 readonly ACTIONLINT_VERSION="${ACTIONLINT_VERSION:-1.7.12}"
 # renovate: datasource=github-releases depName=cli/cli
-readonly GH_VERSION="${GH_VERSION:-2.96.0}"
+readonly GH_VERSION="${GH_VERSION:-2.97.0}"
 # renovate: datasource=github-releases depName=sharkdp/bat
 readonly BAT_VERSION="${BAT_VERSION:-0.26.1}"
 # renovate: datasource=github-releases depName=BurntSushi/ripgrep
