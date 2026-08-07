@@ -4,7 +4,7 @@ set -euo pipefail
 [[ "$(uname)" == "Linux" ]] || exit 0
 
 # renovate: datasource=github-releases depName=junegunn/fzf
-readonly FZF_VERSION="${FZF_VERSION:-0.74.1}"
+readonly FZF_VERSION="${FZF_VERSION:-0.74.2}"
 # renovate: datasource=github-releases depName=zellij-org/zellij
 readonly ZELLIJ_VERSION="${ZELLIJ_VERSION:-0.44.3}"
 # renovate: datasource=github-releases depName=sbstp/kubie
@@ -14,23 +14,23 @@ readonly K9S_VERSION="${K9S_VERSION:-0.51.0}"
 # renovate: datasource=github-releases depName=kdash-rs/kdash
 readonly KDASH_VERSION="${KDASH_VERSION:-2.1.1}"
 # renovate: datasource=github-releases depName=helmfile/helmfile
-readonly HELMFILE_VERSION="${HELMFILE_VERSION:-1.7.1}"
+readonly HELMFILE_VERSION="${HELMFILE_VERSION:-1.7.3}"
 # renovate: datasource=github-releases depName=k0sproject/k0sctl
-readonly K0SCTL_VERSION="${K0SCTL_VERSION:-0.32.1}"
+readonly K0SCTL_VERSION="${K0SCTL_VERSION:-0.32.2}"
 # renovate: datasource=github-releases depName=getsops/sops
 readonly SOPS_VERSION="${SOPS_VERSION:-3.13.3}"
 # renovate: datasource=github-releases depName=gruntwork-io/terragrunt
-readonly TERRAGRUNT_VERSION="${TERRAGRUNT_VERSION:-1.1.1}"
+readonly TERRAGRUNT_VERSION="${TERRAGRUNT_VERSION:-1.1.2}"
 # renovate: datasource=github-releases depName=opentofu/opentofu
 readonly OPENTOFU_VERSION="${OPENTOFU_VERSION:-1.12.5}"
 # renovate: datasource=github-releases depName=helm/helm
 readonly HELM_VERSION="${HELM_VERSION:-4.2.3}"
 # renovate: datasource=github-releases depName=argoproj/argo-cd
-readonly ARGOCD_VERSION="${ARGOCD_VERSION:-3.4.5}"
+readonly ARGOCD_VERSION="${ARGOCD_VERSION:-3.5.0}"
 # renovate: datasource=github-releases depName=FiloSottile/age
 readonly AGE_VERSION="${AGE_VERSION:-1.3.1}"
 # renovate: datasource=github-releases depName=cilium/cilium-cli
-readonly CILIUM_VERSION="${CILIUM_VERSION:-0.19.6}"
+readonly CILIUM_VERSION="${CILIUM_VERSION:-0.19.7}"
 # renovate: datasource=github-releases depName=eza-community/eza
 readonly EZA_VERSION="${EZA_VERSION:-0.23.5}"
 # renovate: datasource=github-releases depName=starship/starship
@@ -42,19 +42,19 @@ readonly DIRENV_VERSION="${DIRENV_VERSION:-2.37.1}"
 # renovate: datasource=github-releases depName=kubernetes-sigs/krew
 readonly KREW_VERSION="${KREW_VERSION:-0.5.0}"
 # renovate: datasource=github-releases depName=DNSControl/dnscontrol
-readonly DNSCONTROL_VERSION="${DNSCONTROL_VERSION:-4.44.1}"
+readonly DNSCONTROL_VERSION="${DNSCONTROL_VERSION:-4.45.0}"
 # renovate: datasource=pypi depName=ansible-core
 readonly ANSIBLE_CORE_VERSION="${ANSIBLE_CORE_VERSION:-2.21.2}"
 # renovate: datasource=pypi depName=ansible-lint
 readonly ANSIBLE_LINT_VERSION="${ANSIBLE_LINT_VERSION:-26.6.0}"
 # renovate: datasource=github-tags depName=aws/aws-cli
-readonly AWS_CLI_VERSION="${AWS_CLI_VERSION:-2.36.9}"
+readonly AWS_CLI_VERSION="${AWS_CLI_VERSION:-2.36.17}"
 # renovate: datasource=github-releases depName=rclone/rclone
-readonly RCLONE_VERSION="${RCLONE_VERSION:-1.74.4}"
+readonly RCLONE_VERSION="${RCLONE_VERSION:-1.75.0}"
 # renovate: datasource=github-releases depName=rhysd/actionlint
 readonly ACTIONLINT_VERSION="${ACTIONLINT_VERSION:-1.7.12}"
 # renovate: datasource=github-releases depName=cli/cli
-readonly GH_VERSION="${GH_VERSION:-2.96.0}"
+readonly GH_VERSION="${GH_VERSION:-2.97.0}"
 # renovate: datasource=github-releases depName=sharkdp/bat
 readonly BAT_VERSION="${BAT_VERSION:-0.26.1}"
 # renovate: datasource=github-releases depName=BurntSushi/ripgrep
