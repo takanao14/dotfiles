@@ -43,6 +43,8 @@ readonly DIRENV_VERSION="${DIRENV_VERSION:-2.37.1}"
 readonly KREW_VERSION="${KREW_VERSION:-0.5.0}"
 # renovate: datasource=github-releases depName=DNSControl/dnscontrol
 readonly DNSCONTROL_VERSION="${DNSCONTROL_VERSION:-4.46.0}"
+# renovate: datasource=github-releases depName=prometheus/prometheus
+readonly PROMETHEUS_VERSION="${PROMETHEUS_VERSION:-3.13.2}"
 # renovate: datasource=pypi depName=ansible-core
 readonly ANSIBLE_CORE_VERSION="${ANSIBLE_CORE_VERSION:-2.21.2}"
 # renovate: datasource=pypi depName=ansible-lint
@@ -61,6 +63,8 @@ readonly BAT_VERSION="${BAT_VERSION:-0.26.1}"
 readonly RIPGREP_VERSION="${RIPGREP_VERSION:-15.2.0}"
 # renovate: datasource=github-releases depName=dalance/procs
 readonly PROCS_VERSION="${PROCS_VERSION:-0.14.12}"
+# renovate: datasource=github-releases depName=mikefarah/yq
+readonly YQ_VERSION="${YQ_VERSION:-4.53.3}"
 
 # Install location. Defaults to a per-user prefix. Set TOOL_BIN_DIR (and
 # TOOL_VERSION_CACHE_DIR) to a system-wide path such as /usr/local/bin to make
@@ -280,6 +284,17 @@ install_procs() {
     install_binary "procs" \
         "https://github.com/dalance/procs/releases/download/v${PROCS_VERSION}/procs-v${PROCS_VERSION}-${ARCH}-linux.zip" \
         "$BIN_DIR/procs"
+}
+
+# Install the raw binary asset rather than the tarball: the tarball names the
+# binary yq_linux_<arch>, which install_binary's find-by-name cannot locate. yq's
+# `checksums` file is a custom filename-first table with one column per hash
+# algorithm (the sha256 column is identified by a separate checksums_hashes_order
+# file), so verify_sha256 cannot parse it and no checksum is passed.
+install_yq() {
+    install_binary "yq" \
+        "https://github.com/mikefarah/yq/releases/download/v${YQ_VERSION}/yq_linux_${BIN_ARCH}" \
+        "$BIN_DIR/yq"
 }
 
 install_sheldon() {
@@ -510,6 +525,22 @@ install_helm_diff_plugin() {
 }
 
 # ============================================================================
+# Monitoring Tools
+# ============================================================================
+
+# promtool validates prometheus.yml and alerting/recording rules, and runs rule
+# unit tests. Prometheus publishes no standalone promtool asset, so the full
+# server tarball (~100MB) is downloaded and install_binary extracts only promtool
+# -- the prometheus server binary is discarded with the temp dir.
+install_promtool() {
+    local archive_name="prometheus-${PROMETHEUS_VERSION}.linux-${BIN_ARCH}.tar.gz"
+    install_binary "promtool" \
+        "https://github.com/prometheus/prometheus/releases/download/v${PROMETHEUS_VERSION}/${archive_name}" \
+        "$BIN_DIR/promtool" \
+        "https://github.com/prometheus/prometheus/releases/download/v${PROMETHEUS_VERSION}/sha256sums.txt"
+}
+
+# ============================================================================
 # AWS Tools
 # ============================================================================
 
@@ -687,6 +718,7 @@ main() {
     install_if_needed "bat"      "$BAT_VERSION"      install_bat
     install_if_needed "rg"       "$RIPGREP_VERSION"  install_ripgrep
     install_if_needed "procs"    "$PROCS_VERSION"    install_procs
+    install_if_needed "yq"       "$YQ_VERSION"       install_yq
 
     install_if_needed "fzf"    "$FZF_VERSION"    install_fzf
     install_if_needed "zellij" "$ZELLIJ_VERSION" install_zellij
@@ -708,6 +740,8 @@ main() {
     install_if_needed "sops"     "$SOPS_VERSION"     install_sops
     install_if_needed "cilium"   "$CILIUM_VERSION"   install_cilium
     install_if_needed "dnscontrol" "$DNSCONTROL_VERSION" install_dnscontrol
+
+    install_if_needed "promtool" "$PROMETHEUS_VERSION" install_promtool
 
     install_if_needed "aws" "$AWS_CLI_VERSION" install_aws_cli
     install_if_needed "rclone" "$RCLONE_VERSION" install_rclone
