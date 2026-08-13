@@ -8,16 +8,12 @@ Host *
      IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
 {{- end }}
 {{- if eq .chezmoi.os "linux" }}
-     # Load the key into the running agent on first use, so the passphrase
-     # is typed once per agent lifetime instead of per connection.
+     # Cache the key in the agent to avoid repeated passphrase prompts.
      AddKeysToAgent yes
 {{- end }}
      SetEnv TERM=xterm-256color
 
-# ForwardAgent is intentionally not set here for Host * (forwarding the agent
-# to every host, including untrusted ones, lets a compromised remote root
-# authenticate elsewhere as you). Enable it per trusted host instead, e.g. in
-# ~/.ssh/config.d/*.conf:
+# Enable agent forwarding only for trusted hosts in ~/.ssh/config.d/*.conf:
 #   Host trusted-host
 #       ForwardAgent yes
 #ForwardX11 yes

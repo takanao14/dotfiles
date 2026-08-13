@@ -1,6 +1,4 @@
-# Keep the first occurrence of each directory when paths are prepended below.
-# In particular, `brew shellenv` prepends its site-functions directory in login
-# shells, so merely checking whether ~/.zfunc already exists is insufficient.
+# Deduplicate paths after `brew shellenv` prepends its site-functions directory.
 typeset -gU fpath
 
 if command -v brew &> /dev/null; then

@@ -1,17 +1,6 @@
-# SSH agent socket selection for headless Linux hosts (toolbox1).
-#
-# Two entry paths coexist on this host:
-#   - Mac (ForwardAgent yes): sshd provides a per-session forwarded socket
-#     backed by the 1Password agent; private keys never touch this host.
-#   - iOS clients (no agent forwarding): fall back to the local systemd user
-#     ssh-agent (~/.config/systemd/user/ssh-agent.service) holding this
-#     host's own key.
-#
-# SSH_AUTH_SOCK always ends up pointing at the stable symlink
-# ~/.ssh/agent_sock. Forwarded sockets live at per-session /tmp paths that
-# die with the connection, so tmux panes reattached from another device
-# would otherwise hold a dead socket; the symlink is repointed on each new
-# shell instead. Last connection wins.
+# Prefer a forwarded 1Password agent; otherwise use the local systemd agent.
+# A stable symlink keeps reattached tmux panes off stale session sockets.
+# Each new shell repoints the link, so the latest connection wins.
 
 if [[ "$OSTYPE" == linux* ]]; then
   _agent_link="$HOME/.ssh/agent_sock"
@@ -25,8 +14,7 @@ if [[ "$OSTYPE" == linux* ]]; then
       systemctl --user start ssh-agent.service >/dev/null 2>&1
     fi
     if [[ -S "$_agent_local" ]]; then
-      # No agent was forwarded into this shell: use the local agent even if a
-      # previous forwarded socket is still alive from another session.
+      # Ignore forwarded sockets inherited from another session.
       ln -sf "$_agent_local" "$_agent_link"
     fi
   fi
