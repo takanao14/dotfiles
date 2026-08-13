@@ -24,14 +24,10 @@ generate_completion() {
     local destination="${ZFUNC_DIR}/${output_name}"
     "$@" > "$raw_file"
 
-    # compinit only recognizes #compdef when it is on the first line. Some CLI
-    # generators emit leading blank lines because their output is intended to
-    # be sourced directly rather than installed as an autoload function.
+    # compinit requires #compdef on the first line.
     awk 'seen || NF { seen = 1; print }' "$raw_file" > "$generated_file"
 
-    # A generated file can register a differently named completion function
-    # when sourced. As an autoloaded _<command> function it must also invoke
-    # that entrypoint for the completion request that caused the initial load.
+    # Invoke a differently named entrypoint after the initial autoload.
     if [[ -n "$autoload_entrypoint" ]]; then
         printf '\n%s "$@"\n' "$autoload_entrypoint" >> "$generated_file"
     fi
