@@ -57,6 +57,10 @@ readonly RCLONE_VERSION="${RCLONE_VERSION:-1.75.0}"
 readonly ACTIONLINT_VERSION="${ACTIONLINT_VERSION:-1.7.12}"
 # renovate: datasource=github-releases depName=cli/cli
 readonly GH_VERSION="${GH_VERSION:-2.97.0}"
+# renovate: datasource=github-releases depName=jesseduffield/lazygit
+readonly LAZYGIT_VERSION="${LAZYGIT_VERSION:-0.64.1}"
+# renovate: datasource=github-releases depName=gitui-org/gitui
+readonly GITUI_VERSION="${GITUI_VERSION:-0.28.1}"
 # renovate: datasource=github-releases depName=sharkdp/bat
 readonly BAT_VERSION="${BAT_VERSION:-0.26.1}"
 # renovate: datasource=github-releases depName=BurntSushi/ripgrep
@@ -241,6 +245,38 @@ install_gh() {
         "https://github.com/cli/cli/releases/download/v${GH_VERSION}/${archive_name}" \
         "$BIN_DIR/gh" \
         "https://github.com/cli/cli/releases/download/v${GH_VERSION}/gh_${GH_VERSION}_checksums.txt"
+}
+
+install_lazygit() {
+    local asset_arch archive_name
+    case "$ARCH" in
+        x86_64) asset_arch="x86_64" ;;
+        aarch64) asset_arch="arm64" ;;
+        *)
+            log_error "Unsupported architecture for lazygit: ${ARCH}"
+            exit 1
+            ;;
+    esac
+    archive_name="lazygit_${LAZYGIT_VERSION}_linux_${asset_arch}.tar.gz"
+    install_binary "lazygit" \
+        "https://github.com/jesseduffield/lazygit/releases/download/v${LAZYGIT_VERSION}/${archive_name}" \
+        "$BIN_DIR/lazygit" \
+        "https://github.com/jesseduffield/lazygit/releases/download/v${LAZYGIT_VERSION}/checksums.txt"
+}
+
+install_gitui() {
+    local archive_name
+    case "$ARCH" in
+        x86_64|aarch64) archive_name="gitui-linux-${ARCH}.tar.gz" ;;
+        *)
+            log_error "Unsupported architecture for gitui: ${ARCH}"
+            exit 1
+            ;;
+    esac
+    # Upstream does not publish a checksum file for release archives.
+    install_binary "gitui" \
+        "https://github.com/gitui-org/gitui/releases/download/v${GITUI_VERSION}/${archive_name}" \
+        "$BIN_DIR/gitui"
 }
 
 install_bat() {
@@ -646,6 +682,8 @@ main() {
     install_if_needed "direnv"   "$DIRENV_VERSION"   install_direnv
     install_if_needed "eza"      "$EZA_VERSION"      install_eza
     install_if_needed "gh"       "$GH_VERSION"       install_gh
+    install_if_needed "lazygit"  "$LAZYGIT_VERSION"  install_lazygit
+    install_if_needed "gitui"    "$GITUI_VERSION"    install_gitui
     install_if_needed "bat"      "$BAT_VERSION"      install_bat
     install_if_needed "rg"       "$RIPGREP_VERSION"  install_ripgrep
     install_if_needed "procs"    "$PROCS_VERSION"    install_procs
