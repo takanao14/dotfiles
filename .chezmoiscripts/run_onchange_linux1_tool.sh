@@ -68,7 +68,7 @@ readonly RIPGREP_VERSION="${RIPGREP_VERSION:-15.2.0}"
 # renovate: datasource=github-releases depName=dalance/procs
 readonly PROCS_VERSION="${PROCS_VERSION:-0.14.12}"
 # renovate: datasource=github-releases depName=mikefarah/yq
-readonly YQ_VERSION="${YQ_VERSION:-4.53.3}"
+readonly YQ_VERSION="${YQ_VERSION:-4.53.6}"
 
 # Defaults to per-user paths; system-wide TOOL_* paths require root.
 readonly BIN_DIR="${TOOL_BIN_DIR:-$HOME/.local/bin}"
