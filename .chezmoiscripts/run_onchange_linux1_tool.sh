@@ -14,7 +14,7 @@ readonly K9S_VERSION="${K9S_VERSION:-0.51.0}"
 # renovate: datasource=github-releases depName=kdash-rs/kdash
 readonly KDASH_VERSION="${KDASH_VERSION:-2.1.1}"
 # renovate: datasource=github-releases depName=helmfile/helmfile
-readonly HELMFILE_VERSION="${HELMFILE_VERSION:-1.7.3}"
+readonly HELMFILE_VERSION="${HELMFILE_VERSION:-1.7.4}"
 # renovate: datasource=github-releases depName=k0sproject/k0sctl
 readonly K0SCTL_VERSION="${K0SCTL_VERSION:-0.32.2}"
 # renovate: datasource=github-releases depName=getsops/sops
