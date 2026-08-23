@@ -6,7 +6,7 @@ set -euo pipefail
 # renovate: datasource=github-releases depName=junegunn/fzf
 readonly FZF_VERSION="${FZF_VERSION:-0.74.3}"
 # renovate: datasource=github-releases depName=zellij-org/zellij
-readonly ZELLIJ_VERSION="${ZELLIJ_VERSION:-0.44.3}"
+readonly ZELLIJ_VERSION="${ZELLIJ_VERSION:-0.45.0}"
 # renovate: datasource=github-releases depName=sbstp/kubie
 readonly KUBIE_VERSION="${KUBIE_VERSION:-0.28.0}"
 # renovate: datasource=github-releases depName=derailed/k9s
