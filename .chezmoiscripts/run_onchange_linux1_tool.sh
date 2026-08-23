@@ -44,7 +44,7 @@ readonly KREW_VERSION="${KREW_VERSION:-0.5.0}"
 # renovate: datasource=github-releases depName=DNSControl/dnscontrol
 readonly DNSCONTROL_VERSION="${DNSCONTROL_VERSION:-4.46.0}"
 # renovate: datasource=github-releases depName=prometheus/prometheus
-readonly PROMETHEUS_VERSION="${PROMETHEUS_VERSION:-3.13.2}"
+readonly PROMETHEUS_VERSION="${PROMETHEUS_VERSION:-3.14.0}"
 # renovate: datasource=pypi depName=ansible-core
 readonly ANSIBLE_CORE_VERSION="${ANSIBLE_CORE_VERSION:-2.21.3}"
 # renovate: datasource=pypi depName=ansible-lint
