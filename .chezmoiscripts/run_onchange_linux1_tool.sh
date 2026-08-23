@@ -22,7 +22,7 @@ readonly SOPS_VERSION="${SOPS_VERSION:-3.13.3}"
 # renovate: datasource=github-releases depName=gruntwork-io/terragrunt
 readonly TERRAGRUNT_VERSION="${TERRAGRUNT_VERSION:-1.1.3}"
 # renovate: datasource=github-releases depName=opentofu/opentofu
-readonly OPENTOFU_VERSION="${OPENTOFU_VERSION:-1.12.5}"
+readonly OPENTOFU_VERSION="${OPENTOFU_VERSION:-1.12.6}"
 # renovate: datasource=github-releases depName=helm/helm
 readonly HELM_VERSION="${HELM_VERSION:-4.2.4}"
 # renovate: datasource=github-releases depName=argoproj/argo-cd
