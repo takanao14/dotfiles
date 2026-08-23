@@ -1,4 +1,5 @@
 alias k=kubectl
+compdef _kubectl k
 alias kgp='kubectl get pods'
 alias kgs='kubectl get svc'
 alias kdp='kubectl describe pod'

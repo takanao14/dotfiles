@@ -46,6 +46,7 @@ generate_completion starship _starship '' starship completions zsh
 generate_completion zellij   _zellij   '' zellij setup --generate-completion zsh
 
 # Kubernetes and infrastructure tools
+generate_completion kubectl  _kubectl  '' kubectl completion zsh
 generate_completion helm     _helm     '' helm completion zsh
 generate_completion argocd   _argocd   '' argocd completion zsh
 generate_completion kubie    _kubie    '' kubie generate-completion zsh
