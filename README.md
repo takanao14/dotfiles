@@ -137,7 +137,8 @@ Linux machines have an explicit `desktop` or `server` profile stored in the
 chezmoi data and exported to scripts as `TOOL_MACHINE_PROFILE`. Kitty, UDEV
 Gothic and Freelens are installed only for the desktop profile. Standalone and
 golden-image installers use the same environment-variable contract and the
-root-owned `/etc/homelab/machine-profile` image marker. An unset profile with no
-marker defaults to `server`; live GUI state is deliberately not inferred.
+root-owned `/etc/provisioning/machine-profile.local` image marker. An unset
+profile with no marker defaults to `server`; live GUI state is deliberately not
+inferred.
 
 Repository-only files such as `README.md`, `bootstrap.sh`, `renovate.json`, and `docs/` are excluded from the target home directory via `.chezmoiignore`.
