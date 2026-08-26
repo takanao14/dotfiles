@@ -3,7 +3,19 @@
 
 {{- /* Resolve git email without committing it to the repo (prompted once, stored in local config) */ -}}
 {{- $email := promptStringOnce . "email" "Git email" -}}
+{{- /* Linux desktop components are an explicit machine role, not a live-session probe. */ -}}
+{{- $machineProfile := "desktop" -}}
+{{- if eq .chezmoi.os "linux" -}}
+{{-   $machineProfile = promptChoiceOnce . "machineProfile" "Linux machine profile" (list "desktop" "server") "server" -}}
+{{- end -}}
+
+{{ if eq .chezmoi.os "linux" -}}
+[scriptEnv]
+    TOOL_MACHINE_PROFILE = {{ $machineProfile | quote }}
+
+{{ end -}}
 
 [data]
     has1password = {{ if $has1password }}true{{ else }}false{{ end }}
     email = {{ $email | quote }}
+    machineProfile = {{ $machineProfile | quote }}

@@ -67,7 +67,7 @@ dotfiles/
 │   └── config.tmpl                # ~/.ssh/config (OrbStack include, 1Password agent)
 └── .chezmoiscripts/               # Setup scripts auto-executed by chezmoi
     ├── run_onchange_after_macos.sh.tmpl # macOS: apply Brewfile when it changes
-    ├── run_onchange_linux0_package.sh   # Linux: sudo-only OS package installs (base deps, HashiCorp repo, kubectl, openbao, pipx/python3.12)
+    ├── run_onchange_linux0_package.sh   # Linux: sudo-only OS package installs (base deps, HashiCorp repo, kubectl, openbao, Freelens on desktops, pipx/python3.12)
     ├── run_onchange_linux1_tool.sh      # Linux: install development tools (no sudo)
     ├── run_onchange_linux2_terminal.sh  # Linux: install kitty (no sudo)
     ├── run_onchange_linux3_fonts.sh     # Linux: install UDEV Gothic fonts (no sudo)
@@ -81,7 +81,7 @@ dotfiles/
 | Shell | zsh, [sheldon](https://github.com/rossmacarthur/sheldon), [starship](https://starship.rs/) |
 | Terminal | [Ghostty](https://ghostty.org/) (macOS), [Alacritty](https://alacritty.org/) (Linux) |
 | Multiplexer | [Zellij](https://zellij.dev/), tmux |
-| Kubernetes | kubectl, [Argo CD CLI](https://argo-cd.readthedocs.io/en/stable/user-guide/commands/argocd/), [kubie](https://github.com/sbstp/kubie), [k9s](https://k9scli.io/), [KDash](https://kdash-rs.github.io/), helm, helmfile, krew |
+| Kubernetes | kubectl, [Freelens](https://freelens.app/) (desktop machines), [Argo CD CLI](https://argo-cd.readthedocs.io/en/stable/user-guide/commands/argocd/), [kubie](https://github.com/sbstp/kubie), [k9s](https://k9scli.io/), [KDash](https://kdash-rs.github.io/), helm, helmfile, krew |
 | IaC | Terraform, Packer, Vault, Terragrunt, [Ansible](https://www.ansible.com/), [ansible-lint](https://ansible.readthedocs.io/projects/lint/) |
 | Cloud / S3 | [AWS CLI](https://aws.amazon.com/cli/) (v2; S3-compatible storage such as SeaweedFS) |
 | Containers | [Podman](https://podman.io/) (Linux) |
@@ -132,5 +132,11 @@ the `krew` plugin itself.
 ## Chezmoi Policy
 
 Chezmoi templates are avoided unless the rendered file content must differ by OS, host, architecture, or secret data. Prefer normal shell/runtime guards for simple portability.
+
+Linux machines have an explicit `desktop` or `server` profile stored in the
+chezmoi data and exported to scripts as `TOOL_MACHINE_PROFILE`. Kitty, UDEV
+Gothic and Freelens are installed only for the desktop profile. Standalone and
+golden-image installers use the same environment-variable contract; live GUI
+detection remains only as a compatibility fallback when the profile is unset.
 
 Repository-only files such as `README.md`, `bootstrap.sh`, `renovate.json`, and `docs/` are excluded from the target home directory via `.chezmoiignore`.

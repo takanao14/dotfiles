@@ -48,29 +48,58 @@ make_tmp_dir() {
     printf -v "$__var_name" '%s' "$path"
 }
 
-check_gui() {
+is_desktop_machine() {
     local skip_msg="${1:-}"
-    log_info "Checking system requirements..."
-    # Golden-image builds (e.g. Packer) install before the xrdp service runs;
-    # TOOL_FORCE_GUI_INSTALL=1 bypasses the live-GUI check.
+    local profile="${TOOL_MACHINE_PROFILE:-auto}"
+
+    case "$profile" in
+        desktop)
+            log_info "Desktop machine profile selected"
+            return 0
+            ;;
+        server)
+            log_info "Server machine profile selected"
+            [[ -n "$skip_msg" ]] && log_info "$skip_msg"
+            return 1
+            ;;
+        auto) ;;
+        *)
+            log_error "TOOL_MACHINE_PROFILE must be desktop, server, auto, or unset (got: ${profile})"
+            exit 1
+            ;;
+    esac
+
+    # Backward-compatible image-build override. New callers should pass the
+    # explicit desktop profile instead.
     if [[ "${TOOL_FORCE_GUI_INSTALL:-}" == "1" ]]; then
-        log_info "TOOL_FORCE_GUI_INSTALL=1; installing regardless of GUI session"
+        log_warn "TOOL_FORCE_GUI_INSTALL is deprecated; use TOOL_MACHINE_PROFILE=desktop"
         return 0
     fi
-    local has_gui=false
+
+    if [[ -n "${DISPLAY:-}" || -n "${WAYLAND_DISPLAY:-}" || -n "${XDG_CURRENT_DESKTOP:-}" ]]; then
+        log_info "Desktop session environment detected"
+        return 0
+    fi
+    if [[ "$(systemctl get-default 2>/dev/null || true)" == "graphical.target" ]]; then
+        log_info "graphical.target is the default systemd target"
+        return 0
+    fi
     if systemctl is-active --quiet xrdp 2>/dev/null; then
         log_info "xrdp service detected"
-        has_gui=true
+        return 0
     fi
-    if pgrep -E "^(weston|sway|wayfire|labwc|river|hyprland)$" >/dev/null 2>&1; then
-        log_info "Wayland compositor detected"
-        has_gui=true
-    fi
-    if [[ "$has_gui" == "false" ]]; then
-        log_warn "No GUI session detected (xrdp or Wayland required)"
-        [[ -n "$skip_msg" ]] && log_warn "$skip_msg"
-        exit 0
-    fi
+    local process
+    for process in gnome-shell plasmashell xfce4-session mate-session cinnamon \
+                   weston sway wayfire labwc river Hyprland; do
+        if pgrep -x "$process" >/dev/null 2>&1; then
+            log_info "Desktop process detected: ${process}"
+            return 0
+        fi
+    done
+
+    log_warn "Unable to detect a desktop machine; defaulting to server profile"
+    [[ -n "$skip_msg" ]] && log_warn "$skip_msg"
+    return 1
 }
 
 # Kitty
@@ -128,7 +157,7 @@ baseline_satisfies() {
 main() {
     log_info "=== Terminal Installation Script ==="
 
-    check_gui "Skipping kitty installation"
+    is_desktop_machine "Skipping kitty installation" || return 0
 
     if baseline_satisfies "kitty" "$KITTY_VERSION" && command -v kitty &>/dev/null; then
         log_info "kitty ${KITTY_VERSION} provided system-wide, skipping per-user install"
