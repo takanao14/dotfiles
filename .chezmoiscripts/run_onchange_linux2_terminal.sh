@@ -76,28 +76,27 @@ is_desktop_machine() {
         return 0
     fi
 
-    if [[ -n "${DISPLAY:-}" || -n "${WAYLAND_DISPLAY:-}" || -n "${XDG_CURRENT_DESKTOP:-}" ]]; then
-        log_info "Desktop session environment detected"
-        return 0
+    local profile_file="/etc/homelab/machine-profile"
+    if [[ -r "$profile_file" ]]; then
+        profile="$(<"$profile_file")"
+        case "$profile" in
+            desktop)
+                log_info "Desktop machine profile read from ${profile_file}"
+                return 0
+                ;;
+            server)
+                log_info "Server machine profile read from ${profile_file}"
+                [[ -n "$skip_msg" ]] && log_info "$skip_msg"
+                return 1
+                ;;
+            *)
+                log_error "Invalid machine profile in ${profile_file}: ${profile}"
+                exit 1
+                ;;
+        esac
     fi
-    if [[ "$(systemctl get-default 2>/dev/null || true)" == "graphical.target" ]]; then
-        log_info "graphical.target is the default systemd target"
-        return 0
-    fi
-    if systemctl is-active --quiet xrdp 2>/dev/null; then
-        log_info "xrdp service detected"
-        return 0
-    fi
-    local process
-    for process in gnome-shell plasmashell xfce4-session mate-session cinnamon \
-                   weston sway wayfire labwc river Hyprland; do
-        if pgrep -x "$process" >/dev/null 2>&1; then
-            log_info "Desktop process detected: ${process}"
-            return 0
-        fi
-    done
 
-    log_warn "Unable to detect a desktop machine; defaulting to server profile"
+    log_warn "No explicit machine profile or image marker; defaulting to server"
     [[ -n "$skip_msg" ]] && log_warn "$skip_msg"
     return 1
 }
