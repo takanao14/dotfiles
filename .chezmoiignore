@@ -7,3 +7,6 @@ docs
 {{ if ne .chezmoi.os "linux" }}
 .config/systemd
 {{ end }}
+{{ if or (ne .chezmoi.os "linux") (ne .machineProfile "desktop") }}
+.config/kitty
+{{ end }}

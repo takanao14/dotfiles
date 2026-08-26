@@ -58,6 +58,7 @@ dotfiles/
 ├── dot_config/
 │   ├── ghostty/config             # Ghostty terminal configuration
 │   ├── alacritty/alacritty.toml   # Alacritty terminal configuration
+│   ├── kitty/kitty.conf           # Kitty configuration (Linux desktop only)
 │   ├── starship.toml              # Starship prompt configuration
 │   ├── sheldon/plugins.toml       # sheldon plugin configuration
 │   └── zellij/config.kdl          # Zellij multiplexer configuration
@@ -79,7 +80,7 @@ dotfiles/
 | Category | Tools |
 |----------|-------|
 | Shell | zsh, [sheldon](https://github.com/rossmacarthur/sheldon), [starship](https://starship.rs/) |
-| Terminal | [Ghostty](https://ghostty.org/) (macOS), [Alacritty](https://alacritty.org/) (Linux) |
+| Terminal | [Ghostty](https://ghostty.org/) (macOS), [Alacritty](https://alacritty.org/) / [Kitty](https://sw.kovidgoyal.net/kitty/) (Linux) |
 | Multiplexer | [Zellij](https://zellij.dev/), tmux |
 | Kubernetes | kubectl, [Freelens](https://freelens.app/) (desktop machines), [Argo CD CLI](https://argo-cd.readthedocs.io/en/stable/user-guide/commands/argocd/), [kubie](https://github.com/sbstp/kubie), [k9s](https://k9scli.io/), [KDash](https://kdash-rs.github.io/), helm, helmfile, krew |
 | IaC | Terraform, Packer, Vault, Terragrunt, [Ansible](https://www.ansible.com/), [ansible-lint](https://ansible.readthedocs.io/projects/lint/) |
@@ -135,7 +136,8 @@ Chezmoi templates are avoided unless the rendered file content must differ by OS
 
 Linux machines have an explicit `desktop` or `server` profile stored in the
 chezmoi data and exported to scripts as `TOOL_MACHINE_PROFILE`. Kitty, UDEV
-Gothic and Freelens are installed only for the desktop profile. Standalone and
+Gothic and Freelens are installed only for the desktop profile, and the Kitty
+configuration is managed there as `~/.config/kitty/kitty.conf`. Standalone and
 golden-image installers use the same environment-variable contract and the
 root-owned `/etc/provisioning/machine-profile.local` image marker. An unset
 profile with no marker defaults to `server`; live GUI state is deliberately not
