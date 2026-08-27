@@ -4,13 +4,6 @@
 Include ~/.orbstack/ssh/config
 
 Host *
-{{- if .has1password }}
-     IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
-{{- end }}
-{{- if eq .chezmoi.os "linux" }}
-     # Cache the key in the agent to avoid repeated passphrase prompts.
-     AddKeysToAgent yes
-{{- end }}
      SetEnv TERM=xterm-256color
 
 # Enable agent forwarding only for trusted hosts in ~/.ssh/config.d/*.conf:
