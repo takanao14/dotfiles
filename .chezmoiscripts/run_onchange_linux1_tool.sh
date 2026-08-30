@@ -70,7 +70,7 @@ readonly PROCS_VERSION="${PROCS_VERSION:-0.14.12}"
 # renovate: datasource=github-releases depName=bootandy/dust
 readonly DUST_VERSION="${DUST_VERSION:-1.2.5}"
 # renovate: datasource=github-releases depName=Byron/dua-cli
-readonly DUA_VERSION="${DUA_VERSION:-2.43.0}"
+readonly DUA_VERSION="${DUA_VERSION:-2.43.1}"
 # renovate: datasource=github-releases depName=mikefarah/yq
 readonly YQ_VERSION="${YQ_VERSION:-4.53.6}"
 
