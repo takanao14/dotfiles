@@ -28,7 +28,7 @@ readonly HELM_VERSION="${HELM_VERSION:-4.2.4}"
 # renovate: datasource=github-releases depName=argoproj/argo-cd
 readonly ARGOCD_VERSION="${ARGOCD_VERSION:-3.5.2}"
 # renovate: datasource=github-releases depName=FiloSottile/age
-readonly AGE_VERSION="${AGE_VERSION:-1.3.1}"
+readonly AGE_VERSION="${AGE_VERSION:-1.3.2}"
 # renovate: datasource=github-releases depName=cilium/cilium-cli
 readonly CILIUM_VERSION="${CILIUM_VERSION:-0.20.0}"
 # renovate: datasource=github-releases depName=eza-community/eza
