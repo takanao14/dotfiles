@@ -3,16 +3,19 @@
   "extends": ["config:recommended"],
   "timezone": "Asia/Tokyo",
   "minimumReleaseAge": "1 day",
+  "labels": ["dependencies", "renovate"],
   "packageRules": [
     {
       "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
       "automerge": true,
       "platformAutomerge": false,
-      "ignoreTests": true
+      "ignoreTests": true,
+      "addLabels": ["auto-merge-candidate"]
     },
     {
       "matchUpdateTypes": ["major"],
-      "automerge": false
+      "automerge": false,
+      "addLabels": ["manual-review", "major-update"]
     },
     {
       "description": "kubectl is pinned to a minor (pkgs.k8s.io repo paths are per-minor); collapse stable releases to major.minor so patch releases never rewrite the pin",
