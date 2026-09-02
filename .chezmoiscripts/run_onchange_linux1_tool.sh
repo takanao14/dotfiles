@@ -115,6 +115,18 @@ cleanup_tmp_paths() {
 
 trap cleanup_tmp_paths EXIT
 
+# Run one installer and drop the temporary paths it created. Holding them all
+# until the trap fires accumulates ~1 GB of archives, which overflows a tmpfs
+# /tmp on small machines (systemd sizes it at 50% of RAM).
+run_install() {
+    local mark=${#TMP_PATHS[@]} i
+    "$@"
+    for ((i = ${#TMP_PATHS[@]} - 1; i >= mark; i--)); do
+        rm -rf "${TMP_PATHS[i]}"
+        unset "TMP_PATHS[$i]"
+    done
+}
+
 # Helpers
 
 # This script never calls sudo; linux0 must provide its OS-level dependencies.
@@ -234,7 +246,7 @@ install_if_needed() {
     fi
     local cache_file="${VERSION_CACHE_DIR}/${cmd}"
     if ! command -v "$cmd" &>/dev/null || [[ "$(cat "$cache_file" 2>/dev/null)" != "$version" ]]; then
-        "$install_func"
+        run_install "$install_func"
         echo "$version" > "$cache_file"
     else
         log_info "${cmd} ${version} is already up to date, skipping"
@@ -716,8 +728,8 @@ main() {
 
     install_if_needed "helm"     "$HELM_VERSION"     install_helm
     install_if_needed "argocd"   "$ARGOCD_VERSION"   install_argocd
-    install_helm_diff_plugin
-    install_krew_if_needed
+    run_install install_helm_diff_plugin
+    run_install install_krew_if_needed
     install_if_needed "kubie"    "$KUBIE_VERSION"    install_kubie
     install_if_needed "k9s"      "$K9S_VERSION"      install_k9s
     install_if_needed "kdash"    "$KDASH_VERSION"    install_kdash
