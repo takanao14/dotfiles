@@ -56,7 +56,7 @@ readonly RCLONE_VERSION="${RCLONE_VERSION:-1.75.0}"
 # renovate: datasource=github-releases depName=rhysd/actionlint
 readonly ACTIONLINT_VERSION="${ACTIONLINT_VERSION:-1.7.12}"
 # renovate: datasource=github-releases depName=cli/cli
-readonly GH_VERSION="${GH_VERSION:-2.98.0}"
+readonly GH_VERSION="${GH_VERSION:-2.99.0}"
 # renovate: datasource=github-releases depName=jesseduffield/lazygit
 readonly LAZYGIT_VERSION="${LAZYGIT_VERSION:-0.64.1}"
 # renovate: datasource=github-releases depName=gitui-org/gitui
