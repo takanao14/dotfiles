@@ -42,7 +42,7 @@ readonly DIRENV_VERSION="${DIRENV_VERSION:-2.37.1}"
 # renovate: datasource=github-releases depName=kubernetes-sigs/krew
 readonly KREW_VERSION="${KREW_VERSION:-0.5.0}"
 # renovate: datasource=github-releases depName=DNSControl/dnscontrol
-readonly DNSCONTROL_VERSION="${DNSCONTROL_VERSION:-5.0.2}"
+readonly DNSCONTROL_VERSION="${DNSCONTROL_VERSION:-5.0.3}"
 # renovate: datasource=github-releases depName=prometheus/prometheus
 readonly PROMETHEUS_VERSION="${PROMETHEUS_VERSION:-3.14.0}"
 # renovate: datasource=pypi depName=ansible-core
