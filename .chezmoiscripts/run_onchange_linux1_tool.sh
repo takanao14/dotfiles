@@ -50,7 +50,7 @@ readonly ANSIBLE_CORE_VERSION="${ANSIBLE_CORE_VERSION:-2.21.3}"
 # renovate: datasource=pypi depName=ansible-lint
 readonly ANSIBLE_LINT_VERSION="${ANSIBLE_LINT_VERSION:-26.8.0}"
 # renovate: datasource=github-tags depName=aws/aws-cli
-readonly AWS_CLI_VERSION="${AWS_CLI_VERSION:-2.36.39}"
+readonly AWS_CLI_VERSION="${AWS_CLI_VERSION:-2.36.40}"
 # renovate: datasource=github-releases depName=rclone/rclone
 readonly RCLONE_VERSION="${RCLONE_VERSION:-1.75.1}"
 # renovate: datasource=github-releases depName=rhysd/actionlint
