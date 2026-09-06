@@ -58,7 +58,7 @@ readonly ACTIONLINT_VERSION="${ACTIONLINT_VERSION:-1.7.12}"
 # renovate: datasource=github-releases depName=cli/cli
 readonly GH_VERSION="${GH_VERSION:-2.100.0}"
 # renovate: datasource=github-releases depName=jesseduffield/lazygit
-readonly LAZYGIT_VERSION="${LAZYGIT_VERSION:-0.64.1}"
+readonly LAZYGIT_VERSION="${LAZYGIT_VERSION:-0.65.0}"
 # renovate: datasource=github-releases depName=gitui-org/gitui
 readonly GITUI_VERSION="${GITUI_VERSION:-0.28.1}"
 # renovate: datasource=github-releases depName=sharkdp/bat
