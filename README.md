@@ -59,7 +59,7 @@ dotfiles/
 │   ├── ghostty/config             # Ghostty terminal configuration
 │   ├── alacritty/alacritty.toml   # Alacritty terminal configuration
 │   ├── kitty/kitty.conf           # Kitty configuration (Linux desktop only)
-│   ├── mise/config.toml           # Linux CLI tool pins (user and golden image)
+│   ├── mise/config.toml           # Linux CLI tool declarations (user and golden image)
 │   ├── starship.toml              # Starship prompt configuration
 │   ├── sheldon/plugins.toml       # sheldon plugin configuration
 │   └── zellij/config.kdl          # Zellij multiplexer configuration
@@ -91,10 +91,11 @@ dotfiles/
 | Other | [GitHub CLI](https://cli.github.com/), [bat](https://github.com/sharkdp/bat), [ripgrep](https://github.com/BurntSushi/ripgrep), [procs](https://github.com/dalance/procs), [dust](https://github.com/bootandy/dust), [dua-cli](https://github.com/Byron/dua-cli), [DNSControl](https://dnscontrol.org/), [direnv](https://direnv.net/), [fzf](https://github.com/junegunn/fzf), [eza](https://github.com/eza-community/eza), [zoxide](https://github.com/ajeetdsouza/zoxide), SOPS |
 
 On Linux, APT or DNF packages are installed globally, while standalone CLI
-tools are pinned in `~/.config/mise/config.toml` and installed per user by
-default. Golden images use the same config with mise system mode under
+tools track `latest` in `~/.config/mise/config.toml` and are installed per user
+by default. Golden images use the same config with mise system mode under
 `/usr/local/share/mise`. The shell prefers user shims, allowing a local version
-to override the system baseline. macOS continues to use Homebrew.
+to override the system baseline. Run `mise upgrade` to refresh user tools;
+macOS continues to use Homebrew's rolling versions.
 
 The previous direct-download installer remains as a temporary rollback path.
 Run it explicitly from the chezmoi source directory with

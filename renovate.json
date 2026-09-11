@@ -40,27 +40,6 @@
       ],
       "extractVersionTemplate": "^v?(?<version>.+)$",
       "versioningTemplate": "semver-coerced"
-    },
-    {
-      "customType": "regex",
-      "managerFilePatterns": ["/(^|/)dot_config/mise/config\\.toml$/"],
-      "matchStrings": ["\\\"aqua:(?<depName>[^\\\"]+)\\\"\\s*=\\s*\\\"(?<currentValue>[^\\\"]+)\\\""],
-      "datasourceTemplate": "github-releases",
-      "versioningTemplate": "semver-coerced"
-    },
-    {
-      "customType": "regex",
-      "managerFilePatterns": ["/(^|/)dot_config/mise/config\\.toml$/"],
-      "matchStrings": ["\\\"github:(?<depName>[^\\\"]+)\\\"\\s*=\\s*\\\"(?<currentValue>[^\\\"]+)\\\""],
-      "datasourceTemplate": "github-releases",
-      "versioningTemplate": "semver-coerced"
-    },
-    {
-      "customType": "regex",
-      "managerFilePatterns": ["/(^|/)dot_config/mise/config\\.toml$/"],
-      "matchStrings": ["\\\"pipx:(?<depName>[^\\\"]+)\\\"\\s*=\\s*\\\"(?<currentValue>[^\\\"]+)\\\""],
-      "datasourceTemplate": "pypi",
-      "versioningTemplate": "pep440"
     }
   ]
 }
