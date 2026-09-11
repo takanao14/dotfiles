@@ -70,7 +70,7 @@ dotfiles/
 └── .chezmoiscripts/               # Setup scripts auto-executed by chezmoi
     ├── run_onchange_after_macos.sh.tmpl # macOS: apply Brewfile when it changes
     ├── run_onchange_linux0_package.sh   # Linux: sudo-only OS package installs (base deps, HashiCorp repo, kubectl, openbao, Freelens on desktops, pipx/python3.12)
-    ├── run_onchange_linux1_mise.sh.tmpl # Linux: install mise and pinned tools per user
+    ├── run_onchange_after_linux1_mise.sh.tmpl # Linux: install mise and pinned tools after config deployment
     ├── run_onchange_linux1_tool.sh      # Linux: legacy downloader (opt-in rollback)
     ├── run_onchange_linux2_terminal.sh  # Linux: install kitty (no sudo)
     ├── run_onchange_linux3_fonts.sh     # Linux: install UDEV Gothic fonts (no sudo)
