@@ -59,6 +59,7 @@ dotfiles/
 │   ├── ghostty/config             # Ghostty terminal configuration
 │   ├── alacritty/alacritty.toml   # Alacritty terminal configuration
 │   ├── kitty/kitty.conf           # Kitty configuration (Linux desktop only)
+│   ├── mise/config.toml           # Linux CLI tool pins (user and golden image)
 │   ├── starship.toml              # Starship prompt configuration
 │   ├── sheldon/plugins.toml       # sheldon plugin configuration
 │   └── zellij/config.kdl          # Zellij multiplexer configuration
@@ -69,7 +70,8 @@ dotfiles/
 └── .chezmoiscripts/               # Setup scripts auto-executed by chezmoi
     ├── run_onchange_after_macos.sh.tmpl # macOS: apply Brewfile when it changes
     ├── run_onchange_linux0_package.sh   # Linux: sudo-only OS package installs (base deps, HashiCorp repo, kubectl, openbao, Freelens on desktops, pipx/python3.12)
-    ├── run_onchange_linux1_tool.sh      # Linux: install development tools (no sudo)
+    ├── run_onchange_linux1_mise.sh.tmpl # Linux: install mise and pinned tools per user
+    ├── run_onchange_linux1_tool.sh      # Linux: legacy downloader (opt-in rollback)
     ├── run_onchange_linux2_terminal.sh  # Linux: install kitty (no sudo)
     ├── run_onchange_linux3_fonts.sh     # Linux: install UDEV Gothic fonts (no sudo)
     └── run_after_zsh_completions.sh     # Regenerate CLI-provided zsh completions
@@ -87,6 +89,17 @@ dotfiles/
 | Cloud / S3 | [AWS CLI](https://aws.amazon.com/cli/) (v2; S3-compatible storage such as SeaweedFS) |
 | Containers | [Podman](https://podman.io/) (Linux) |
 | Other | [GitHub CLI](https://cli.github.com/), [bat](https://github.com/sharkdp/bat), [ripgrep](https://github.com/BurntSushi/ripgrep), [procs](https://github.com/dalance/procs), [dust](https://github.com/bootandy/dust), [dua-cli](https://github.com/Byron/dua-cli), [DNSControl](https://dnscontrol.org/), [direnv](https://direnv.net/), [fzf](https://github.com/junegunn/fzf), [eza](https://github.com/eza-community/eza), [zoxide](https://github.com/ajeetdsouza/zoxide), SOPS |
+
+On Linux, APT or DNF packages are installed globally, while standalone CLI
+tools are pinned in `~/.config/mise/config.toml` and installed per user by
+default. Golden images use the same config with mise system mode under
+`/usr/local/share/mise`. The shell prefers user shims, allowing a local version
+to override the system baseline. macOS continues to use Homebrew.
+
+The previous direct-download installer remains as a temporary rollback path.
+Run it explicitly from the chezmoi source directory with
+`DOTFILES_LEGACY_TOOL_INSTALLER=1`; changing the variable alone does not retrigger
+an unchanged `run_onchange_` script.
 
 ## zsh Loading Strategy
 

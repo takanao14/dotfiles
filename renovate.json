@@ -18,6 +18,12 @@
       "addLabels": ["manual-review", "major-update"]
     },
     {
+      "description": "mise binary checksums must be updated with its version",
+      "matchDepNames": ["jdx/mise"],
+      "automerge": false,
+      "addLabels": ["manual-review"]
+    },
+    {
       "description": "kubectl is pinned to a minor (pkgs.k8s.io repo paths are per-minor); collapse stable releases to major.minor so patch releases never rewrite the pin",
       "matchDepNames": ["kubernetes/kubernetes"],
       "extractVersion": "^v?(?<version>\\d+\\.\\d+)\\.\\d+$"
@@ -34,6 +40,27 @@
       ],
       "extractVersionTemplate": "^v?(?<version>.+)$",
       "versioningTemplate": "semver-coerced"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/(^|/)dot_config/mise/config\\.toml$/"],
+      "matchStrings": ["\\\"aqua:(?<depName>[^\\\"]+)\\\"\\s*=\\s*\\\"(?<currentValue>[^\\\"]+)\\\""],
+      "datasourceTemplate": "github-releases",
+      "versioningTemplate": "semver-coerced"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/(^|/)dot_config/mise/config\\.toml$/"],
+      "matchStrings": ["\\\"github:(?<depName>[^\\\"]+)\\\"\\s*=\\s*\\\"(?<currentValue>[^\\\"]+)\\\""],
+      "datasourceTemplate": "github-releases",
+      "versioningTemplate": "semver-coerced"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/(^|/)dot_config/mise/config\\.toml$/"],
+      "matchStrings": ["\\\"pipx:(?<depName>[^\\\"]+)\\\"\\s*=\\s*\\\"(?<currentValue>[^\\\"]+)\\\""],
+      "datasourceTemplate": "pypi",
+      "versioningTemplate": "pep440"
     }
   ]
 }

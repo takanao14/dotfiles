@@ -3,6 +3,10 @@ set -euo pipefail
 
 [[ "$(uname)" == "Linux" ]] || exit 0
 
+# The direct-download implementation is retained temporarily as an explicit
+# rollback path while mise becomes the default Linux tool manager.
+[[ "${DOTFILES_LEGACY_TOOL_INSTALLER:-0}" == "1" ]] || exit 0
+
 # renovate: datasource=github-releases depName=junegunn/fzf
 readonly FZF_VERSION="${FZF_VERSION:-0.74.3}"
 # renovate: datasource=github-releases depName=zellij-org/zellij
