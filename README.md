@@ -68,14 +68,23 @@ dotfiles/
 │   └── kubie.yaml                 # kubie (kubectl context manager) configuration
 ├── private_dot_ssh/
 │   └── config.tmpl                # ~/.ssh/config (OrbStack include, 1Password agent)
-└── .chezmoiscripts/               # Setup scripts auto-executed by chezmoi
-    ├── run_onchange_after_macos.sh.tmpl # macOS: apply Brewfile when it changes
-    ├── run_onchange_linux0_package.sh   # Linux: sudo-only OS package installs (base deps, HashiCorp repo, kubectl, openbao, Freelens on desktops, pipx/python3.12)
-    ├── run_onchange_after_linux1_mise.sh.tmpl # Linux: install mise and pinned tools after config deployment
-    ├── run_onchange_linux2_terminal.sh  # Linux: install kitty (no sudo)
-    ├── run_onchange_linux3_fonts.sh     # Linux: install UDEV Gothic fonts (no sudo)
-    └── run_after_zsh_completions.sh     # Regenerate CLI-provided zsh completions
+└── .chezmoiscripts/               # Setup scripts auto-executed by chezmoi, in name order
+    ├── run_onchange_10_linux_package.sh # Linux: sudo-only OS package installs (base deps, HashiCorp repo, kubectl, openbao, Freelens on desktops, pipx/python3.12)
+    ├── run_onchange_20_linux_terminal.sh # Linux: install kitty (no sudo)
+    ├── run_onchange_30_linux_fonts.sh   # Linux: install UDEV Gothic fonts (no sudo)
+    ├── run_onchange_after_40_linux_mise.sh.tmpl # Linux: install mise and the pinned tools
+    ├── run_onchange_after_50_linux_ssh_agent.sh.tmpl # Linux: enable the ssh-agent user unit
+    ├── run_onchange_after_60_macos_brew.sh.tmpl # macOS: apply Brewfile when it changes
+    └── run_after_70_all_zsh_completions.sh # Regenerate CLI-provided zsh completions
 ```
+
+Scripts are named `run_[onchange_][after_]<NN>_<platform>_<topic>.sh`. chezmoi
+runs unprefixed scripts during the apply and `after_` scripts once every file is
+in place, sorting each group by the name left after the `run_`, `onchange_` and
+`after_` prefixes are stripped. `<NN>` is therefore the only ordering control,
+and it runs as a single sequence across both platforms and both phases: mise
+needs its deployed config, so it is `after_`, and completion generation must see
+the installed tools, so it is last.
 
 ## Key Tools
 
@@ -116,7 +125,7 @@ used.
 
 - If a CLI can output a zsh completion definition (for example,
   `sops completion zsh`), add it to
-  `.chezmoiscripts/run_after_zsh_completions.sh`. The script regenerates the
+  `.chezmoiscripts/run_after_70_all_zsh_completions.sh`. The script regenerates the
   corresponding `~/.zfunc/_<command>` after `chezmoi apply`, and only replaces
   the file when its content changed. Generated output is normalized for zsh
   autoloading: `#compdef` must be the first line, and a generator that defines

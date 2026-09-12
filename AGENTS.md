@@ -22,7 +22,7 @@
   `dot_zsh.d/source/`; defer nonessential integrations through
   `dot_zsh.d/defer/`.
 - Never invoke a CLI completion generator during shell startup. Add supported
-  generators to `.chezmoiscripts/run_after_zsh_completions.sh`; use committed
+  generators to `.chezmoiscripts/run_after_70_all_zsh_completions.sh`; use committed
   definitions or lazy adapters under `dot_zfunc/` when no generator exists.
 - Keep setup scripts idempotent. An unchanged `chezmoi apply` must not
   repeatedly download tools, rewrite files, or restart services.
@@ -55,3 +55,10 @@
   conventions change.
 - List repository-only files in `.chezmoiignore`.
 - Use English names and ASCII filenames.
+- Name `.chezmoiscripts/` entries
+  `run_[onchange_][after_]<NN>_<platform>_<topic>.sh[.tmpl]`, with `<platform>`
+  one of `linux`, `macos`, or `all`. chezmoi orders each phase by the name that
+  remains once the `run_`, `onchange_` and `after_` prefixes are stripped, so
+  `<NN>` is the only ordering control. Keep it a single sequence across
+  platforms and phases, in steps of ten, and renumber rather than let a number
+  disagree with the real execution order.

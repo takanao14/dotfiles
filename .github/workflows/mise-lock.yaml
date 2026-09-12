@@ -29,7 +29,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          installer=.chezmoiscripts/run_onchange_after_linux1_mise.sh.tmpl
+          installer=.chezmoiscripts/run_onchange_after_40_linux_mise.sh.tmpl
           version="$(sed -n 's/^readonly MISE_VERSION="${MISE_VERSION:-\([^}]*\)}"$/\1/p' "$installer")"
           checksum="$(awk '
             /x86_64\)/ { x64 = 1 }

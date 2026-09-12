@@ -22,7 +22,7 @@ readonly BIN_ARCH
 # TOOL_SKIP_SYSTEM_PACKAGES=1 only verifies preinstalled dependencies.
 readonly SKIP_PACKAGES="${TOOL_SKIP_SYSTEM_PACKAGES:-0}"
 
-# Share linux1's cache layout for consistent baseline deferral.
+# Shared cache layout lets a per-user install defer to the golden-image baseline.
 readonly VERSION_CACHE_DIR="${TOOL_VERSION_CACHE_DIR:-$HOME/.local/share/tool-versions}"
 readonly SYSTEM_CACHE_DIR="/usr/local/share/tool-versions"
 
@@ -154,8 +154,8 @@ gpgkey=${gpgkey_url}
 EOF
 }
 
-# Idempotency helpers (mirrored by run_onchange_linux2_terminal.sh and
-# run_onchange_linux3_fonts.sh)
+# Idempotency helpers (mirrored by run_onchange_20_linux_terminal.sh and
+# run_onchange_30_linux_fonts.sh)
 
 # True when a per-user install can defer to the system baseline.
 baseline_satisfies() {
