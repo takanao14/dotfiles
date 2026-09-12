@@ -58,6 +58,23 @@ jobs:
           "$RUNNER_TEMP/mise" lock --global --bump
           --platform linux-x64,linux-arm64
 
+      - name: Verify every configured tool remains locked
+        shell: bash
+        run: |
+          set -euo pipefail
+          config_tools="$(mktemp)"
+          locked_tools="$(mktemp)"
+          awk -F'"' '/^".*" = / { print $2 }' \
+            dot_config/mise/config.toml | sort >"$config_tools"
+          sed -n 's/^\[\[tools\."\(.*\)"\]\]$/\1/p' \
+            dot_config/mise/mise.lock | sort >"$locked_tools"
+          missing="$(comm -23 "$config_tools" "$locked_tools")"
+          if [[ -n "$missing" ]]; then
+            echo "Lock refresh omitted configured tools:" >&2
+            echo "$missing" >&2
+            exit 1
+          fi
+
       - name: Commit the refreshed lockfile
         shell: bash
         run: |
