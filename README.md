@@ -72,7 +72,6 @@ dotfiles/
     ├── run_onchange_after_macos.sh.tmpl # macOS: apply Brewfile when it changes
     ├── run_onchange_linux0_package.sh   # Linux: sudo-only OS package installs (base deps, HashiCorp repo, kubectl, openbao, Freelens on desktops, pipx/python3.12)
     ├── run_onchange_after_linux1_mise.sh.tmpl # Linux: install mise and pinned tools after config deployment
-    ├── run_onchange_linux1_tool.sh      # Linux: legacy downloader (opt-in rollback)
     ├── run_onchange_linux2_terminal.sh  # Linux: install kitty (no sudo)
     ├── run_onchange_linux3_fonts.sh     # Linux: install UDEV Gothic fonts (no sudo)
     └── run_after_zsh_completions.sh     # Regenerate CLI-provided zsh completions
@@ -101,11 +100,6 @@ a project mise config to override the system baseline. Renovate updates the
 configured versions; the `mise-lock` GitHub Actions workflow refreshes the
 lockfile on the same branch. macOS continues to use Homebrew's rolling package
 model.
-
-The previous direct-download installer remains as a temporary rollback path.
-Run it explicitly from the chezmoi source directory with
-`DOTFILES_LEGACY_TOOL_INSTALLER=1`; changing the variable alone does not retrigger
-an unchanged `run_onchange_` script.
 
 ## zsh Loading Strategy
 
@@ -138,9 +132,9 @@ used.
 
 The post-apply script currently generates completions for Sheldon, Starship,
 Zellij, Helm, Argo CD, Kubie, K9s, Helmfile, k0sctl, Cilium, GitHub CLI, bat,
-ripgrep, procs, SOPS, DNSControl, Rclone, Ansible, and ansible-lint. The Linux
-installer exposes Ansible's `register-python-argcomplete` dependency solely for
-this generation step.
+ripgrep, procs, SOPS, DNSControl, Rclone, Ansible, and ansible-lint. `argcomplete`
+is declared in the mise config so `register-python-argcomplete` exists for the
+Ansible generators.
 
 Static definitions are committed for actionlint, age/age-keygen,
 ansible-playbook, direnv, and eza. AWS CLI, Terraform, OpenTofu, Terragrunt,

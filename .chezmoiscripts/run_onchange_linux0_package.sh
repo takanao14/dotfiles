@@ -154,7 +154,8 @@ gpgkey=${gpgkey_url}
 EOF
 }
 
-# Idempotency helpers (mirrors run_onchange_linux1_tool.sh)
+# Idempotency helpers (mirrored by run_onchange_linux2_terminal.sh and
+# run_onchange_linux3_fonts.sh)
 
 # True when a per-user install can defer to the system baseline.
 baseline_satisfies() {
@@ -325,7 +326,7 @@ install_freelens() {
     esac
 }
 
-# pipx toolchain bootstrap (consumed by the ansible installs in linux1)
+# pipx toolchain bootstrap (consumed by the mise pipx backend)
 
 # Install Python 3.12 when the distro default cannot run ansible-core.
 have_python312() {
