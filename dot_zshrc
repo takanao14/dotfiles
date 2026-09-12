@@ -4,6 +4,20 @@ if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
   export PATH="$HOME/.local/bin:$PATH"
 fi
 
+if [[ "$(uname)" == "Linux" ]]; then
+  # Add system first because each entry is prepended; user shims must win.
+  for _mise_path in /usr/local/share/mise/shims "$HOME/.local/share/mise/shims"; do
+    if [[ -d "$_mise_path" && ":$PATH:" != *":$_mise_path:"* ]]; then
+      export PATH="$_mise_path:$PATH"
+    fi
+  done
+  unset _mise_path
+
+  if [[ -z "${HELM_PLUGINS:-}" && -d /usr/local/share/helm/plugins ]]; then
+    export HELM_PLUGINS=/usr/local/share/helm/plugins
+  fi
+fi
+
 if command -v sheldon &> /dev/null; then
   eval "$(sheldon source)"
 fi

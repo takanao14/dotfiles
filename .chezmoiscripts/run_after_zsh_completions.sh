@@ -1,6 +1,16 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Chezmoi scripts run in separate processes, so the mise installer cannot
+# update this script's PATH. Prefer per-user tools over a golden-image baseline.
+for mise_shims in /usr/local/share/mise/shims "$HOME/.local/share/mise/shims"; do
+    if [[ -d "$mise_shims" && ":$PATH:" != *":$mise_shims:"* ]]; then
+        PATH="$mise_shims:$PATH"
+    fi
+done
+export PATH
+unset mise_shims
+
 readonly ZFUNC_DIR="$HOME/.zfunc"
 TMP_DIR="$(mktemp -d)"
 readonly TMP_DIR
