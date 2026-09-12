@@ -520,10 +520,10 @@ url = "https://github.com/DNSControl/dnscontrol/releases/download/v5.0.4/dnscont
 url_api = "https://api.github.com/repos/DNSControl/dnscontrol/releases/assets/550977987"
 provenance = "github-attestations"
 
-[[tools."pipx:ansible-core"]]
-version = "2.21.4"
-backend = "pipx:ansible-core"
-specifiers = ["2.21.4"]
+[[tools."pipx:ansible"]]
+version = "14.4.0"
+backend = "pipx:ansible"
+specifiers = ["14.4.0"]
 
 [[tools."pipx:ansible-lint"]]
 version = "26.8.0"

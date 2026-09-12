@@ -37,6 +37,8 @@ lockfile = true
 "aqua:aws/aws-cli" = "2.36.44"
 "aqua:rclone/rclone" = "1.75.1"
 "aqua:rhysd/actionlint" = "1.7.12"
-"pipx:ansible-core" = "2.21.4"
+# The ansible distribution ships no console scripts of its own; --include-deps
+# exposes ansible-playbook and friends from the bundled ansible-core.
+"pipx:ansible" = { version = "14.4.0", uvx = false, pipx_args = "--include-deps" }
 "pipx:ansible-lint" = "26.8.0"
 "pipx:argcomplete" = "3.7.2"
