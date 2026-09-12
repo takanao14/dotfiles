@@ -525,6 +525,15 @@ version = "14.4.0"
 backend = "pipx:ansible"
 specifiers = ["14.4.0"]
 
+[[tools."pipx:ansible"]]
+version = "14.4.0"
+backend = "pipx:ansible"
+specifiers = ["14.4.0"]
+
+[tools."pipx:ansible".options]
+pipx_args = "--include-deps"
+uvx = "false"
+
 [[tools."pipx:ansible-lint"]]
 version = "26.8.0"
 backend = "pipx:ansible-lint"
