@@ -67,7 +67,7 @@ mise_version_matches() {
 install_mise() {
     local tmp actual
     tmp="$(mktemp)"
-    trap 'rm -f "$tmp"' EXIT
+    trap 'rm -f "${tmp:-}"' EXIT
     curl -fsSL "$MISE_URL" -o "$tmp"
     actual="$(sha256sum "$tmp" | awk '{print $1}')"
     if [[ "$actual" != "$MISE_SHA256" ]]; then
