@@ -2,6 +2,7 @@
 set -euo pipefail
 
 # mise-config-sha256: {{ include "dot_config/mise/config.toml" | sha256sum }}
+# mise-lock-sha256: {{ include "dot_config/mise/mise.lock" | sha256sum }}
 
 [[ "$(uname)" == "Linux" ]] || exit 0
 
@@ -84,10 +85,10 @@ if [[ "$MISE_INSTALL_SCOPE" == "system" ]]; then
     export MISE_SYSTEM_DATA_DIR
 fi
 if [[ -n "$MISE_SYSTEM_FLAG" ]]; then
-    "$MISE_BIN" install --yes "$MISE_SYSTEM_FLAG"
+    "$MISE_BIN" install --yes --locked "$MISE_SYSTEM_FLAG"
     "$MISE_BIN" reshim "$MISE_SYSTEM_FLAG"
 else
-    "$MISE_BIN" install --yes
+    "$MISE_BIN" install --yes --locked
     "$MISE_BIN" reshim
 fi
 

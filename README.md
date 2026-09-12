@@ -60,6 +60,7 @@ dotfiles/
 │   ├── alacritty/alacritty.toml   # Alacritty terminal configuration
 │   ├── kitty/kitty.conf           # Kitty configuration (Linux desktop only)
 │   ├── mise/config.toml           # Linux CLI tool declarations (user and golden image)
+│   ├── mise/mise.lock             # Resolved Linux artifacts for x64 and arm64
 │   ├── starship.toml              # Starship prompt configuration
 │   ├── sheldon/plugins.toml       # sheldon plugin configuration
 │   └── zellij/config.kdl          # Zellij multiplexer configuration
@@ -91,11 +92,15 @@ dotfiles/
 | Other | [GitHub CLI](https://cli.github.com/), [bat](https://github.com/sharkdp/bat), [ripgrep](https://github.com/BurntSushi/ripgrep), [procs](https://github.com/dalance/procs), [dust](https://github.com/bootandy/dust), [dua-cli](https://github.com/Byron/dua-cli), [DNSControl](https://dnscontrol.org/), [direnv](https://direnv.net/), [fzf](https://github.com/junegunn/fzf), [eza](https://github.com/eza-community/eza), [zoxide](https://github.com/ajeetdsouza/zoxide), SOPS |
 
 On Linux, APT or DNF packages are installed globally, while standalone CLI
-tools track `latest` in `~/.config/mise/config.toml` and are installed per user
-by default. Golden images use the same config with mise system mode under
-`/usr/local/share/mise`. The shell prefers user shims, allowing a local version
-to override the system baseline. Run `mise upgrade` to refresh user tools;
-macOS continues to use Homebrew's rolling versions.
+tools use versions pinned in `~/.config/mise/config.toml` and are installed per
+user by default. `mise.lock` resolves those versions to checksummed Linux x64
+and arm64 artifacts, and setup uses `mise install --locked` to avoid live
+release resolution. Golden images use the same config and lockfile with mise
+system mode under `/usr/local/share/mise`. The shell prefers user shims, allowing
+a project mise config to override the system baseline. Renovate updates the
+configured versions; the `mise-lock` GitHub Actions workflow refreshes the
+lockfile on the same branch. macOS continues to use Homebrew's rolling package
+model.
 
 The previous direct-download installer remains as a temporary rollback path.
 Run it explicitly from the chezmoi source directory with
