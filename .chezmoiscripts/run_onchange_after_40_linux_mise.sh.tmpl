@@ -60,14 +60,28 @@ esac
 readonly MISE_BIN="$MISE_BIN_DIR/mise"
 readonly MISE_URL="https://github.com/jdx/mise/releases/download/v${MISE_VERSION}/mise-v${MISE_VERSION}-linux-${MISE_ARCH}"
 
+TMP_PATHS=()
+
+cleanup_tmp_paths() {
+    local path
+
+    for path in "${TMP_PATHS[@]}"; do
+        rm -f "$path"
+    done
+}
+
+trap cleanup_tmp_paths EXIT
+
 mise_version_matches() {
     [[ -x "$MISE_BIN" ]] && "$MISE_BIN" --version 2>/dev/null | grep -q "^${MISE_VERSION} "
 }
 
 install_mise() {
-    local tmp actual
+    local tmp
+    local actual
+
     tmp="$(mktemp)"
-    trap 'rm -f "${tmp:-}"' EXIT
+    TMP_PATHS+=("$tmp")
     curl -fsSL "$MISE_URL" -o "$tmp"
     actual="$(sha256sum "$tmp" | awk '{print $1}')"
     if [[ "$actual" != "$MISE_SHA256" ]]; then
