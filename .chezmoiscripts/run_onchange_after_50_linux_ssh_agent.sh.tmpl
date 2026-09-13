@@ -3,7 +3,7 @@
 # ssh-agent.service hash: {{ include "dot_config/systemd/user/ssh-agent.service" | sha256sum }}
 set -euo pipefail
 
-[[ "$(uname)" == "Linux" ]] || exit 0
+[[ "$(uname -s)" == "Linux" ]] || exit 0
 
 # A user systemd instance needs a session (pam_systemd); when chezmoi runs
 # outside one (e.g. cloud-init, cron) skip instead of failing the apply.

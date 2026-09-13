@@ -4,7 +4,7 @@ set -euo pipefail
 # mise-config-sha256: {{ include "dot_config/mise/config.toml" | sha256sum }}
 # mise-lock-sha256: {{ include "dot_config/mise/mise.lock" | sha256sum }}
 
-[[ "$(uname)" == "Linux" ]] || exit 0
+[[ "$(uname -s)" == "Linux" ]] || exit 0
 
 # renovate: datasource=github-releases depName=jdx/mise
 readonly MISE_VERSION="${MISE_VERSION:-2026.9.5}"

@@ -3,19 +3,19 @@ set -euo pipefail
 
 # Brewfile hash: {{ include "dot_Brewfile" | sha256sum }}
 
-[[ "$(uname)" == "Darwin" ]] || exit 0
+[[ "$(uname -s)" == "Darwin" ]] || exit 0
 
-echo "macos script"
+printf '[INFO] Applying global Brewfile\n'
 
-if ! command -v brew &> /dev/null; then
-    echo "Homebrew is not installed; skipping brew bundle"
+if ! command -v brew >/dev/null 2>&1; then
+    printf '[WARN] Homebrew is not installed; skipping brew bundle\n'
     exit 0
 fi
 
 brew bundle --global
 
 # Brewfile cannot install plugins; the git source lacks Helm 4 verification.
-if command -v helm &> /dev/null && ! helm plugin list 2>/dev/null | grep -q "^diff"; then
-    echo "Installing helm-diff plugin..."
+if command -v helm >/dev/null 2>&1 && ! helm plugin list 2>/dev/null | grep -q "^diff"; then
+    printf '[INFO] Installing helm-diff plugin...\n'
     helm plugin install --verify=false https://github.com/databus23/helm-diff
 fi
