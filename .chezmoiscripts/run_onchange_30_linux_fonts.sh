@@ -42,7 +42,8 @@ trap cleanup_tmp_paths EXIT
 # Helpers
 
 make_tmp_dir() {
-    local __var_name="$1" path
+    local __var_name="$1"
+    local path
     path="$(mktemp -d)"
     TMP_PATHS+=("$path")
     printf -v "$__var_name" '%s' "$path"
@@ -146,7 +147,8 @@ rebuild_font_cache() {
 # True when a system-wide baseline already provides KEY at VERSION. Only
 # meaningful for a per-user install (our cache dir is not the system one).
 baseline_satisfies() {
-    local key="$1" version="$2"
+    local key="$1"
+    local version="$2"
     [[ "$VERSION_CACHE_DIR" != "$SYSTEM_CACHE_DIR" ]] || return 1
     [[ "$(cat "${SYSTEM_CACHE_DIR}/${key}" 2>/dev/null)" == "$version" ]]
 }

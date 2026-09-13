@@ -41,6 +41,7 @@ log_error() {
 }
 
 is_desktop_machine() {
+    local skip_msg="${1:-}"
     local profile="${TOOL_MACHINE_PROFILE:-auto}"
 
     case "$profile" in
@@ -50,6 +51,7 @@ is_desktop_machine() {
             ;;
         server)
             log_info "Server machine profile selected"
+            [[ -n "$skip_msg" ]] && log_info "$skip_msg"
             return 1
             ;;
         auto) ;;
@@ -69,6 +71,7 @@ is_desktop_machine() {
                 ;;
             server)
                 log_info "Server machine profile read from ${profile_file}"
+                [[ -n "$skip_msg" ]] && log_info "$skip_msg"
                 return 1
                 ;;
             *)
@@ -86,6 +89,7 @@ is_desktop_machine() {
     fi
 
     log_warn "No explicit machine profile or image marker; defaulting to server"
+    [[ -n "$skip_msg" ]] && log_warn "$skip_msg"
     return 1
 }
 
@@ -109,7 +113,8 @@ cleanup_tmp_paths() {
 trap cleanup_tmp_paths EXIT
 
 make_tmp_dir() {
-    local __var_name="$1" path
+    local __var_name="$1"
+    local path
     path="$(mktemp -d)"
     TMP_PATHS+=("$path")
     printf -v "$__var_name" '%s' "$path"
@@ -162,7 +167,8 @@ EOF
 
 # True when a per-user install can defer to the system baseline.
 baseline_satisfies() {
-    local key="$1" version="$2"
+    local key="$1"
+    local version="$2"
     [[ "$VERSION_CACHE_DIR" != "$SYSTEM_CACHE_DIR" ]] || return 1
     [[ "$(cat "${SYSTEM_CACHE_DIR}/${key}" 2>/dev/null)" == "$version" ]]
 }
@@ -431,10 +437,8 @@ main() {
     install_if_needed "kubectl" "$KUBECTL_VERSION" install_kubectl
     install_if_needed "bao"     "$OPENBAO_VERSION" install_openbao
 
-    if is_desktop_machine; then
+    if is_desktop_machine "Skipping Freelens installation"; then
         install_freelens
-    else
-        log_info "Skipping Freelens installation on server profile"
     fi
 
     ensure_pipx_toolchain
