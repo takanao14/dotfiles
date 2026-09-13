@@ -7,7 +7,7 @@ set -euo pipefail
 
 # A user systemd instance needs a session (pam_systemd); when chezmoi runs
 # outside one (e.g. cloud-init, cron) skip instead of failing the apply.
-if ! systemctl --user show-environment &>/dev/null; then
+if ! systemctl --user show-environment >/dev/null 2>&1; then
     echo "[WARN] systemd user instance unavailable; run manually later:"
     echo "[WARN]   systemctl --user enable --now ssh-agent.service"
     exit 0

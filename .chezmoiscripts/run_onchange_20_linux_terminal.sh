@@ -19,14 +19,17 @@ readonly KITTY_APP="${KITTY_PREFIX}/kitty.app"
 
 # Logging
 
-readonly RED='\033[0;31m'
-readonly GREEN='\033[0;32m'
-readonly YELLOW='\033[1;33m'
-readonly NC='\033[0m'
+log_info() {
+    printf '[INFO] %s\n' "$*"
+}
 
-log_info()  { echo -e "${GREEN}[INFO]${NC} $*"; }
-log_warn()  { echo -e "${YELLOW}[WARN]${NC} $*"; }
-log_error() { echo -e "${RED}[ERROR]${NC} $*" >&2; }
+log_warn() {
+    printf '[WARN] %s\n' "$*"
+}
+
+log_error() {
+    printf '[ERROR] %s\n' "$*" >&2
+}
 
 TMP_PATHS=()
 
@@ -158,13 +161,13 @@ main() {
 
     is_desktop_machine "Skipping kitty installation" || return 0
 
-    if baseline_satisfies "kitty" "$KITTY_VERSION" && command -v kitty &>/dev/null; then
+    if baseline_satisfies "kitty" "$KITTY_VERSION" && command -v kitty >/dev/null 2>&1; then
         log_info "kitty ${KITTY_VERSION} provided system-wide, skipping per-user install"
         exit 0
     fi
 
     local cache_file="$VERSION_CACHE_DIR/kitty"
-    if command -v kitty &>/dev/null && \
+    if command -v kitty >/dev/null 2>&1 && \
        [[ "$(cat "$cache_file" 2>/dev/null)" == "$KITTY_VERSION" ]]; then
         log_info "kitty ${KITTY_VERSION} is already up to date, skipping"
         exit 0

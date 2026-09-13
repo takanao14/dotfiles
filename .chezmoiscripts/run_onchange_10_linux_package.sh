@@ -28,14 +28,17 @@ readonly SYSTEM_CACHE_DIR="/usr/local/share/tool-versions"
 
 # Logging
 
-readonly RED='\033[0;31m'
-readonly GREEN='\033[0;32m'
-readonly YELLOW='\033[1;33m'
-readonly NC='\033[0m'
+log_info() {
+    printf '[INFO] %s\n' "$*"
+}
 
-log_info()  { echo -e "${GREEN}[INFO]${NC} $*"; }
-log_warn()  { echo -e "${YELLOW}[WARN]${NC} $*"; }
-log_error() { echo -e "${RED}[ERROR]${NC} $*" >&2; }
+log_warn() {
+    printf '[WARN] %s\n' "$*"
+}
+
+log_error() {
+    printf '[ERROR] %s\n' "$*" >&2
+}
 
 is_desktop_machine() {
     local profile="${TOOL_MACHINE_PROFILE:-auto}"
@@ -166,12 +169,12 @@ baseline_satisfies() {
 
 install_if_needed() {
     local cmd="$1" version="$2" install_func="$3"
-    if baseline_satisfies "$cmd" "$version" && command -v "$cmd" &>/dev/null; then
+    if baseline_satisfies "$cmd" "$version" && command -v "$cmd" >/dev/null 2>&1; then
         log_info "${cmd} ${version} provided system-wide, skipping reinstall"
         return
     fi
     local cache_file="${VERSION_CACHE_DIR}/${cmd}"
-    if ! command -v "$cmd" &>/dev/null || [[ "$(cat "$cache_file" 2>/dev/null)" != "$version" ]]; then
+    if ! command -v "$cmd" >/dev/null 2>&1 || [[ "$(cat "$cache_file" 2>/dev/null)" != "$version" ]]; then
         "$install_func"
         mkdir -p "$VERSION_CACHE_DIR"
         echo "$version" > "$cache_file"
@@ -330,13 +333,13 @@ install_freelens() {
 
 # Install Python 3.12 when the distro default cannot run ansible-core.
 have_python312() {
-    command -v python3.12 &>/dev/null && return 0
-    command -v python3 &>/dev/null && \
+    command -v python3.12 >/dev/null 2>&1 && return 0
+    command -v python3 >/dev/null 2>&1 && \
         python3 -c 'import sys; raise SystemExit(0 if sys.version_info[:2] >= (3, 12) else 1)' 2>/dev/null
 }
 
 ensure_pipx_toolchain() {
-    if ! command -v pipx &>/dev/null; then
+    if ! command -v pipx >/dev/null 2>&1; then
         log_info "Installing pipx..."
         update_package_cache
         case "$OS_ID" in
@@ -382,11 +385,11 @@ preflight_packages() {
     # Check base and package-managed tool dependencies.
     for cmd in curl tar gzip unzip xz gpg git file find make sha256sum install \
                terraform packer vault kubectl bao pipx mosh tmux podman zsh; do
-        command -v "$cmd" &>/dev/null || missing+=("$cmd")
+        command -v "$cmd" >/dev/null 2>&1 || missing+=("$cmd")
     done
     if is_desktop_machine; then
         for cmd in fc-cache fc-list; do
-            command -v "$cmd" &>/dev/null || missing+=("$cmd")
+            command -v "$cmd" >/dev/null 2>&1 || missing+=("$cmd")
         done
         [[ "$(freelens_installed_version)" == "$FREELENS_VERSION" ]] || \
             missing+=("freelens=${FREELENS_VERSION}")
@@ -419,7 +422,9 @@ main() {
 
     install_base_dependencies
 
-    if ! command -v terraform &>/dev/null || ! command -v packer &>/dev/null || ! command -v vault &>/dev/null; then
+    if ! command -v terraform >/dev/null 2>&1 || \
+       ! command -v packer >/dev/null 2>&1 || \
+       ! command -v vault >/dev/null 2>&1; then
         install_hashicorp_tools
     fi
 
@@ -437,4 +442,4 @@ main() {
     log_info "=== Package installation completed ==="
 }
 
-main
+main "$@"

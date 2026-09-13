@@ -16,14 +16,17 @@ readonly DOWNLOAD_URL="https://github.com/yuru7/udev-gothic/releases/download/v$
 
 # Logging
 
-readonly RED='\033[0;31m'
-readonly GREEN='\033[0;32m'
-readonly YELLOW='\033[1;33m'
-readonly NC='\033[0m'
+log_info() {
+    printf '[INFO] %s\n' "$*"
+}
 
-log_info()  { echo -e "${GREEN}[INFO]${NC} $*"; }
-log_warn()  { echo -e "${YELLOW}[WARN]${NC} $*"; }
-log_error() { echo -e "${RED}[ERROR]${NC} $*" >&2; }
+log_warn() {
+    printf '[WARN] %s\n' "$*"
+}
+
+log_error() {
+    printf '[ERROR] %s\n' "$*" >&2
+}
 
 TMP_PATHS=()
 
@@ -103,7 +106,7 @@ is_desktop_machine() {
 check_dependencies() {
     local missing_deps=()
     for cmd in curl unzip fc-cache fc-list; do
-        if ! command -v "$cmd" &>/dev/null; then
+        if ! command -v "$cmd" >/dev/null 2>&1; then
             missing_deps+=("$cmd")
         fi
     done
