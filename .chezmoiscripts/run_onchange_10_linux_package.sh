@@ -130,6 +130,26 @@ update_package_cache() {
     esac
 }
 
+refresh_hashicorp_apt_key_if_configured() {
+    [[ "$OS_ID" == "ubuntu" || "$OS_ID" == "debian" ]] || return 0
+
+    local source_file
+    for source_file in \
+        /etc/apt/sources.list \
+        /etc/apt/sources.list.d/*.list \
+        /etc/apt/sources.list.d/*.sources; do
+        [[ -r "$source_file" ]] || continue
+        grep -qF 'apt.releases.hashicorp.com' "$source_file" || continue
+
+        log_info "Refreshing HashiCorp APT signing key..."
+        curl -fsSL https://apt.releases.hashicorp.com/gpg \
+            | gpg --dearmor \
+            | sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg > /dev/null
+        sudo chmod 644 /usr/share/keyrings/hashicorp-archive-keyring.gpg
+        return 0
+    done
+}
+
 install_packages() {
     case "$OS_ID" in
         ubuntu|debian) sudo apt-get install -y "$@" ;;
@@ -426,6 +446,8 @@ main() {
         exit 1
     fi
 
+    # Repair a rotated key before any apt operation uses an existing repo.
+    refresh_hashicorp_apt_key_if_configured
     install_base_dependencies
 
     if ! command -v terraform >/dev/null 2>&1 || \

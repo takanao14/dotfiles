@@ -50,6 +50,32 @@ detect_linux_distribution() {
     fi
 }
 
+refresh_hashicorp_apt_key_if_configured() {
+    local distro="$1"
+    [[ "$distro" == "ubuntu" || "$distro" == "debian" ]] || return 0
+
+    local source_file
+    for source_file in \
+        /etc/apt/sources.list \
+        /etc/apt/sources.list.d/*.list \
+        /etc/apt/sources.list.d/*.sources; do
+        [[ -r "$source_file" ]] || continue
+        grep -qF 'apt.releases.hashicorp.com' "$source_file" || continue
+
+        if ! command -v gpg >/dev/null 2>&1; then
+            printf 'Cannot refresh the configured HashiCorp APT key: gpg is not installed.\n' >&2
+            exit 1
+        fi
+
+        echo "Refresh HashiCorp APT signing key"
+        curl -fsSL https://apt.releases.hashicorp.com/gpg \
+            | gpg --dearmor \
+            | sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg >/dev/null
+        sudo chmod 644 /usr/share/keyrings/hashicorp-archive-keyring.gpg
+        return 0
+    done
+}
+
 install_linux_bootstrap_packages() {
     local distro="$1"
     local command_name
@@ -90,6 +116,8 @@ initialize_linux() {
             ;;
     esac
 
+    # A rotated third-party key must be repaired before the first apt update.
+    refresh_hashicorp_apt_key_if_configured "$distro"
     install_linux_bootstrap_packages "$distro"
 
     if ! command -v chezmoi >/dev/null 2>&1; then
