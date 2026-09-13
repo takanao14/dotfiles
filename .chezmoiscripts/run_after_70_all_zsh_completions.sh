@@ -74,6 +74,7 @@ generate_completion sops       _sops       _cli_zsh_autocomplete sops completion
 generate_completion dnscontrol _dnscontrol '' dnscontrol shell-completion zsh
 generate_completion rclone     _rclone     '' rclone completion zsh -
 generate_completion register-python-argcomplete _ansible          '' register-python-argcomplete --shell zsh ansible
+generate_completion register-python-argcomplete _ansible-playbook '' register-python-argcomplete --shell zsh ansible-playbook
 generate_completion register-python-argcomplete _ansible-lint     '' register-python-argcomplete --shell zsh ansible-lint
 
 # compinit's dump does not track content changes to individual completion
