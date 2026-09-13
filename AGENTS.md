@@ -10,7 +10,12 @@
 ## Development Rules
 
 - Communicate with the user in Japanese. Use English in code, comments, file
-  names, commit messages, and documentation.
+  names, and documentation; keep file names ASCII.
+- Write commit messages in English using Conventional Commits.
+- Prefer the lowercase types `feat`, `fix`, `docs`, `refactor`, `test`,
+  `chore`, `ci`, `build`, `perf`, and `revert`.
+- Introduce another type only when none of the preferred types describes the
+  change clearly.
 - Edit chezmoi source files, not rendered files in the home directory.
 - Prefer plain source files. Use chezmoi templates only for OS, host,
   architecture, or secret-specific content; use runtime guards for simple
@@ -54,7 +59,6 @@
 - Update `README.md` and this file when repository structure or operating
   conventions change.
 - List repository-only files in `.chezmoiignore`.
-- Use English names and ASCII filenames.
 - Name `.chezmoiscripts/` entries
   `run_[onchange_][after_]<NN>_<platform>_<topic>.sh[.tmpl]`, with `<platform>`
   one of `linux`, `macos`, or `all`. chezmoi orders each phase by the name that
