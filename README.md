@@ -14,7 +14,7 @@ curl -fsSL https://raw.githubusercontent.com/takanao14/dotfiles/main/bootstrap.s
 
 `bootstrap.sh` automatically runs the following:
 
-1. Install Homebrew (macOS) / zsh and git (Linux)
+1. Install Homebrew (macOS) / git, make, and zsh (Linux)
 2. Install chezmoi
 3. Apply this repository via `chezmoi init --apply takanao14/dotfiles`
 
@@ -32,18 +32,26 @@ dotfiles/
 ├── .chezmoi.toml.tmpl             # chezmoi data (1Password detection, prompted email)
 ├── dot_zsh.d/
 │   ├── source/                    # Loaded immediately at zsh startup
+│   │   ├── cargo.zsh              # Cargo and Homebrew rustup paths
 │   │   ├── editor.zsh             # Editor environment variable
+│   │   ├── empty_null.zsh          # Sheldon source placeholder
+│   │   ├── env.zsh                # ~/.env loader
 │   │   ├── fpath.zsh              # Completion path configuration
+│   │   ├── go.zsh                 # Go installation path
 │   │   ├── ssh.zsh                # SSH TERM fallback for kitty
+│   │   ├── ssh_agent.zsh          # Forwarded/local SSH agent selection
 │   │   └── starship.zsh           # Starship prompt initialization
 │   └── defer/                     # Lazily loaded via zsh-defer
 │       ├── alias.zsh              # Aliases (kubectl, etc.)
 │       ├── direnv.zsh             # direnv hook
-│       ├── zoxide.zsh             # zoxide initialization
-│       ├── sops.zsh               # SOPS age key environment variable
-│       ├── orbstack.zsh           # OrbStack shell init (Linux VMs)
+│       ├── empty_null.zsh          # Sheldon defer placeholder
+│       ├── idea.zsh               # IntelliJ IDEA command path
 │       ├── krew.zsh               # kubectl krew path
-│       └── sshr.zsh               # known_hosts cleanup helper
+│       ├── opencode.zsh            # OpenCode command path
+│       ├── orbstack.zsh           # OrbStack shell init (Linux VMs)
+│       ├── sops.zsh               # SOPS age key environment variable
+│       ├── sshr.zsh               # known_hosts cleanup helper
+│       └── zoxide.zsh             # zoxide initialization
 ├── dot_zfunc/                      # Committed zsh completions and lazy adapters
 │   ├── _actionlint                 # Static actionlint completion
 │   ├── _age                        # Static age / age-keygen completion
@@ -61,6 +69,7 @@ dotfiles/
 │   ├── kitty/kitty.conf           # Kitty configuration (Linux desktop only)
 │   ├── mise/config.toml           # Linux CLI tool declarations (user and golden image)
 │   ├── mise/mise.lock             # Resolved Linux artifacts for x64 and arm64
+│   ├── systemd/user/ssh-agent.service # Linux local SSH agent fallback
 │   ├── starship.toml              # Starship prompt configuration
 │   ├── sheldon/plugins.toml       # sheldon plugin configuration
 │   └── zellij/config.kdl          # Zellij multiplexer configuration
@@ -91,7 +100,7 @@ the installed tools, so it is last.
 | Category | Tools |
 |----------|-------|
 | Shell | zsh, [sheldon](https://github.com/rossmacarthur/sheldon), [starship](https://starship.rs/) |
-| Terminal | [Ghostty](https://ghostty.org/) (macOS), [Alacritty](https://alacritty.org/) / [Kitty](https://sw.kovidgoyal.net/kitty/) (Linux) |
+| Terminal | [Ghostty](https://ghostty.org/) (macOS), [Kitty](https://sw.kovidgoyal.net/kitty/) (Linux desktop), [Alacritty](https://alacritty.org/) (configuration only) |
 | Multiplexer | [Zellij](https://zellij.dev/), tmux |
 | Kubernetes | kubectl, [Freelens](https://freelens.app/) (desktop machines), [Argo CD CLI](https://argo-cd.readthedocs.io/en/stable/user-guide/commands/argocd/), [kubie](https://github.com/sbstp/kubie), [k9s](https://k9scli.io/), [KDash](https://kdash-rs.github.io/), helm, helmfile, krew |
 | IaC | Terraform, Packer, Vault, Terragrunt, [Ansible](https://www.ansible.com/), [ansible-lint](https://ansible.readthedocs.io/projects/lint/) |
@@ -109,6 +118,9 @@ a project mise config to override the system baseline. Renovate updates the
 configured versions; the `mise-lock` GitHub Actions workflow refreshes the
 lockfile on the same branch. macOS continues to use Homebrew's rolling package
 model.
+
+macOS installs UDEV Gothic NF through the Brewfile, while Linux desktop
+machines install the same font through the font setup script.
 
 ## zsh Loading Strategy
 
@@ -141,13 +153,13 @@ used.
 
 The post-apply script currently generates completions for Sheldon, Starship,
 Zellij, Helm, Argo CD, Kubie, K9s, Helmfile, k0sctl, Cilium, GitHub CLI, bat,
-ripgrep, procs, SOPS, DNSControl, Rclone, Ansible, and ansible-lint. `argcomplete`
-is declared in the mise config so `register-python-argcomplete` exists for the
-Ansible generators.
+ripgrep, procs, SOPS, DNSControl, Rclone, Ansible, ansible-playbook, and
+ansible-lint. `argcomplete` is declared in the mise config so
+`register-python-argcomplete` exists for the Ansible generators.
 
 Static definitions are committed for actionlint, age/age-keygen,
-ansible-playbook, direnv, and eza. AWS CLI, Terraform, OpenTofu, Terragrunt,
-and OpenBao use lazy adapters.
+direnv, and eza. AWS CLI, Terraform, OpenTofu, Terragrunt, and OpenBao use lazy
+adapters.
 fzf completion selection is already provided by the Sheldon-managed fzf-tab
 plugin. Krew has no separate completion generator; kubectl handles discovery of
 the `krew` plugin itself.
