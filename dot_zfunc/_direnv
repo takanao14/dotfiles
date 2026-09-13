@@ -25,7 +25,7 @@
 # Description
 # -----------
 #
-#  Completion script for direnv 2.34.0 (https://direnv.net/)
+#  Completion script for direnv 2.37.1 (https://direnv.net/)
 #
 # ------------------------------------------------------------------------------
 # Authors
@@ -51,6 +51,7 @@ _direnv_commands() {
     "fetchurl:Fetches a given URL into direnv's CAS"
     'help:shows this help'
     'hook:Used to setup the shell hook'
+    'log:Logs a message'
     'prune:removes old allowed files'
     'reload:triggers an env reload'
     'status:prints some debug status information'
@@ -73,7 +74,7 @@ _direnv() {
   case $state in
     (command_args)
       case $words[1] in
-        (allow|permit|grant|block|deny|revoke|edit)
+        (allow|permit|grant|block|deny|disallow|revoke|edit)
           _arguments \
             '1:rc file:_files' \
             && ret=0
@@ -93,6 +94,13 @@ _direnv() {
         (hook)
           _arguments \
             '1:shell:(bash zsh fish tcsh elvish)' \
+            && ret=0
+          ;;
+        (log)
+          _arguments \
+            '(--error)--status[log a status message]' \
+            '(--status)--error[log an error message]' \
+            '1:message' \
             && ret=0
           ;;
         (fetchurl)
