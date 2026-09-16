@@ -16,11 +16,11 @@ readonly MISE_INSTALL_SCOPE="${MISE_INSTALL_SCOPE:-user}"
 case "$(uname -m)" in
     x86_64)
         readonly MISE_ARCH="x64"
-        readonly MISE_SHA256="d71e94e1ed59d4d0ca4ac847fa321d6d6615a8e613e9b468c9fb39f0dddd06d5"
+        readonly MISE_SHA256="32f644d8c291bb182f702c6d2b0dda9f8b01441e940d74d328aad5f08446b2fd"
         ;;
     aarch64 | arm64)
         readonly MISE_ARCH="arm64"
-        readonly MISE_SHA256="3a52c7c7c58d21a0791516950ebf4bc915f403277b49c93d657fc585259625ec"
+        readonly MISE_SHA256="3721d44253d0a014545eb1fe13258333da270b98d8c7523e07e7619e74e2f77f"
         ;;
     *)
         echo "Unsupported architecture: $(uname -m)" >&2
@@ -85,17 +85,18 @@ install_mise() {
     tmp_binary="$(mktemp)"
     TMP_PATHS+=("$tmp" "$tmp_binary")
     curl -fsSL "$MISE_URL" -o "$tmp"
-    actual="$(sha256sum "$tmp" | awk '{print $1}')"
+    tar -xOzf "$tmp" mise/bin/mise > "$tmp_binary"
+    actual="$(sha256sum "$tmp_binary" | awk '{print $1}')"
     if [[ "$actual" != "$MISE_SHA256" ]]; then
         echo "mise checksum mismatch; retrying without cached release data" >&2
         curl -fsSL "${MISE_URL}?sha256=${MISE_SHA256}" -o "$tmp"
-        actual="$(sha256sum "$tmp" | awk '{print $1}')"
+        tar -xOzf "$tmp" mise/bin/mise > "$tmp_binary"
+        actual="$(sha256sum "$tmp_binary" | awk '{print $1}')"
     fi
     if [[ "$actual" != "$MISE_SHA256" ]]; then
         echo "mise checksum mismatch: expected $MISE_SHA256, got $actual" >&2
         exit 1
     fi
-    tar -xOzf "$tmp" mise/bin/mise > "$tmp_binary"
     install -d "$MISE_BIN_DIR"
     install -m 0755 "$tmp_binary" "$MISE_BIN"
 }
