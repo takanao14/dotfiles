@@ -24,6 +24,12 @@
       "addLabels": ["manual-review"]
     },
     {
+      "description": "k0sctl 0.33.0 has a bug; review upgrades manually until a fixed release is confirmed",
+      "matchDepNames": ["aqua:k0sproject/k0sctl"],
+      "automerge": false,
+      "addLabels": ["manual-review"]
+    },
+    {
       "description": "kubectl is pinned to a minor (pkgs.k8s.io repo paths are per-minor); collapse stable releases to major.minor so patch releases never rewrite the pin",
       "matchDepNames": ["kubernetes/kubernetes"],
       "extractVersion": "^v?(?<version>\\d+\\.\\d+)\\.\\d+$"
