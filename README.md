@@ -115,9 +115,9 @@ and arm64 artifacts, and setup uses `mise install --locked` to avoid live
 release resolution. Golden images use the same config and lockfile with mise
 system mode under `/usr/local/share/mise`. The shell prefers user shims, allowing
 a project mise config to override the system baseline. Renovate updates the
-configured versions; the `mise-lock` GitHub Actions workflow refreshes the
-lockfile on the same branch. macOS continues to use Homebrew's rolling package
-model.
+configured versions; the `mise-lock` GitHub Actions workflow refreshes both the
+bootstrap binary checksums and lockfile on the same branch. mise updates remain
+manual-review-only. macOS continues to use Homebrew's rolling package model.
 
 macOS installs UDEV Gothic NF through the Brewfile, while Linux desktop
 machines install the same font through the font setup script.

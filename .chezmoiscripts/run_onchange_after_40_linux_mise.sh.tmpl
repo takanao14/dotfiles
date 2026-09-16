@@ -58,7 +58,7 @@ case "$MISE_INSTALL_SCOPE" in
 esac
 
 readonly MISE_BIN="$MISE_BIN_DIR/mise"
-readonly MISE_URL="https://mise.jdx.dev/v${MISE_VERSION}/mise-v${MISE_VERSION}-linux-${MISE_ARCH}.tar.gz"
+readonly MISE_URL="https://github.com/jdx/mise/releases/download/v${MISE_VERSION}/mise-v${MISE_VERSION}-linux-${MISE_ARCH}"
 
 TMP_PATHS=()
 
@@ -78,27 +78,18 @@ mise_version_matches() {
 
 install_mise() {
     local tmp
-    local tmp_binary
     local actual
 
     tmp="$(mktemp)"
-    tmp_binary="$(mktemp)"
-    TMP_PATHS+=("$tmp" "$tmp_binary")
+    TMP_PATHS+=("$tmp")
     curl -fsSL "$MISE_URL" -o "$tmp"
-    tar -xOzf "$tmp" mise/bin/mise > "$tmp_binary"
-    actual="$(sha256sum "$tmp_binary" | awk '{print $1}')"
-    if [[ "$actual" != "$MISE_SHA256" ]]; then
-        echo "mise checksum mismatch; retrying without cached release data" >&2
-        curl -fsSL "${MISE_URL}?sha256=${MISE_SHA256}" -o "$tmp"
-        tar -xOzf "$tmp" mise/bin/mise > "$tmp_binary"
-        actual="$(sha256sum "$tmp_binary" | awk '{print $1}')"
-    fi
+    actual="$(sha256sum "$tmp" | awk '{print $1}')"
     if [[ "$actual" != "$MISE_SHA256" ]]; then
         echo "mise checksum mismatch: expected $MISE_SHA256, got $actual" >&2
         exit 1
     fi
     install -d "$MISE_BIN_DIR"
-    install -m 0755 "$tmp_binary" "$MISE_BIN"
+    install -m 0755 "$tmp" "$MISE_BIN"
 }
 
 mise_version_matches || install_mise

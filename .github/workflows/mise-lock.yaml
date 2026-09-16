@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - dot_config/mise/config.toml
+      - .chezmoiscripts/run_onchange_after_40_linux_mise.sh.tmpl
   workflow_dispatch:
 
 permissions:
@@ -25,11 +26,36 @@ jobs:
         with:
           ref: ${{ github.head_ref || github.ref_name }}
 
+      - name: Refresh the repository-pinned mise checksums
+        shell: bash
+        run: |
+          set -euo pipefail
+          installer=.chezmoiscripts/run_onchange_after_40_linux_mise.sh.tmpl
+          # Match the literal shell parameter expansion.
+          # shellcheck disable=SC2016
+          version="$(sed -n 's/^readonly MISE_VERSION="${MISE_VERSION:-\([^}]*\)}"$/\1/p' "$installer")"
+          checksums="$(curl --compressed -fsSL \
+            "https://github.com/jdx/mise/releases/download/v${version}/SHASUMS256.txt")"
+          x64_checksum="$(awk -v name="./mise-v${version}-linux-x64" \
+            '$2 == name { print $1 }' <<<"$checksums")"
+          arm64_checksum="$(awk -v name="./mise-v${version}-linux-arm64" \
+            '$2 == name { print $1 }' <<<"$checksums")"
+          [[ "$x64_checksum" =~ ^[0-9a-f]{64}$ ]]
+          [[ "$arm64_checksum" =~ ^[0-9a-f]{64}$ ]]
+          sed -i \
+            "/x86_64)/,/;;/ s/readonly MISE_SHA256=\"[0-9a-f]*\"/readonly MISE_SHA256=\"${x64_checksum}\"/" \
+            "$installer"
+          sed -i \
+            "/aarch64 | arm64)/,/;;/ s/readonly MISE_SHA256=\"[0-9a-f]*\"/readonly MISE_SHA256=\"${arm64_checksum}\"/" \
+            "$installer"
+
       - name: Install the repository-pinned mise
         shell: bash
         run: |
           set -euo pipefail
           installer=.chezmoiscripts/run_onchange_after_40_linux_mise.sh.tmpl
+          # Match the literal shell parameter expansion.
+          # shellcheck disable=SC2016
           version="$(sed -n 's/^readonly MISE_VERSION="${MISE_VERSION:-\([^}]*\)}"$/\1/p' "$installer")"
           checksum="$(awk '
             /x86_64\)/ { x64 = 1 }
@@ -75,15 +101,17 @@ jobs:
             exit 1
           fi
 
-      - name: Commit the refreshed lockfile
+      - name: Commit the refreshed mise data
         shell: bash
         run: |
           set -euo pipefail
-          if git diff --quiet -- dot_config/mise/mise.lock; then
+          installer=.chezmoiscripts/run_onchange_after_40_linux_mise.sh.tmpl
+          lockfile=dot_config/mise/mise.lock
+          if git diff --quiet -- "$installer" "$lockfile"; then
             exit 0
           fi
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add dot_config/mise/mise.lock
-          git commit -m "chore: refresh mise lockfile"
+          git add "$installer" "$lockfile"
+          git commit -m "chore: refresh mise generated data"
           git push origin "HEAD:${GITHUB_HEAD_REF:-${GITHUB_REF_NAME}}"
