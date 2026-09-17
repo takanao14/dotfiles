@@ -16,11 +16,11 @@ readonly MISE_INSTALL_SCOPE="${MISE_INSTALL_SCOPE:-user}"
 case "$(uname -m)" in
     x86_64)
         readonly MISE_ARCH="x64"
-        readonly MISE_SHA256="bd481434a65ede6b2ec6162b88f129e5c6b94cf9de808b8ee7c6f027b13b4589"
+        readonly MISE_SHA256="f917e52216924ef0a8b4eca3f7004dfcff3b94665716ac5685fd53006a491eee"
         ;;
     aarch64 | arm64)
         readonly MISE_ARCH="arm64"
-        readonly MISE_SHA256="e98b7644f8fe908c7b6b9086de215eaa422736d44f8a72d8bb39cb73f7477720"
+        readonly MISE_SHA256="1b46a14314c18f9bbce4bf6f88cc1fb3b31be8dd2b23327a851555f4e144fc61"
         ;;
     *)
         echo "Unsupported architecture: $(uname -m)" >&2
