@@ -99,19 +99,19 @@ url = "https://awscli.amazonaws.com/awscli-exe-linux-aarch64-2.36.47.zip"
 url = "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.36.47.zip"
 
 [[tools."aqua:bootandy/dust"]]
-version = "1.2.5"
+version = "1.2.6"
 backend = "aqua:bootandy/dust"
-specifiers = ["1.2.5"]
+specifiers = ["1.2.6"]
 
 [tools."aqua:bootandy/dust"."platforms.linux-arm64"]
-checksum = "sha256:83b8d5b068bdbfd1952a55c8419e77c413d1c084ce7f7369d28f9be36d66dd6a"
-url = "https://github.com/bootandy/dust/releases/download/v1.2.5/dust-v1.2.5-aarch64-unknown-linux-gnu.tar.gz"
-url_api = "https://api.github.com/repos/bootandy/dust/releases/assets/521927389"
+checksum = "sha256:ec6a63bc275a33000443d444fd5424e56745aa995bc88e1080cd951e5e9e5cbf"
+url = "https://github.com/bootandy/dust/releases/download/v1.2.6/dust-v1.2.6-aarch64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/bootandy/dust/releases/assets/568852461"
 
 [tools."aqua:bootandy/dust"."platforms.linux-x64"]
-checksum = "sha256:64b16f5c10cc4c25d2eaa144e9d2d44b3ed8f72ee63b3bc0a92c85e21e9e0932"
-url = "https://github.com/bootandy/dust/releases/download/v1.2.5/dust-v1.2.5-x86_64-unknown-linux-gnu.tar.gz"
-url_api = "https://api.github.com/repos/bootandy/dust/releases/assets/521290571"
+checksum = "sha256:14f788707aad217667f6812cf1a9639bf5c861a2ee815d486cffc36051f5e759"
+url = "https://github.com/bootandy/dust/releases/download/v1.2.6/dust-v1.2.6-x86_64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/bootandy/dust/releases/assets/568852367"
 
 [[tools."aqua:cilium/cilium-cli"]]
 version = "0.20.0"
