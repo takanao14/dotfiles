@@ -2,7 +2,7 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended"],
   "timezone": "Asia/Tokyo",
-  "minimumReleaseAge": "1 day",
+  "minimumReleaseAge": "2 days",
   "labels": ["dependencies", "renovate"],
   "packageRules": [
     {
