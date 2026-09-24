@@ -504,20 +504,20 @@ url = "https://github.com/zellij-org/zellij/releases/download/v0.45.1/zellij-x86
 url_api = "https://api.github.com/repos/zellij-org/zellij/releases/assets/533538763"
 
 [[tools."github:DNSControl/dnscontrol"]]
-version = "5.1.0"
+version = "5.2.0"
 backend = "github:DNSControl/dnscontrol"
-specifiers = ["v5.1.0"]
+specifiers = ["v5.2.0"]
 
 [tools."github:DNSControl/dnscontrol"."platforms.linux-arm64"]
-checksum = "sha256:ce895f7d9352a8fbcad0d46ae6533d2ba3d2a4bcd182f5d52b18fded4dbdb9bc"
-url = "https://github.com/DNSControl/dnscontrol/releases/download/v5.1.0/dnscontrol_5.1.0_linux_arm64.tar.gz"
-url_api = "https://api.github.com/repos/DNSControl/dnscontrol/releases/assets/566758659"
+checksum = "sha256:63123eb877015af9e43139674ee109c2e97012bafb0b3de3a28836905875a8bb"
+url = "https://github.com/DNSControl/dnscontrol/releases/download/v5.2.0/dnscontrol_5.2.0_linux_arm64.tar.gz"
+url_api = "https://api.github.com/repos/DNSControl/dnscontrol/releases/assets/581809149"
 provenance = "github-attestations"
 
 [tools."github:DNSControl/dnscontrol"."platforms.linux-x64"]
-checksum = "sha256:9f9725ab750d39577b3f33a94a7ff20ba0d7228fb07544627f3210266ec119be"
-url = "https://github.com/DNSControl/dnscontrol/releases/download/v5.1.0/dnscontrol_5.1.0_linux_amd64.tar.gz"
-url_api = "https://api.github.com/repos/DNSControl/dnscontrol/releases/assets/566758626"
+checksum = "sha256:9b82d5734af489013a733de991ccd557dcaeebe1631dcc842e4123bb93acc612"
+url = "https://github.com/DNSControl/dnscontrol/releases/download/v5.2.0/dnscontrol_5.2.0_linux_amd64.tar.gz"
+url_api = "https://api.github.com/repos/DNSControl/dnscontrol/releases/assets/581809152"
 provenance = "github-attestations"
 
 [[tools."pipx:ansible-core"]]
