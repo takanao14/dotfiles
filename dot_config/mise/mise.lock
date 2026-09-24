@@ -88,15 +88,15 @@ url_api = "https://api.github.com/repos/argoproj/argo-cd/releases/assets/5628968
 url = "https://github.com/argoproj/argo-cd/releases/download/v3.5.3/argocd-cli.intoto.jsonl"
 
 [[tools."aqua:aws/aws-cli"]]
-version = "2.36.49"
+version = "2.36.50"
 backend = "aqua:aws/aws-cli"
-specifiers = ["2.36.49"]
+specifiers = ["2.36.50"]
 
 [tools."aqua:aws/aws-cli"."platforms.linux-arm64"]
-url = "https://awscli.amazonaws.com/awscli-exe-linux-aarch64-2.36.49.zip"
+url = "https://awscli.amazonaws.com/awscli-exe-linux-aarch64-2.36.50.zip"
 
 [tools."aqua:aws/aws-cli"."platforms.linux-x64"]
-url = "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.36.49.zip"
+url = "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.36.50.zip"
 
 [[tools."aqua:bootandy/dust"]]
 version = "1.2.6"
