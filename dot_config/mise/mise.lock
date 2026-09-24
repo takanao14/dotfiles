@@ -310,19 +310,19 @@ url = "https://github.com/junegunn/fzf/releases/download/v0.74.4/fzf-0.74.4-linu
 url_api = "https://api.github.com/repos/junegunn/fzf/releases/assets/558287768"
 
 [[tools."aqua:k0sproject/k0sctl"]]
-version = "0.31.1"
+version = "0.33.1"
 backend = "aqua:k0sproject/k0sctl"
-specifiers = ["0.31.1"]
+specifiers = ["0.33.1"]
 
 [tools."aqua:k0sproject/k0sctl"."platforms.linux-arm64"]
-checksum = "sha256:9107ce95f3762b2afbd0e5b9c7d4145e5749b36f3e1976c91873d04f6ae4f98f"
-url = "https://github.com/k0sproject/k0sctl/releases/download/v0.31.1/k0sctl-linux-arm64"
-url_api = "https://api.github.com/repos/k0sproject/k0sctl/releases/assets/463012881"
+checksum = "sha256:3632072361f3e83dde9b34f83eea49673d3bfe84763cf361edc3aec7209231a6"
+url = "https://github.com/k0sproject/k0sctl/releases/download/v0.33.1/k0sctl-linux-arm64"
+url_api = "https://api.github.com/repos/k0sproject/k0sctl/releases/assets/578938981"
 
 [tools."aqua:k0sproject/k0sctl"."platforms.linux-x64"]
-checksum = "sha256:c7dc5cdc7f8c006249d573229302612b8ef323ef4faff6a68ebe8c4aba83772d"
-url = "https://github.com/k0sproject/k0sctl/releases/download/v0.31.1/k0sctl-linux-amd64"
-url_api = "https://api.github.com/repos/k0sproject/k0sctl/releases/assets/463012882"
+checksum = "sha256:bd5cd9125c93d8d30c33f7b2f3693fed0d74140a248d433dad74f2b7015295b5"
+url = "https://github.com/k0sproject/k0sctl/releases/download/v0.33.1/k0sctl-linux-amd64"
+url_api = "https://api.github.com/repos/k0sproject/k0sctl/releases/assets/578938984"
 
 [[tools."aqua:kdash-rs/kdash"]]
 version = "2.1.1"
