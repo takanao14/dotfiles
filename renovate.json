@@ -18,14 +18,8 @@
       "addLabels": ["manual-review", "major-update"]
     },
     {
-      "description": "mise binary checksums must be updated with its version",
+      "description": "mise-lock CI refreshes the installer checksums in a follow-up commit; merge manually after it lands",
       "matchDepNames": ["jdx/mise"],
-      "automerge": false,
-      "addLabels": ["manual-review"]
-    },
-    {
-      "description": "k0sctl 0.33.0 has a bug; review upgrades manually until a fixed release is confirmed",
-      "matchDepNames": ["aqua:k0sproject/k0sctl"],
       "automerge": false,
       "addLabels": ["manual-review"]
     },
