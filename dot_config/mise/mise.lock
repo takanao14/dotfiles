@@ -382,19 +382,19 @@ url = "https://github.com/opentofu/opentofu/releases/download/v1.12.6/tofu_1.12.
 url_api = "https://api.github.com/repos/opentofu/opentofu/releases/assets/520762723"
 
 [[tools."aqua:prometheus/prometheus"]]
-version = "3.14.0"
+version = "3.15.0"
 backend = "aqua:prometheus/prometheus"
-specifiers = ["3.14.0"]
+specifiers = ["3.15.0"]
 
 [tools."aqua:prometheus/prometheus"."platforms.linux-arm64"]
-checksum = "sha256:077f3781ab7245dc04c9a3c9b78ba120fc8e41aa0dc97489b0af67247e50ba83"
-url = "https://github.com/prometheus/prometheus/releases/download/v3.14.0/prometheus-3.14.0.linux-arm64.tar.gz"
-url_api = "https://api.github.com/repos/prometheus/prometheus/releases/assets/519110559"
+checksum = "sha256:f1f90ec08e849d494ca66c611470afc50192f0355f1a61c33f2cbde02d067823"
+url = "https://github.com/prometheus/prometheus/releases/download/v3.15.0/prometheus-3.15.0.linux-arm64.tar.gz"
+url_api = "https://api.github.com/repos/prometheus/prometheus/releases/assets/587862303"
 
 [tools."aqua:prometheus/prometheus"."platforms.linux-x64"]
-checksum = "sha256:f665c6da19eb7ba399c915d30c7d9793c9b417bf8a749b504bc470678631478d"
-url = "https://github.com/prometheus/prometheus/releases/download/v3.14.0/prometheus-3.14.0.linux-amd64.tar.gz"
-url_api = "https://api.github.com/repos/prometheus/prometheus/releases/assets/519110475"
+checksum = "sha256:2a542df32eac02ee17b9d844fb2aa1de00dafa5476579ba8a3ba862e9d572ea0"
+url = "https://github.com/prometheus/prometheus/releases/download/v3.15.0/prometheus-3.15.0.linux-amd64.tar.gz"
+url_api = "https://api.github.com/repos/prometheus/prometheus/releases/assets/587862123"
 
 [[tools."aqua:rclone/rclone"]]
 version = "1.75.1"
