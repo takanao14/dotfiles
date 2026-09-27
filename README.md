@@ -78,7 +78,7 @@ dotfiles/
 ├── private_dot_ssh/
 │   └── config.tmpl                # ~/.ssh/config (OrbStack include, 1Password agent)
 └── .chezmoiscripts/               # Setup scripts auto-executed by chezmoi, in name order
-    ├── run_onchange_10_linux_package.sh # Linux: sudo-only OS package installs (base deps, HashiCorp repo, kubectl, openbao, Freelens on desktops, pipx/python3.12)
+    ├── run_onchange_10_linux_package.sh # Linux: sudo-only OS package installs (base deps, HashiCorp repo, kubectl, openbao, Freelens on desktops, python3.12)
     ├── run_onchange_20_linux_terminal.sh # Linux: install kitty (no sudo)
     ├── run_onchange_30_linux_fonts.sh   # Linux: install UDEV Gothic fonts (no sudo)
     ├── run_onchange_after_40_linux_mise.sh.tmpl # Linux: install mise and the pinned tools
@@ -112,14 +112,14 @@ On Linux, APT or DNF packages are installed globally, while standalone CLI
 tools use versions pinned in `~/.config/mise/config.toml` and are installed per
 user by default. `mise.lock` resolves those versions to checksummed Linux x64
 and arm64 artifacts, and setup uses `mise install --locked` to avoid live
-release resolution. `minimum_release_age = "2d"` keeps the Python dependencies
-that the pipx backend resolves at install time at least two days old, matching
-Renovate's `minimumReleaseAge`. Golden images use the same config and lockfile with mise
-system mode under `/usr/local/share/mise`. The shell prefers user shims, allowing
-a project mise config to override the system baseline. Renovate updates the
-configured versions; the `mise-lock` GitHub Actions workflow refreshes both the
-bootstrap binary checksums and lockfile on the same branch. mise updates remain
-manual-review-only. macOS continues to use Homebrew's rolling package model.
+release resolution. `minimum_release_age = "2d"` and `UV_EXCLUDE_NEWER` keep
+the Python dependencies that uv resolves for the `pipx:` tools at least two days
+old, matching Renovate's `minimumReleaseAge`. Golden images use the same config
+and lockfile with mise system mode under `/usr/local/share/mise`. The shell
+prefers user shims, allowing a project mise config to override the system
+baseline. Renovate updates the configured versions; the `mise-lock` GitHub
+Actions workflow refreshes both the bootstrap binary checksums and lockfile on
+the same branch. mise updates remain manual-review-only. macOS continues to use Homebrew's rolling package model.
 
 macOS installs UDEV Gothic NF through the Brewfile, while Linux desktop
 machines install the same font through the font setup script.

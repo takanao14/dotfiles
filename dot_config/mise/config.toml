@@ -3,7 +3,7 @@ experimental = true
 lockfile = true
 # Skip releases younger than two days, matching Renovate's minimumReleaseAge.
 # Pinned tools are unaffected; this mainly limits the transitive Python
-# dependencies that the pipx backend resolves at install time.
+# dependencies that uv resolves for the pipx: tools at install time.
 minimum_release_age = "2d"
 
 [tools]
