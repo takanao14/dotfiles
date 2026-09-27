@@ -1,6 +1,10 @@
 [settings]
 experimental = true
 lockfile = true
+# Skip releases younger than two days, matching Renovate's minimumReleaseAge.
+# Pinned tools are unaffected; this mainly limits the transitive Python
+# dependencies that the pipx backend resolves at install time.
+minimum_release_age = "2d"
 
 [tools]
 "aqua:cli/cli" = "2.101.0"

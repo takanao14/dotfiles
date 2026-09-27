@@ -112,7 +112,9 @@ On Linux, APT or DNF packages are installed globally, while standalone CLI
 tools use versions pinned in `~/.config/mise/config.toml` and are installed per
 user by default. `mise.lock` resolves those versions to checksummed Linux x64
 and arm64 artifacts, and setup uses `mise install --locked` to avoid live
-release resolution. Golden images use the same config and lockfile with mise
+release resolution. `minimum_release_age = "2d"` keeps the Python dependencies
+that the pipx backend resolves at install time at least two days old, matching
+Renovate's `minimumReleaseAge`. Golden images use the same config and lockfile with mise
 system mode under `/usr/local/share/mise`. The shell prefers user shims, allowing
 a project mise config to override the system baseline. Renovate updates the
 configured versions; the `mise-lock` GitHub Actions workflow refreshes both the
