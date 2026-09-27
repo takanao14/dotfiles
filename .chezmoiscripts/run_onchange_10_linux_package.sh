@@ -220,6 +220,9 @@ install_base_dependencies() {
             packages=(ca-certificates curl coreutils file findutils git gnupg gzip make tar unzip xz-utils mosh tmux podman zsh)
             ;;
         rocky)
+            # mosh ships only in EPEL on Rocky.
+            install_packages epel-release
+            update_package_cache
             packages=(ca-certificates curl coreutils file findutils git gnupg2 gzip make tar unzip xz mosh tmux podman zsh)
             ;;
         *)
