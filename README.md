@@ -155,7 +155,7 @@ used.
 
 The post-apply script currently generates completions for Sheldon, Starship,
 Zellij, Helm, Argo CD, Kubie, K9s, Helmfile, k0sctl, Cilium, GitHub CLI, bat,
-ripgrep, procs, SOPS, DNSControl, Rclone, Ansible, ansible-playbook, and
+ripgrep, procs, SOPS, DNSControl, Rclone, uv, Ansible, ansible-playbook, and
 ansible-lint. `argcomplete` is declared in the mise config so
 `register-python-argcomplete` exists for the Ansible generators.
 
