@@ -26,6 +26,7 @@ dotfiles/
 ├── dot_Brewfile                   # Homebrew package list (macOS)
 ├── dot_gitconfig.tmpl             # ~/.gitconfig (email templated per machine)
 ├── dot_zshrc                      # ~/.zshrc
+├── modify_dot_bashrc              # Appends the shared PATH setup to ~/.bashrc (Linux)
 ├── dot_zprofile                   # ~/.zprofile (Homebrew path config)
 ├── dot_tmux.conf                  # ~/.tmux.conf
 ├── dot_vimrc                      # ~/.vimrc (portable Vim defaults)
@@ -69,6 +70,7 @@ dotfiles/
 │   ├── kitty/kitty.conf           # Kitty configuration (Linux desktop only)
 │   ├── mise/config.toml           # Linux CLI tool declarations (user and golden image)
 │   ├── mise/mise.lock             # Resolved Linux artifacts for x64 and arm64
+│   ├── shell/path.sh              # PATH and mise shims shared by zsh and bash
 │   ├── systemd/user/ssh-agent.service # Linux local SSH agent fallback
 │   ├── starship.toml              # Starship prompt configuration
 │   ├── sheldon/plugins.toml       # sheldon plugin configuration
