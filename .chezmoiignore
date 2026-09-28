@@ -5,6 +5,7 @@ renovate.json
 .github
 docs
 {{ if ne .chezmoi.os "linux" }}
+.bashrc
 .config/systemd
 .config/mise
 {{ end }}

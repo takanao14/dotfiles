@@ -1,0 +1,19 @@
+#!/bin/sh
+# Keep the distribution's ~/.bashrc and append the shared PATH setup once.
+# chezmoi passes the current file on stdin and writes stdout back.
+
+marker='# chezmoi: shared PATH setup'
+
+current="$(cat)"
+printf '%s' "$current"
+[ -n "$current" ] && printf '\n'
+
+case "$current" in
+  *"$marker"*) exit 0 ;;
+esac
+
+[ -n "$current" ] && printf '\n'
+cat <<EOF
+$marker
+[ -r "\$HOME/.config/shell/path.sh" ] && . "\$HOME/.config/shell/path.sh"
+EOF

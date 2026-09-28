@@ -26,6 +26,10 @@
 - Put only startup-critical or ordering-sensitive zsh configuration in
   `dot_zsh.d/source/`; defer nonessential integrations through
   `dot_zsh.d/defer/`.
+- Keep PATH and mise shim setup that bash also needs in
+  `dot_config/shell/path.sh` (POSIX sh). `dot_zshrc` sources it, and
+  `modify_dot_bashrc` appends a source line to the distribution's `~/.bashrc`
+  on Linux without replacing it.
 - Never invoke a CLI completion generator during shell startup. Add supported
   generators to `.chezmoiscripts/run_after_70_all_zsh_completions.sh`; use committed
   definitions or lazy adapters under `dot_zfunc/` when no generator exists.
