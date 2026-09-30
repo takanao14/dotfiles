@@ -130,6 +130,9 @@ machines install the same font through the font setup script.
 
 To keep startup fast, [zsh-defer](https://github.com/romkatv/zsh-defer) splits configuration loading into two phases:
 
+Deferred tasks skip per-task prompt redraws; otherwise each task can trigger
+another Starship render during the first prompt.
+
 - `dot_zsh.d/source/` — loaded immediately at startup (e.g. completion path setup that cannot be deferred)
 - `dot_zsh.d/defer/` — lazily loaded in the background (aliases, tool initializations)
 
