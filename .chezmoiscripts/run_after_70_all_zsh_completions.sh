@@ -50,6 +50,71 @@ generate_completion() {
     echo "Updated zsh completion: ${destination}"
 }
 
+generate_ansible_completion() {
+    local command_name="$1"
+    local output_name="_$1"
+    local command_path interpreter
+
+    command_path="$(command -v "$command_name" 2>/dev/null)" || {
+        echo "Skipping ${command_name} completion: command not found"
+        return
+    }
+    interpreter="$(head -n 1 "$command_path")"
+    interpreter="${interpreter#\#!}"
+
+    if [[ -x "$interpreter" ]] &&
+        "$interpreter" -c 'import argcomplete' >/dev/null 2>&1; then
+        generate_completion register-python-argcomplete "$output_name" '' \
+            register-python-argcomplete --shell zsh "$command_name"
+        return
+    fi
+
+    local generated_file="${TMP_DIR}/${output_name}"
+    local destination="${ZFUNC_DIR}/${output_name}"
+    cat > "$generated_file" <<EOF
+#compdef ${command_name}
+if [[ \$PREFIX == -* ]]; then
+    local -a cli_options
+    cli_options=(\${(f)"\$(command ${command_name} --help 2>/dev/null | grep -Eo -- '-{1,2}[[:alnum:]][[:alnum:]-]*' | sort -u)"})
+    _describe 'options' cli_options
+else
+    _files
+fi
+EOF
+    if [[ ! -f "$destination" ]] || ! cmp -s "$generated_file" "$destination"; then
+        install -m 0644 "$generated_file" "$destination"
+        echo "Updated zsh completion: ${destination}"
+    fi
+}
+
+use_zsh_ansible_completion() {
+    command -v zsh >/dev/null 2>&1 || return 1
+    zsh -f -c '
+        for dir in $fpath; do
+            [[ $dir == $HOME/.zfunc ]] && continue
+            [[ -f $dir/_ansible ]] || continue
+            head -n 1 "$dir/_ansible" | grep -Eq "^#compdef .*ansible-playbook"
+            exit $?
+        done
+        exit 1
+    '
+}
+
+remove_generated_ansible_completion() {
+    local command_name="$1"
+    local destination="${ZFUNC_DIR}/_${command_name}"
+    [[ -f "$destination" ]] || return 0
+
+    if head -n 1 "$destination" | grep -Fxq "#compdef ${command_name}" &&
+        { grep -Fq '__python_argcomplete_run()' "$destination" ||
+          grep -Fq "_describe 'options' cli_options" "$destination"; }; then
+        rm -f "$destination"
+        echo "Removed generated zsh completion: ${destination}"
+    else
+        echo "Keeping unrecognized zsh completion: ${destination}" >&2
+    fi
+}
+
 # Shell tools
 generate_completion sheldon  _sheldon  '' sheldon completions --shell zsh
 generate_completion starship _starship '' starship completions zsh
@@ -74,9 +139,14 @@ generate_completion sops       _sops       _cli_zsh_autocomplete sops completion
 generate_completion dnscontrol _dnscontrol '' dnscontrol shell-completion zsh
 generate_completion rclone     _rclone     '' rclone completion zsh -
 generate_completion uv         _uv         '' uv generate-shell-completion zsh
-generate_completion register-python-argcomplete _ansible          '' register-python-argcomplete --shell zsh ansible
-generate_completion register-python-argcomplete _ansible-playbook '' register-python-argcomplete --shell zsh ansible-playbook
-generate_completion register-python-argcomplete _ansible-lint     '' register-python-argcomplete --shell zsh ansible-lint
+if use_zsh_ansible_completion; then
+    remove_generated_ansible_completion ansible
+    remove_generated_ansible_completion ansible-playbook
+else
+    generate_ansible_completion ansible
+    generate_ansible_completion ansible-playbook
+fi
+generate_ansible_completion ansible-lint
 
 # compinit's dump does not track content changes to individual completion
 # files. Remove it after generation so the next shell scans ~/.zfunc again.

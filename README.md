@@ -157,9 +157,16 @@ used.
 
 The post-apply script currently generates completions for Sheldon, Starship,
 Zellij, Helm, Argo CD, Kubie, K9s, Helmfile, k0sctl, Cilium, GitHub CLI, bat,
-ripgrep, procs, SOPS, DNSControl, Rclone, uv, Ansible, ansible-playbook, and
-ansible-lint. `argcomplete` is declared in the mise config so
-`register-python-argcomplete` exists for the Ansible generators.
+ripgrep, procs, SOPS, DNSControl, Rclone, uv, and ansible-lint. It also
+generates Ansible and ansible-playbook completions when zsh does not provide
+them. `argcomplete` is declared in the mise config so
+`register-python-argcomplete` exists for the Ansible generators. When zsh
+provides `_ansible` for both Ansible and ansible-playbook, the script uses it
+and removes only its own older generated definitions. Otherwise, it generates
+completions for those commands. If a command cannot import `argcomplete` from
+its own Python environment, the generated completion reads its `--help` options
+on completion requests and completes files for positional arguments. Ansible-lint
+uses the same generator or fallback independently.
 
 Static definitions are committed for actionlint, age/age-keygen,
 direnv, and eza. AWS CLI, Terraform, OpenTofu, Terragrunt, and OpenBao use lazy
