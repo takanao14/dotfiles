@@ -105,15 +105,15 @@ url_api = "https://api.github.com/repos/astral-sh/uv/releases/assets/596657933"
 provenance = "github-attestations"
 
 [[tools."aqua:aws/aws-cli"]]
-version = "2.37.5"
+version = "2.37.6"
 backend = "aqua:aws/aws-cli"
-specifiers = ["2.37.5"]
+specifiers = ["2.37.6"]
 
 [tools."aqua:aws/aws-cli"."platforms.linux-arm64"]
-url = "https://awscli.amazonaws.com/awscli-exe-linux-aarch64-2.37.5.zip"
+url = "https://awscli.amazonaws.com/awscli-exe-linux-aarch64-2.37.6.zip"
 
 [tools."aqua:aws/aws-cli"."platforms.linux-x64"]
-url = "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.37.5.zip"
+url = "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.37.6.zip"
 
 [[tools."aqua:bootandy/dust"]]
 version = "1.2.6"
