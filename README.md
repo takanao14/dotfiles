@@ -201,9 +201,11 @@ version updates still require a manual merge). `Dotfiles CI` runs on every PR
 without path filters. Validation waits for mise generation, then checks the exact
 resulting commit on macOS and Linux. A generated push explicitly dispatches
 validation on the update branch because `GITHUB_TOKEN` PR events need workflow
-approval. A trusted `workflow_run` publisher records `Dotfiles CI` on that exact
-SHA; dispatch check suites alone are not included in the PR status rollup. The
-publisher never executes PR code and also handles read-only fork validation. Run **Refresh mise lockfile manually** to create a separate branch and
+approval. The result job records `Dotfiles CI` on the exact validated SHA;
+dispatch check suites alone are not included in the PR status rollup, and a
+token-dispatched run does not trigger a subsequent `workflow_run`. A trusted
+`workflow_run` publisher handles read-only fork validation without executing PR
+code. Run **Refresh mise lockfile manually** to create a separate branch and
 PR, even when selecting `main`; an unchanged refresh creates no PR.
 
 Local validation (Python 3.11+, chezmoi, zsh, Bash, ShellCheck):
