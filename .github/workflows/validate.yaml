@@ -34,7 +34,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-python@v6
         with:
-          python-version: '3.12'
+          python-version: '3.15'
       - name: Install validation tools on the disposable runner
         shell: bash
         run: |
