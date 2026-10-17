@@ -31,6 +31,6 @@ jobs:
             state=success
           fi
           gh api --method POST "repos/$REPOSITORY/statuses/$SHA" \
-            -f "state=$state" -f 'context=Required CI' \
+            -f "state=$state" -f 'context=Dotfiles CI' \
             -f 'description=macOS and Linux dotfiles validation' \
             -f "target_url=$RUN_URL"
