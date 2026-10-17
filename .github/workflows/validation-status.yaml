@@ -11,9 +11,12 @@ permissions:
 
 jobs:
   publish:
-    # A GITHUB_TOKEN-generated PR event can finish without running any jobs.
-    # The explicit dispatch is the run that validates that commit.
-    if: github.event.workflow_run.conclusion != 'action_required'
+    # Fork validations cannot write commit statuses. Publish only their result
+    # from main; same-repository and dispatched runs publish their own status.
+    if: >-
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.head_repository.full_name != github.repository &&
+      github.event.workflow_run.conclusion != 'action_required'
     runs-on: ubuntu-latest
     steps:
       # Never check out or execute code/artifacts from the triggering PR.
