@@ -1,0 +1,36 @@
+name: Publish validation status
+
+on:
+  workflow_run:
+    workflows: [Validate dotfiles]
+    types: [completed]
+
+permissions:
+  contents: read
+  statuses: write
+
+jobs:
+  publish:
+    # A GITHUB_TOKEN-generated PR event can finish without running any jobs.
+    # The explicit dispatch is the run that validates that commit.
+    if: github.event.workflow_run.conclusion != 'action_required'
+    runs-on: ubuntu-latest
+    steps:
+      # Never check out or execute code/artifacts from the triggering PR.
+      - name: Publish the result on the triggering commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          SHA: ${{ github.event.workflow_run.head_sha }}
+          CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+          RUN_URL: ${{ github.event.workflow_run.html_url }}
+        run: |
+          set -euo pipefail
+          state=failure
+          if [[ "$CONCLUSION" == success ]]; then
+            state=success
+          fi
+          gh api --method POST "repos/$REPOSITORY/statuses/$SHA" \
+            -f "state=$state" -f 'context=Required CI' \
+            -f 'description=macOS and Linux dotfiles validation' \
+            -f "target_url=$RUN_URL"
