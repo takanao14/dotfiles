@@ -32,7 +32,7 @@ jobs:
         with:
           ref: ${{ needs.refresh.outputs.sha }}
           persist-credentials: false
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.15'
       - name: Install validation tools on the disposable runner
