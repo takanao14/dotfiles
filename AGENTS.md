@@ -48,7 +48,7 @@
 ## Validation
 
 - Update `main` through a PR, including bot-generated updates. Run
-  `python3 scripts/validate.py` before pushing; `Required CI` must pass on the
+  `python3 scripts/validate.py` before pushing; `Dotfiles CI` must pass on the
   latest commit. Never bypass the main ruleset for routine work.
 
 - For templates or rendered configuration, run `chezmoi execute-template` or
