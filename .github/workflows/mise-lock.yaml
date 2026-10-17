@@ -1,32 +1,60 @@
 name: Refresh mise lockfile
 
 on:
-  pull_request:
-    paths:
-      - dot_config/mise/config.toml
-      - .chezmoiscripts/run_onchange_after_40_linux_mise.sh.tmpl
-  workflow_dispatch:
+  workflow_call:
+    inputs:
+      manual:
+        type: boolean
+        default: false
+    outputs:
+      sha:
+        description: Commit to validate after refreshing generated data
+        value: ${{ jobs.refresh.outputs.sha }}
 
 permissions:
   contents: write
-
-concurrency:
-  group: mise-lock-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+  pull-requests: write
+  actions: write
 
 jobs:
   refresh:
-    if: >-
-      github.event_name == 'workflow_dispatch' ||
-      github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
+    outputs:
+      sha: ${{ steps.result.outputs.sha }}
     steps:
       - name: Check out the update branch
         uses: actions/checkout@v7
         with:
-          ref: ${{ github.head_ref || github.ref_name }}
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+
+      - name: Select the update branch and detect relevant changes
+        id: select
+        env:
+          MANUAL: ${{ inputs.manual }}
+          SAME_REPO: ${{ !github.event.pull_request || github.event.pull_request.head.repo.full_name == github.repository }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_BRANCH: ${{ github.head_ref || github.ref_name }}
+        run: |
+          set -euo pipefail
+          branch="$HEAD_BRANCH"
+          refresh=false
+          if [[ "$MANUAL" == true ]]; then
+            branch="codex/mise-lock-${GITHUB_RUN_ID}"
+            git switch -c "$branch"
+            refresh=true
+          elif [[ "$SAME_REPO" == true && -n "$BASE_SHA" ]]; then
+            if ! git diff --quiet "$BASE_SHA" HEAD -- \
+              dot_config/mise/config.toml \
+              .chezmoiscripts/run_onchange_after_40_linux_mise.sh.tmpl; then
+              refresh=true
+            fi
+          fi
+          echo "branch=$branch" >> "$GITHUB_OUTPUT"
+          echo "refresh=$refresh" >> "$GITHUB_OUTPUT"
 
       - name: Refresh the repository-pinned mise checksums
+        if: steps.select.outputs.refresh == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -50,6 +78,7 @@ jobs:
             "$installer"
 
       - name: Install the repository-pinned mise
+        if: steps.select.outputs.refresh == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -76,6 +105,7 @@ jobs:
           chmod 0755 "$RUNNER_TEMP/mise"
 
       - name: Refresh the Linux lock entries
+        if: steps.select.outputs.refresh == 'true'
         env:
           GITHUB_TOKEN: ${{ github.token }}
           MISE_CONFIG_FILE: ${{ github.workspace }}/dot_config/mise/config.toml
@@ -85,6 +115,7 @@ jobs:
           --platform linux-x64,linux-arm64
 
       - name: Verify every configured tool remains locked
+        if: steps.select.outputs.refresh == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -102,7 +133,11 @@ jobs:
           fi
 
       - name: Commit the refreshed mise data
+        id: commit
+        if: steps.select.outputs.refresh == 'true'
         shell: bash
+        env:
+          UPDATE_BRANCH: ${{ steps.select.outputs.branch }}
         run: |
           set -euo pipefail
           installer=.chezmoiscripts/run_onchange_after_40_linux_mise.sh.tmpl
@@ -114,4 +149,27 @@ jobs:
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
           git add "$installer" "$lockfile"
           git commit -m "chore: refresh mise generated data"
-          git push origin "HEAD:${GITHUB_HEAD_REF:-${GITHUB_REF_NAME}}"
+          # Normal push rejects a concurrent branch update instead of overwriting it.
+          git push origin "HEAD:$UPDATE_BRANCH"
+          echo "pushed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Open the manual update PR
+        if: inputs.manual && steps.commit.outputs.pushed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          UPDATE_BRANCH: ${{ steps.select.outputs.branch }}
+        run: >-
+          gh pr create --base main --head "$UPDATE_BRANCH"
+          --title "chore: refresh mise generated data"
+          --body "Refresh the pinned mise checksums and Linux lockfile."
+
+      - name: Validate the generated commit explicitly
+        if: steps.commit.outputs.pushed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          UPDATE_BRANCH: ${{ steps.select.outputs.branch }}
+        run: gh workflow run validate.yaml --ref "$UPDATE_BRANCH"
+
+      - name: Record the exact commit to validate
+        id: result
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
