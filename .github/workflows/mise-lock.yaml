@@ -43,7 +43,12 @@ jobs:
             branch="codex/mise-lock-${GITHUB_RUN_ID}"
             git switch -c "$branch"
             refresh=true
-          elif [[ "$SAME_REPO" == true && -n "$BASE_SHA" ]]; then
+          elif [[ "$SAME_REPO" == true && "$branch" != main ]]; then
+            # Dispatches must also refresh relevant changes, including a branch
+            # update that races with the preceding generated push.
+            if [[ -z "$BASE_SHA" ]]; then
+              BASE_SHA="$(git rev-parse origin/main)"
+            fi
             if ! git diff --quiet "$BASE_SHA" HEAD -- \
               dot_config/mise/config.toml \
               .chezmoiscripts/run_onchange_after_40_linux_mise.sh.tmpl; then
@@ -150,6 +155,7 @@ jobs:
           git add "$installer" "$lockfile"
           git commit -m "chore: refresh mise generated data"
           # Normal push rejects a concurrent branch update instead of overwriting it.
+          test "$UPDATE_BRANCH" != main
           git push origin "HEAD:$UPDATE_BRANCH"
           echo "pushed=true" >> "$GITHUB_OUTPUT"
 
