@@ -1,0 +1,61 @@
+name: Validate dotfiles
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  refresh:
+    uses: ./.github/workflows/mise-lock.yaml
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: write
+
+  validate:
+    name: Validate (${{ matrix.os }})
+    needs: refresh
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.refresh.outputs.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Install validation tools on the disposable runner
+        shell: bash
+        run: |
+          if [[ "$RUNNER_OS" == Linux ]]; then
+            sudo apt-get update
+            sudo apt-get install -y zsh shellcheck
+          else
+            brew install shellcheck
+          fi
+          curl -fsSL https://get.chezmoi.io | sh -s -- -b "$RUNNER_TEMP/bin"
+          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+      - run: python3 scripts/validate.py
+
+  required:
+    name: Required CI
+    if: always()
+    needs: [refresh, validate]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require every validation job to succeed
+        env:
+          REFRESH: ${{ needs.refresh.result }}
+          RESULT: ${{ needs.validate.result }}
+        run: test "$REFRESH" = success && test "$RESULT" = success

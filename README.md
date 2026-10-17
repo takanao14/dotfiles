@@ -121,7 +121,7 @@ and lockfile with mise system mode under `/usr/local/share/mise`. The shell
 prefers user shims, allowing a project mise config to override the system
 baseline. Renovate updates the configured versions; the `mise-lock` GitHub
 Actions workflow refreshes both the bootstrap binary checksums and lockfile on
-the same branch. mise updates remain manual-review-only. macOS continues to use Homebrew's rolling package model.
+the same branch. mise version updates remain manual-review-only. macOS continues to use Homebrew's rolling package model.
 
 macOS installs UDEV Gothic NF through the Brewfile, while Linux desktop
 machines install the same font through the font setup script.
@@ -192,3 +192,40 @@ profile with no marker defaults to `server`; live GUI state is deliberately not
 inferred.
 
 Repository-only files such as `README.md`, `bootstrap.sh`, `renovate.json`, and `docs/` are excluded from the target home directory via `.chezmoiignore`.
+
+## Development and main protection
+
+Push changes to a branch and open a PR; owners and bots follow the same rules.
+Non-major Renovate updates merge only after the latest commit passes CI (mise
+version updates still require a manual merge). `Required CI` runs on every PR
+without path filters. It waits for mise generation, then validates the exact
+resulting commit on macOS and Linux. A generated push explicitly dispatches
+validation on the update branch because `GITHUB_TOKEN` PR events need workflow
+approval. Run **Refresh mise lockfile manually** to create a separate branch and
+PR, even when selecting `main`; an unchanged refresh creates no PR.
+
+Local validation (Python 3.11+, chezmoi, zsh, Bash, ShellCheck):
+
+```sh
+python3 scripts/validate.py
+actionlint
+```
+
+Validation renders both architectures and Linux machine profiles using synthetic
+data and a temporary destination. It syntax-checks shell sources, completions
+and rendered scripts, checks TOML/JSON and target exclusions, and never applies
+dotfiles or runs setup scripts. The OS package managers and services themselves
+are not exercised; Ubuntu CI covers the shared Linux configuration, including
+Debian and Rocky runtime guards.
+
+For a new repository, merge the CI PR first, verify an ordinary PR and a generated
+commit's **Required CI** check, then create a branch ruleset in Settings → Rules →
+Rulesets: target `refs/heads/main`, enforcement **Active**, bypass list **empty**,
+restrict deletions, block force pushes, require a PR with **0** approvals, and
+require **Required CI** from GitHub Actions with **Require branches to be up to
+date** enabled. Use the payload in `docs/main-ruleset.json` with
+`gh api --method POST repos/OWNER/REPO/rulesets --input docs/main-ruleset.json`.
+Read back the active ruleset before deleting the old `main` branch protection
+(`gh api --method DELETE repos/OWNER/REPO/branches/main/protection`). This short
+overlap preserves deletion/force-push protection during migration. Do not enable
+the required check before it exists and succeeds on the latest generated SHA.

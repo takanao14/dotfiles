@@ -4,6 +4,7 @@ bootstrap.sh
 renovate.json
 .github
 docs
+scripts
 {{ if ne .chezmoi.os "linux" }}
 .bashrc
 .config/systemd

@@ -9,7 +9,7 @@
       "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
       "automerge": true,
       "platformAutomerge": false,
-      "ignoreTests": true,
+      "ignoreTests": false,
       "addLabels": ["auto-merge-candidate"]
     },
     {

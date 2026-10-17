@@ -1,0 +1,16 @@
+name: Refresh mise lockfile manually
+
+on:
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  refresh:
+    uses: ./.github/workflows/mise-lock.yaml
+    with:
+      manual: true
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: write
