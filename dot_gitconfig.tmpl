@@ -6,3 +6,8 @@
         process = git-lfs filter-process
         required = true
         clean = git-lfs clean -- %f
+
+[core]
+        pager = "if command -v delta >/dev/null 2>&1; then delta; else less; fi"
+[delta]
+        navigate = true
