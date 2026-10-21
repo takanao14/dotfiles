@@ -58,6 +58,8 @@ dotfiles/
 │   ├── _age                        # Static age / age-keygen completion
 │   ├── _aws                        # AWS CLI completion adapter
 │   ├── _bash_cli_complete          # Lazy bash-style CLI completion bridge
+│   ├── _btm                        # Static bottom completion
+│   ├── _hyperfine                  # Static hyperfine completion
 │   ├── _direnv                     # Static direnv completion
 │   ├── _eza                        # Static eza completion
 │   ├── _terraform                  # Terraform completion adapter
@@ -108,7 +110,12 @@ the installed tools, so it is last.
 | IaC | Terraform, Packer, Vault, Terragrunt, [Ansible](https://www.ansible.com/), [ansible-lint](https://ansible.readthedocs.io/projects/lint/) |
 | Cloud / S3 | [AWS CLI](https://aws.amazon.com/cli/) (v2; S3-compatible storage such as SeaweedFS) |
 | Containers | [Podman](https://podman.io/) (Linux) |
-| Other | [GitHub CLI](https://cli.github.com/), [bat](https://github.com/sharkdp/bat), [ripgrep](https://github.com/BurntSushi/ripgrep), [procs](https://github.com/dalance/procs), [dust](https://github.com/bootandy/dust), [dua-cli](https://github.com/Byron/dua-cli), [DNSControl](https://dnscontrol.org/), [direnv](https://direnv.net/), [fzf](https://github.com/junegunn/fzf), [eza](https://github.com/eza-community/eza), [zoxide](https://github.com/ajeetdsouza/zoxide), SOPS |
+| Other | [GitHub CLI](https://cli.github.com/), [bat](https://github.com/sharkdp/bat), [fd](https://github.com/sharkdp/fd), [delta](https://github.com/dandavison/delta), [hyperfine](https://github.com/sharkdp/hyperfine), [bottom](https://github.com/ClementTsang/bottom), [ripgrep](https://github.com/BurntSushi/ripgrep), [procs](https://github.com/dalance/procs), [dust](https://github.com/bootandy/dust), [dua-cli](https://github.com/Byron/dua-cli), [DNSControl](https://dnscontrol.org/), [direnv](https://direnv.net/), [fzf](https://github.com/junegunn/fzf), [eza](https://github.com/eza-community/eza), [zoxide](https://github.com/ajeetdsouza/zoxide), SOPS |
+
+Git uses delta as its pager when available and falls back to less. Delta uses
+a unified diff layout with section navigation; side-by-side output is opt-in.
+Use `procs` for process lookup, `btm` for live system monitoring, and
+`hyperfine` for repeatable command benchmarks.
 
 On Linux, APT or DNF packages are installed globally, while standalone CLI
 tools use versions pinned in `~/.config/mise/config.toml` and are installed per
@@ -160,7 +167,7 @@ used.
 
 The post-apply script currently generates completions for Sheldon, Starship,
 Zellij, Helm, Argo CD, Kubie, K9s, Helmfile, k0sctl, Cilium, GitHub CLI, bat,
-ripgrep, procs, SOPS, DNSControl, Rclone, uv, and ansible-lint. It also
+fd, delta, ripgrep, procs, SOPS, DNSControl, Rclone, uv, and ansible-lint. It also
 generates Ansible and ansible-playbook completions when zsh does not provide
 them. `argcomplete` is declared in the mise config so
 `register-python-argcomplete` exists for the Ansible generators. When zsh
@@ -172,8 +179,9 @@ on completion requests and completes files for positional arguments. Ansible-lin
 uses the same generator or fallback independently.
 
 Static definitions are committed for actionlint, age/age-keygen,
-direnv, and eza. AWS CLI, Terraform, OpenTofu, Terragrunt, and OpenBao use lazy
-adapters.
+direnv, eza, hyperfine, and bottom (`btm`). The hyperfine and bottom definitions
+come from their pinned upstream release archives. AWS CLI, Terraform, OpenTofu,
+Terragrunt, and OpenBao use lazy adapters.
 fzf completion selection is already provided by the Sheldon-managed fzf-tab
 plugin. Krew has no separate completion generator; kubectl handles discovery of
 the `krew` plugin itself.

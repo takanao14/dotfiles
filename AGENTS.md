@@ -33,6 +33,8 @@
 - Never invoke a CLI completion generator during shell startup. Add supported
   generators to `.chezmoiscripts/run_after_70_all_zsh_completions.sh`; use committed
   definitions or lazy adapters under `dot_zfunc/` when no generator exists.
+  Keep upstream static completion provenance in the file, and refresh the
+  hyperfine and bottom definitions when their pinned versions change.
 - Keep setup scripts idempotent. An unchanged `chezmoi apply` must not
   repeatedly download tools, rewrite files, or restart services.
 - Keep SSH configuration under `private_dot_ssh/` and preserve private target
