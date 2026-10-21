@@ -59,8 +59,12 @@ generate_ansible_completion() {
         echo "Skipping ${command_name} completion: command not found"
         return
     }
-    interpreter="$(head -n 1 "$command_path")"
-    interpreter="${interpreter#\#!}"
+    # mise shims can be binaries; only read an interpreter from a shebang.
+    interpreter=''
+    if head -c 2 "$command_path" | LC_ALL=C grep -q '^#!'; then
+        interpreter="$(head -n 1 "$command_path")"
+        interpreter="${interpreter#\#!}"
+    fi
 
     if [[ -x "$interpreter" ]] &&
         "$interpreter" -c 'import argcomplete' >/dev/null 2>&1; then
