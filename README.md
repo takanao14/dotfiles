@@ -2,6 +2,8 @@
 
 Personal dotfiles managed with [chezmoi](https://www.chezmoi.io/). Supports macOS and Linux (Ubuntu / Debian / Rocky Linux).
 
+Linux x64 and arm64 are supported, including arm64 VMs on Apple Silicon.
+
 Linux tool installation requires Python 3.12 or newer for the pinned Ansible
 toolchain. Use a release or configured package repository that provides
 `python3.12` when the distribution default is older.
@@ -110,16 +112,16 @@ the installed tools, so it is last.
 | Terminal | [Ghostty](https://ghostty.org/) (macOS), [Kitty](https://sw.kovidgoyal.net/kitty/) (Linux desktop), [Alacritty](https://alacritty.org/) (configuration only) |
 | File manager | [Yazi](https://yazi-rs.github.io/) |
 | Multiplexer | [Zellij](https://zellij.dev/), tmux |
-| Kubernetes | kubectl, [Freelens](https://freelens.app/) (desktop machines), [Argo CD CLI](https://argo-cd.readthedocs.io/en/stable/user-guide/commands/argocd/), [kubie](https://github.com/sbstp/kubie), [k9s](https://k9scli.io/), [KDash](https://kdash-rs.github.io/), helm, helmfile, krew |
+| Kubernetes | kubectl, [Freelens](https://freelens.app/) (desktop machines), [Argo CD CLI](https://argo-cd.readthedocs.io/en/stable/user-guide/commands/argocd/), [kubie](https://github.com/sbstp/kubie), [k9s](https://k9scli.io/), helm, helmfile, krew |
 | IaC | Terraform, Packer, Vault, Terragrunt, [Ansible](https://www.ansible.com/), [ansible-lint](https://ansible.readthedocs.io/projects/lint/) |
 | Cloud / S3 | [AWS CLI](https://aws.amazon.com/cli/) (v2; S3-compatible storage such as SeaweedFS) |
 | Containers | [Podman](https://podman.io/) (Linux) |
-| Other | [GitHub CLI](https://cli.github.com/), [bat](https://github.com/sharkdp/bat), [fd](https://github.com/sharkdp/fd), [delta](https://github.com/dandavison/delta), [hyperfine](https://github.com/sharkdp/hyperfine), [bottom](https://github.com/ClementTsang/bottom), [ripgrep](https://github.com/BurntSushi/ripgrep), [procs](https://github.com/dalance/procs), [dust](https://github.com/bootandy/dust), [dua-cli](https://github.com/Byron/dua-cli), [DNSControl](https://dnscontrol.org/), [direnv](https://direnv.net/), [fzf](https://github.com/junegunn/fzf), [eza](https://github.com/eza-community/eza), [zoxide](https://github.com/ajeetdsouza/zoxide), SOPS |
+| Other | [GitHub CLI](https://cli.github.com/), [bat](https://github.com/sharkdp/bat), [fd](https://github.com/sharkdp/fd), [delta](https://github.com/dandavison/delta), [hyperfine](https://github.com/sharkdp/hyperfine), [bottom](https://github.com/ClementTsang/bottom), [ripgrep](https://github.com/BurntSushi/ripgrep), [dust](https://github.com/bootandy/dust), [dua-cli](https://github.com/Byron/dua-cli), [DNSControl](https://dnscontrol.org/), [direnv](https://direnv.net/), [fzf](https://github.com/junegunn/fzf), [eza](https://github.com/eza-community/eza), [zoxide](https://github.com/ajeetdsouza/zoxide), SOPS |
 
 Git uses delta as its pager when available and falls back to less. Delta uses
 a unified diff layout with section navigation; side-by-side output is opt-in.
-Use `procs` for process lookup, `btm` for live system monitoring, and
-`hyperfine` for repeatable command benchmarks.
+Use `ps` and `pgrep` for process lookup, `btm` for live system monitoring,
+and `hyperfine` for repeatable command benchmarks.
 
 Run `yazi` to browse files, or `y` in zsh to also change the shell directory
 on exit. Yazi uses the existing `file`, fd, ripgrep, fzf, and zoxide tools.
@@ -176,7 +178,7 @@ used.
 
 The post-apply script currently generates completions for Sheldon, Starship,
 Zellij, Helm, Argo CD, Kubie, K9s, Helmfile, k0sctl, Cilium, GitHub CLI, bat,
-fd, delta, ripgrep, procs, SOPS, DNSControl, Rclone, uv, and ansible-lint. It also
+fd, delta, ripgrep, SOPS, DNSControl, Rclone, uv, and ansible-lint. It also
 generates Ansible and ansible-playbook completions when zsh does not provide
 them. `argcomplete` is declared in the mise config so
 `register-python-argcomplete` exists for the Ansible generators. When zsh
@@ -236,8 +238,15 @@ Validation renders both architectures and Linux machine profiles using synthetic
 data and a temporary destination. It syntax-checks shell sources, completions
 and rendered scripts, checks TOML/JSON and target exclusions, and never applies
 dotfiles or runs setup scripts. The OS package managers and services themselves
-are not exercised; Ubuntu CI covers the shared Linux configuration, including
-Debian and Rocky runtime guards.
+are not exercised by local validation. The mise lock validator checks configured
+versions and requires both Linux platform entries for every platform-specific
+tool; `pipx:` tools have platform-independent locks.
+
+Required CI also installs every declared mise tool with `--locked` on fresh
+Ubuntu x64 and arm64 runners and checks that bottom and k9s start. This does
+not replace a first and repeated `chezmoi apply` on a disposable stock Linux
+VM, or runtime verification on Debian and Rocky Linux. Those checks cover OS
+packages, services, setup ordering, and idempotence beyond the mise install.
 
 For a new repository, merge the CI PR first, verify an ordinary PR and a generated
 commit's **Dotfiles CI** check, then create a branch ruleset in Settings → Rules →

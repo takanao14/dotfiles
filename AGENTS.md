@@ -4,6 +4,7 @@
 
 - This repository manages personal dotfiles with chezmoi.
 - Support macOS and Linux: Ubuntu, Debian, and Rocky Linux.
+- Keep Linux x64 and arm64 tool installation supported.
 - Prioritize portability, fast shell startup, maintainability, and few
   dependencies.
 
@@ -63,6 +64,9 @@
 - Run `git diff --check` before handing off changes.
 - Do not run validation that installs packages, accesses secrets, or changes
   the current machine without explicit authorization.
+- Validate configured mise versions and both Linux platform entries with
+  `scripts/validate_mise_lock.py`. Keep fresh locked installs on both Linux
+  architectures in required CI; local validation must not install tools.
 
 ## Documentation and Naming
 
