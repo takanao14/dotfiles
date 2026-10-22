@@ -52,6 +52,7 @@ dotfiles/
 │       ├── orbstack.zsh           # OrbStack shell init (Linux VMs)
 │       ├── sops.zsh               # SOPS age key environment variable
 │       ├── sshr.zsh               # known_hosts cleanup helper
+│       ├── yazi.zsh               # Yazi wrapper with change-directory support
 │       └── zoxide.zsh             # zoxide initialization
 ├── dot_zfunc/                      # Committed zsh completions and lazy adapters
 │   ├── _actionlint                 # Static actionlint completion
@@ -62,6 +63,8 @@ dotfiles/
 │   ├── _hyperfine                  # Static hyperfine completion
 │   ├── _direnv                     # Static direnv completion
 │   ├── _eza                        # Static eza completion
+│   ├── _ya                         # Static Yazi CLI completion
+│   ├── _yazi                       # Static Yazi completion
 │   ├── _terraform                  # Terraform completion adapter
 │   ├── _tofu                       # OpenTofu completion adapter
 │   ├── _terragrunt                 # Terragrunt completion adapter
@@ -105,6 +108,7 @@ the installed tools, so it is last.
 |----------|-------|
 | Shell | zsh, [sheldon](https://github.com/rossmacarthur/sheldon), [starship](https://starship.rs/) |
 | Terminal | [Ghostty](https://ghostty.org/) (macOS), [Kitty](https://sw.kovidgoyal.net/kitty/) (Linux desktop), [Alacritty](https://alacritty.org/) (configuration only) |
+| File manager | [Yazi](https://yazi-rs.github.io/) |
 | Multiplexer | [Zellij](https://zellij.dev/), tmux |
 | Kubernetes | kubectl, [Freelens](https://freelens.app/) (desktop machines), [Argo CD CLI](https://argo-cd.readthedocs.io/en/stable/user-guide/commands/argocd/), [kubie](https://github.com/sbstp/kubie), [k9s](https://k9scli.io/), [KDash](https://kdash-rs.github.io/), helm, helmfile, krew |
 | IaC | Terraform, Packer, Vault, Terragrunt, [Ansible](https://www.ansible.com/), [ansible-lint](https://ansible.readthedocs.io/projects/lint/) |
@@ -116,6 +120,11 @@ Git uses delta as its pager when available and falls back to less. Delta uses
 a unified diff layout with section navigation; side-by-side output is opt-in.
 Use `procs` for process lookup, `btm` for live system monitoring, and
 `hyperfine` for repeatable command benchmarks.
+
+Run `yazi` to browse files, or `y` in zsh to also change the shell directory
+on exit. Yazi uses the existing `file`, fd, ripgrep, fzf, and zoxide tools.
+Additional media preview tools and plugins are optional and are not managed
+by this configuration.
 
 On Linux, APT or DNF packages are installed globally, while standalone CLI
 tools use versions pinned in `~/.config/mise/config.toml` and are installed per
@@ -179,9 +188,9 @@ on completion requests and completes files for positional arguments. Ansible-lin
 uses the same generator or fallback independently.
 
 Static definitions are committed for actionlint, age/age-keygen,
-direnv, eza, hyperfine, and bottom (`btm`). The hyperfine and bottom definitions
-come from their pinned upstream release archives. AWS CLI, Terraform, OpenTofu,
-Terragrunt, and OpenBao use lazy adapters.
+direnv, eza, hyperfine, bottom (`btm`), and Yazi (`yazi` / `ya`). The hyperfine,
+bottom, and Yazi definitions come from their pinned upstream release archives.
+AWS CLI, Terraform, OpenTofu, Terragrunt, and OpenBao use lazy adapters.
 fzf completion selection is already provided by the Sheldon-managed fzf-tab
 plugin. Krew has no separate completion generator; kubectl handles discovery of
 the `krew` plugin itself.
