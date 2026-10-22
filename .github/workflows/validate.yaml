@@ -25,7 +25,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-26.04, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v7
@@ -48,20 +48,64 @@ jobs:
           echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
       - run: python3 scripts/validate.py
 
+  install:
+    name: Locked Linux install (${{ matrix.os }})
+    needs: refresh
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-26.04, ubuntu-26.04-arm]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.refresh.outputs.sha }}
+          persist-credentials: false
+      - name: Install prerequisites on the disposable runner
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ca-certificates curl git gzip tar unzip xz-utils python3
+      - name: Validate Linux lock coverage
+        run: python3 scripts/validate_mise_lock.py
+      - name: Install the repository-pinned mise
+        run: bash scripts/install_mise_ci.sh "$RUNNER_TEMP/mise"
+      - name: Install every configured tool from an empty data directory
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          MISE_CONFIG_FILE: ${{ github.workspace }}/dot_config/mise/config.toml
+          MISE_DATA_DIR: ${{ runner.temp }}/mise-data
+          MISE_CACHE_DIR: ${{ runner.temp }}/mise-cache
+          MISE_SAFE: "1"
+          UV_EXCLUDE_NEWER: "2 days"
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Do not restore installed tools: a cache hit could hide a broken lock.
+          test ! -e "$MISE_DATA_DIR"
+          test ! -e "$MISE_CACHE_DIR"
+          cd "$RUNNER_TEMP"
+          "$RUNNER_TEMP/mise" install --yes --locked
+          "$RUNNER_TEMP/mise" exec -- btm --version
+          "$RUNNER_TEMP/mise" exec -- k9s version
+      - name: Require the locked install to leave generated data unchanged
+        run: git diff --exit-code -- dot_config/mise
+
   required:
     name: Required CI
     if: always()
-    needs: [refresh, validate]
+    needs: [refresh, validate, install]
     permissions:
       contents: read
       statuses: write
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - name: Require every validation job to succeed
         env:
           REFRESH: ${{ needs.refresh.result }}
           RESULT: ${{ needs.validate.result }}
-        run: test "$REFRESH" = success && test "$RESULT" = success
+          INSTALL: ${{ needs.install.result }}
+        run: test "$REFRESH" = success && test "$RESULT" = success && test "$INSTALL" = success
       - name: Publish the result on the exact validated commit
         if: >-
           always() &&
@@ -73,11 +117,12 @@ jobs:
           SHA: ${{ needs.refresh.outputs.sha || github.event.pull_request.head.sha || github.sha }}
           REFRESH: ${{ needs.refresh.result }}
           RESULT: ${{ needs.validate.result }}
+          INSTALL: ${{ needs.install.result }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           set -euo pipefail
           state=failure
-          if [[ "$REFRESH" == success && "$RESULT" == success ]]; then
+          if [[ "$REFRESH" == success && "$RESULT" == success && "$INSTALL" == success ]]; then
             state=success
           fi
           gh api --method POST "repos/$REPOSITORY/statuses/$SHA" \

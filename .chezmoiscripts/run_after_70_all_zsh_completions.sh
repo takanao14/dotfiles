@@ -140,7 +140,6 @@ generate_completion bat        _bat        '' bat --completion zsh
 generate_completion fd         _fd         '' fd --gen-completions zsh
 generate_completion delta      _delta      '' delta --generate-completion zsh
 generate_completion rg         _rg         '' rg --generate complete-zsh
-generate_completion procs      _procs      '' procs --gen-completion-out zsh
 generate_completion sops       _sops       _cli_zsh_autocomplete sops completion zsh
 generate_completion dnscontrol _dnscontrol '' dnscontrol shell-completion zsh
 generate_completion rclone     _rclone     '' rclone completion zsh -

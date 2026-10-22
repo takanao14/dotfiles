@@ -6,11 +6,19 @@ import itertools
 import json
 import pathlib
 import subprocess
+import sys
 import tarfile
 import tempfile
 import tomllib
 
+from validate_mise_lock import main as validate_mise_lock
+
 ROOT = pathlib.Path(__file__).resolve().parents[1]
+
+if validate_mise_lock():
+    raise SystemExit(1)
+subprocess.run([sys.executable, '-m', 'unittest', 'discover',
+                '-s', str(ROOT / 'scripts'), '-p', 'test_*.py'], check=True)
 
 
 def run(*args, **kwargs):

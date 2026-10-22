@@ -18,7 +18,7 @@ permissions:
 
 jobs:
   refresh:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     outputs:
       sha: ${{ steps.result.outputs.sha }}
     steps:
@@ -84,30 +84,7 @@ jobs:
 
       - name: Install the repository-pinned mise
         if: steps.select.outputs.refresh == 'true'
-        shell: bash
-        run: |
-          set -euo pipefail
-          installer=.chezmoiscripts/run_onchange_after_40_linux_mise.sh.tmpl
-          # Match the literal shell parameter expansion.
-          # shellcheck disable=SC2016
-          version="$(sed -n 's/^readonly MISE_VERSION="${MISE_VERSION:-\([^}]*\)}"$/\1/p' "$installer")"
-          checksum="$(awk '
-            /x86_64\)/ { x64 = 1 }
-            x64 && /readonly MISE_SHA256=/ {
-              value = $0
-              sub(/^.*MISE_SHA256="/, "", value)
-              sub(/"$/, "", value)
-              print value
-              exit
-            }
-          ' "$installer")"
-          test -n "$version"
-          test -n "$checksum"
-          curl -fsSL \
-            "https://github.com/jdx/mise/releases/download/v${version}/mise-v${version}-linux-x64" \
-            -o "$RUNNER_TEMP/mise"
-          echo "$checksum  $RUNNER_TEMP/mise" | sha256sum --check
-          chmod 0755 "$RUNNER_TEMP/mise"
+        run: bash scripts/install_mise_ci.sh "$RUNNER_TEMP/mise"
 
       - name: Refresh the Linux lock entries
         if: steps.select.outputs.refresh == 'true'
@@ -121,21 +98,7 @@ jobs:
 
       - name: Verify every configured tool remains locked
         if: steps.select.outputs.refresh == 'true'
-        shell: bash
-        run: |
-          set -euo pipefail
-          config_tools="$(mktemp)"
-          locked_tools="$(mktemp)"
-          awk -F'"' '/^".*" = / { print $2 }' \
-            dot_config/mise/config.toml | sort >"$config_tools"
-          sed -n 's/^\[\[tools\."\(.*\)"\]\]$/\1/p' \
-            dot_config/mise/mise.lock | sort >"$locked_tools"
-          missing="$(comm -23 "$config_tools" "$locked_tools")"
-          if [[ -n "$missing" ]]; then
-            echo "Lock refresh omitted configured tools:" >&2
-            echo "$missing" >&2
-            exit 1
-          fi
+        run: python3 scripts/validate_mise_lock.py
 
       - name: Commit the refreshed mise data
         id: commit

@@ -1,0 +1,5 @@
+# Hosted Ubuntu 26.04 labels are not yet known to pinned actionlint 1.7.12.
+self-hosted-runner:
+  labels:
+    - ubuntu-26.04
+    - ubuntu-26.04-arm

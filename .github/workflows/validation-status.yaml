@@ -17,7 +17,7 @@ jobs:
       github.event.workflow_run.event == 'pull_request' &&
       github.event.workflow_run.head_repository.full_name != github.repository &&
       github.event.workflow_run.conclusion != 'action_required'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       # Never check out or execute code/artifacts from the triggering PR.
       - name: Publish the result on the triggering commit
