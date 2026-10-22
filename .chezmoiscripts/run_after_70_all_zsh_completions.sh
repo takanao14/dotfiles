@@ -3,6 +3,9 @@ set -euo pipefail
 
 # Chezmoi scripts run in separate processes, so the mise installer cannot
 # update this script's PATH. Prefer per-user tools over a golden-image baseline.
+if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
+    PATH="$HOME/.local/bin:$PATH"
+fi
 for mise_shims in /usr/local/share/mise/shims "$HOME/.local/share/mise/shims"; do
     if [[ -d "$mise_shims" && ":$PATH:" != *":$mise_shims:"* ]]; then
         PATH="$mise_shims:$PATH"
@@ -120,6 +123,8 @@ remove_generated_ansible_completion() {
 }
 
 # Shell tools
+generate_completion mise     _mise     '' mise completion zsh
+generate_completion chezmoi  _chezmoi  '' chezmoi completion zsh
 generate_completion sheldon  _sheldon  '' sheldon completions --shell zsh
 generate_completion starship _starship '' starship completions zsh
 generate_completion zellij   _zellij   '' zellij setup --generate-completion zsh
@@ -136,9 +141,12 @@ generate_completion cilium   _cilium   '' cilium completion zsh
 
 # Other manually installed tools
 generate_completion gh         _gh         '' gh completion -s zsh
+generate_completion lazygit    _lazygit    _lazygit lazygit completion zsh
 generate_completion bat        _bat        '' bat --completion zsh
 generate_completion fd         _fd         '' fd --gen-completions zsh
 generate_completion delta      _delta      '' delta --generate-completion zsh
+generate_completion dua        _dua        '' dua completions zsh
+generate_completion yq         _yq         '' yq completion zsh
 generate_completion rg         _rg         '' rg --generate complete-zsh
 generate_completion sops       _sops       _cli_zsh_autocomplete sops completion zsh
 generate_completion dnscontrol _dnscontrol '' dnscontrol shell-completion zsh

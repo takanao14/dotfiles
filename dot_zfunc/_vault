@@ -1,0 +1,4 @@
+#compdef vault
+
+autoload -Uz _bash_cli_complete
+_bash_cli_complete vault
