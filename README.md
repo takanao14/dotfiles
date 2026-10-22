@@ -64,10 +64,14 @@ dotfiles/
 │   ├── _btm                        # Static bottom completion
 │   ├── _hyperfine                  # Static hyperfine completion
 │   ├── _direnv                     # Static direnv completion
+│   ├── _dust                       # Static dust completion
 │   ├── _eza                        # Static eza completion
 │   ├── _ya                         # Static Yazi CLI completion
 │   ├── _yazi                       # Static Yazi completion
 │   ├── _terraform                  # Terraform completion adapter
+│   ├── _packer                     # Packer completion adapter
+│   ├── _vault                      # Vault completion adapter
+│   ├── _zoxide                     # Static zoxide CLI completion
 │   ├── _tofu                       # OpenTofu completion adapter
 │   ├── _terragrunt                 # Terragrunt completion adapter
 │   └── _bao                        # OpenBao completion adapter
@@ -176,7 +180,8 @@ used.
 - Do not run completion generators from `dot_zsh.d/source/`,
   `dot_zsh.d/defer/`, or `dot_zshrc`.
 
-The post-apply script currently generates completions for Sheldon, Starship,
+The post-apply script currently generates completions for mise, chezmoi, yq,
+dua, lazygit, Sheldon, Starship,
 Zellij, Helm, Argo CD, Kubie, K9s, Helmfile, k0sctl, Cilium, GitHub CLI, bat,
 fd, delta, ripgrep, SOPS, DNSControl, Rclone, uv, and ansible-lint. It also
 generates Ansible and ansible-playbook completions when zsh does not provide
@@ -190,9 +195,11 @@ on completion requests and completes files for positional arguments. Ansible-lin
 uses the same generator or fallback independently.
 
 Static definitions are committed for actionlint, age/age-keygen,
-direnv, eza, hyperfine, bottom (`btm`), and Yazi (`yazi` / `ya`). The hyperfine,
-bottom, and Yazi definitions come from their pinned upstream release archives.
-AWS CLI, Terraform, OpenTofu, Terragrunt, and OpenBao use lazy adapters.
+direnv, dust, eza, hyperfine, bottom (`btm`), zoxide, and Yazi (`yazi` / `ya`).
+The hyperfine, bottom, Yazi, dust, and zoxide definitions come from their pinned
+upstream releases or source tags. The zoxide CLI definition is separate from
+the existing `z` / `zi` shell integration.
+AWS CLI, Terraform, OpenTofu, Terragrunt, OpenBao, Packer, and Vault use lazy adapters.
 fzf completion selection is already provided by the Sheldon-managed fzf-tab
 plugin. Krew has no separate completion generator; kubectl handles discovery of
 the `krew` plugin itself.
