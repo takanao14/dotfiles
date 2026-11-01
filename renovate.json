@@ -27,6 +27,12 @@
       "description": "kubectl is pinned to a minor (pkgs.k8s.io repo paths are per-minor); collapse stable releases to major.minor so patch releases never rewrite the pin",
       "matchDepNames": ["kubernetes/kubernetes"],
       "extractVersion": "^v?(?<version>\\d+\\.\\d+)\\.\\d+$"
+    },
+    {
+      "description": "OpenTofu tags can precede release assets; only update to published GitHub releases",
+      "matchManagers": ["mise"],
+      "matchDepNames": ["aqua:opentofu/opentofu"],
+      "overrideDatasource": "github-releases"
     }
   ],
   "customManagers": [
