@@ -143,7 +143,8 @@ and lockfile with mise system mode under `/usr/local/share/mise`. The shell
 prefers user shims, allowing a project mise config to override the system
 baseline. Renovate updates the configured versions; the `mise-lock` GitHub
 Actions workflow refreshes both the bootstrap binary checksums and lockfile on
-the same branch. mise version updates remain manual-review-only. macOS continues to use Homebrew's rolling package model.
+the same branch. mise version updates remain manual-review-only and are
+proposed at most weekly, on Monday mornings, once a release is seven days old. macOS continues to use Homebrew's rolling package model.
 
 macOS installs UDEV Gothic NF through the Brewfile, while Linux desktop
 machines install the same font through the font setup script.
