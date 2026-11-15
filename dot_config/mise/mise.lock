@@ -148,21 +148,21 @@ url = "https://github.com/bootandy/dust/releases/download/v1.2.7/dust-v1.2.7-x86
 url_api = "https://api.github.com/repos/bootandy/dust/releases/assets/699456259"
 
 [[tools."aqua:cilium/cilium-cli"]]
-version = "0.20.2"
+version = "0.20.3"
 backend = "aqua:cilium/cilium-cli"
-specifiers = ["0.20.2"]
+specifiers = ["0.20.3"]
 
 [tools."aqua:cilium/cilium-cli"."platforms.linux-arm64"]
-checksum = "sha256:922af9c977e781500eb96c51137e495409b1cdd248c9e1b7fffb863e6b6efdf8"
+checksum = "sha256:fa1bd66b407ec205e88746fc0b17590a247f255bf71bb9dfb0008b14d158f68d"
 checksum_source = "mise-versions"
-url = "https://github.com/cilium/cilium-cli/releases/download/v0.20.2/cilium-linux-arm64.tar.gz"
-url_api = "https://api.github.com/repos/cilium/cilium-cli/releases/assets/687888468"
+url = "https://github.com/cilium/cilium-cli/releases/download/v0.20.3/cilium-linux-arm64.tar.gz"
+url_api = "https://api.github.com/repos/cilium/cilium-cli/releases/assets/739456165"
 
 [tools."aqua:cilium/cilium-cli"."platforms.linux-x64"]
-checksum = "sha256:b7224a62bfed0e84f1a84567d274fefc5017df76a936e067c42012bb7fc30856"
+checksum = "sha256:b987ad0d195310d3fc96553aa7bcd41d1e97b64713ecdfee3eb48dd27e1ec7d7"
 checksum_source = "mise-versions"
-url = "https://github.com/cilium/cilium-cli/releases/download/v0.20.2/cilium-linux-amd64.tar.gz"
-url_api = "https://api.github.com/repos/cilium/cilium-cli/releases/assets/687888470"
+url = "https://github.com/cilium/cilium-cli/releases/download/v0.20.3/cilium-linux-amd64.tar.gz"
+url_api = "https://api.github.com/repos/cilium/cilium-cli/releases/assets/739456158"
 
 [[tools."aqua:cli/cli"]]
 version = "2.103.3"
