@@ -7,7 +7,7 @@ lockfile = true
 minimum_release_age = "2d"
 
 [tools]
-"aqua:cli/cli" = "2.103.3"
+"aqua:cli/cli" = "2.104.0"
 "aqua:jesseduffield/lazygit" = "0.66.3"
 "aqua:sharkdp/bat" = "0.26.1"
 "aqua:sharkdp/fd" = "10.5.2"
