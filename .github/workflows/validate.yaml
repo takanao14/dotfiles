@@ -19,13 +19,30 @@ jobs:
       pull-requests: write
       actions: write
 
+  scope:
+    name: Select validation OSes
+    # Run beside refresh: its generated commit only touches Linux-only paths,
+    # so it cannot change the selection.
+    runs-on: ubuntu-26.04
+    outputs:
+      os: ${{ steps.select.outputs.os }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Skip macOS when only Linux-only paths changed
+        id: select
+        run: echo "os=$(bash scripts/select_validate_os.sh origin/main HEAD)" >> "$GITHUB_OUTPUT"
+
   validate:
     name: Validate (${{ matrix.os }})
-    needs: refresh
+    needs: [refresh, scope]
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-26.04, macos-latest]
+        os: ${{ fromJSON(needs.scope.outputs.os) }}
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v7
@@ -109,7 +126,7 @@ jobs:
   required:
     name: Required CI
     if: always()
-    needs: [refresh, validate, install]
+    needs: [refresh, scope, validate, install]
     permissions:
       contents: read
       statuses: write
@@ -120,7 +137,10 @@ jobs:
           REFRESH: ${{ needs.refresh.result }}
           RESULT: ${{ needs.validate.result }}
           INSTALL: ${{ needs.install.result }}
-        run: test "$REFRESH" = success && test "$RESULT" = success && test "$INSTALL" = success
+          SCOPE: ${{ needs.scope.result }}
+        run: >-
+          test "$REFRESH" = success && test "$SCOPE" = success &&
+          test "$RESULT" = success && test "$INSTALL" = success
       - name: Publish the result on the exact validated commit
         if: >-
           always() &&
@@ -133,11 +153,13 @@ jobs:
           REFRESH: ${{ needs.refresh.result }}
           RESULT: ${{ needs.validate.result }}
           INSTALL: ${{ needs.install.result }}
+          SCOPE: ${{ needs.scope.result }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           set -euo pipefail
           state=failure
-          if [[ "$REFRESH" == success && "$RESULT" == success && "$INSTALL" == success ]]; then
+          if [[ "$REFRESH" == success && "$SCOPE" == success &&
+                "$RESULT" == success && "$INSTALL" == success ]]; then
             state=success
           fi
           gh api --method POST "repos/$REPOSITORY/statuses/$SHA" \

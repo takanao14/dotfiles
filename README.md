@@ -226,7 +226,11 @@ Push changes to a branch and open a PR; owners and bots follow the same rules.
 Non-major Renovate updates merge only after the latest commit passes CI (mise
 version updates still require a manual merge). `Dotfiles CI` runs on every PR
 without path filters. Validation waits for mise generation, then checks the exact
-resulting commit on macOS and Linux. A generated push explicitly dispatches
+resulting commit on macOS and Linux. `scripts/select_validate_os.sh` drops the
+macOS job when every path changed since the merge base with `main` is
+Linux-only (mise, systemd, Kitty, `_linux_` setup scripts) or documentation;
+any other path keeps it, and Linux validation still renders the macOS targets.
+A generated push explicitly dispatches
 validation on the update branch because `GITHUB_TOKEN` PR events need workflow
 approval. The result job records `Dotfiles CI` on the exact validated SHA;
 dispatch check suites alone are not included in the PR status rollup, and a
