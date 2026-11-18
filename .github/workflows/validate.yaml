@@ -32,16 +32,22 @@ jobs:
         with:
           ref: ${{ needs.refresh.outputs.sha }}
           persist-credentials: false
-      - uses: actions/setup-python@v7
-        with:
-          python-version: '3.15'
+      # Use the runner's python3 like the managed machines do; setup-python
+      # downloads uncached versions on macOS and dominated the job time.
+      - name: Require a python3 with tomllib
+        run: python3 -c 'import sys; print(sys.version); assert sys.version_info >= (3, 11), "python3 >= 3.11 is required"'
       - name: Install validation tools on the disposable runner
         shell: bash
+        env:
+          HOMEBREW_NO_AUTO_UPDATE: "1"
+          HOMEBREW_NO_INSTALL_CLEANUP: "1"
         run: |
           if [[ "$RUNNER_OS" == Linux ]]; then
-            sudo apt-get update
-            sudo apt-get install -y zsh shellcheck
-          else
+            if ! command -v zsh >/dev/null || ! command -v shellcheck >/dev/null; then
+              sudo apt-get update
+              sudo apt-get install -y zsh shellcheck
+            fi
+          elif ! command -v shellcheck >/dev/null; then
             brew install shellcheck
           fi
           curl -fsSL https://get.chezmoi.io | sh -s -- -b "$RUNNER_TEMP/bin"
@@ -63,9 +69,18 @@ jobs:
           ref: ${{ needs.refresh.outputs.sha }}
           persist-credentials: false
       - name: Install prerequisites on the disposable runner
+        shell: bash
         run: |
-          sudo apt-get update
-          sudo apt-get install -y ca-certificates curl git gzip tar unzip xz-utils python3
+          missing=()
+          for tool in curl git gzip tar unzip xz python3; do
+            command -v "$tool" >/dev/null || missing+=("$tool")
+          done
+          test -e /etc/ssl/certs/ca-certificates.crt || missing+=(ca-certificates)
+          if (( ${#missing[@]} )); then
+            echo "Installing prerequisites for: ${missing[*]}"
+            sudo apt-get update
+            sudo apt-get install -y ca-certificates curl git gzip tar unzip xz-utils python3
+          fi
       - name: Validate Linux lock coverage
         run: python3 scripts/validate_mise_lock.py
       - name: Install the repository-pinned mise
