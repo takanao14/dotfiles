@@ -182,19 +182,21 @@ url_api = "https://api.github.com/repos/cli/cli/releases/assets/761188566"
 provenance = "github-attestations"
 
 [[tools."aqua:dandavison/delta"]]
-version = "0.20.1"
+version = "0.21.1"
 backend = "aqua:dandavison/delta"
-specifiers = ["0.20.1"]
+specifiers = ["0.21.1"]
 
 [tools."aqua:dandavison/delta"."platforms.linux-arm64"]
-checksum = "sha256:da7f4338f593572ff426ae153e0870e2fdc72729416eff551b40cdeb67940db8"
-url = "https://github.com/dandavison/delta/releases/download/0.20.1/delta-0.20.1-aarch64-unknown-linux-gnu.tar.gz"
-url_api = "https://api.github.com/repos/dandavison/delta/releases/assets/610499593"
+checksum = "sha256:efe38626967f550c1d3bbe2014990dff5c8028a0a65a3f9b9b6c4a3bb53bfa28"
+checksum_source = "mise-versions"
+url = "https://github.com/dandavison/delta/releases/download/0.21.1/delta-0.21.1-aarch64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/dandavison/delta/releases/assets/765882036"
 
 [tools."aqua:dandavison/delta"."platforms.linux-x64"]
-checksum = "sha256:50f08c879f84c81ceb220e476491a7f492d2c9c671e79918cc44badf961a6240"
-url = "https://github.com/dandavison/delta/releases/download/0.20.1/delta-0.20.1-x86_64-unknown-linux-gnu.tar.gz"
-url_api = "https://api.github.com/repos/dandavison/delta/releases/assets/610498121"
+checksum = "sha256:d3fa53f78b8d63f2c0620aad591441e7d47b5c77e552869aa6fe21fd08b21ff6"
+checksum_source = "mise-versions"
+url = "https://github.com/dandavison/delta/releases/download/0.21.1/delta-0.21.1-x86_64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/dandavison/delta/releases/assets/765880079"
 
 [[tools."aqua:derailed/k9s"]]
 version = "0.51.0"
