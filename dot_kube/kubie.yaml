@@ -8,3 +8,7 @@ configs:
 prompt:
   disable: true
 
+behavior:
+  # Avoid fetching namespaces from the API when a namespace is specified.
+  validate_namespaces: false
+
