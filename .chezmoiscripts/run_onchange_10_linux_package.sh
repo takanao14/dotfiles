@@ -11,9 +11,9 @@ readonly OS_ID="${ID}"
 # renovate: datasource=github-releases depName=kubernetes/kubernetes
 readonly KUBECTL_VERSION="${KUBECTL_VERSION:-1.37}"
 # renovate: datasource=github-releases depName=openbao/openbao
-readonly OPENBAO_VERSION="${OPENBAO_VERSION:-2.7.2}"
+readonly OPENBAO_VERSION="${OPENBAO_VERSION:-2.7.3}"
 # renovate: datasource=github-releases depName=freelensapp/freelens
-readonly FREELENS_VERSION="${FREELENS_VERSION:-2.0.0}"
+readonly FREELENS_VERSION="${FREELENS_VERSION:-2.1.0}"
 
 BIN_ARCH="$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/')"
 readonly BIN_ARCH

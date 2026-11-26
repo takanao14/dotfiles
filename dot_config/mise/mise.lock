@@ -84,21 +84,21 @@ url = "https://github.com/ajeetdsouza/zoxide/releases/download/v0.10.0/zoxide-0.
 url_api = "https://api.github.com/repos/ajeetdsouza/zoxide/releases/assets/466316293"
 
 [[tools."aqua:argoproj/argo-cd"]]
-version = "3.6.1"
+version = "3.6.2"
 backend = "aqua:argoproj/argo-cd"
-specifiers = ["3.6.1"]
+specifiers = ["3.6.2"]
 
 [tools."aqua:argoproj/argo-cd"."platforms.linux-arm64"]
-checksum = "sha256:6636e9183de7dba666b673a417986e7ff54dbadd948b2f9f6c83bcf7d33ebb94"
+checksum = "sha256:578e87773bfb0fe5047250f16f914d0362fbfce0b5b2b7ed7204776925dcdff9"
 checksum_source = "mise-versions"
-url = "https://github.com/argoproj/argo-cd/releases/download/v3.6.1/argocd-linux-arm64"
-url_api = "https://api.github.com/repos/argoproj/argo-cd/releases/assets/709772974"
+url = "https://github.com/argoproj/argo-cd/releases/download/v3.6.2/argocd-linux-arm64"
+url_api = "https://api.github.com/repos/argoproj/argo-cd/releases/assets/764780647"
 
 [tools."aqua:argoproj/argo-cd"."platforms.linux-x64"]
-checksum = "sha256:46d2fc941071f0a0c36326a67a431d34b1479e1a24737f7b367abc93968beadc"
+checksum = "sha256:80cc51ce8eb39d5601d54fd14225ed15a04ccf4baa3427f5c1e72a4e342aa0b2"
 checksum_source = "mise-versions"
-url = "https://github.com/argoproj/argo-cd/releases/download/v3.6.1/argocd-linux-amd64"
-url_api = "https://api.github.com/repos/argoproj/argo-cd/releases/assets/709772491"
+url = "https://github.com/argoproj/argo-cd/releases/download/v3.6.2/argocd-linux-amd64"
+url_api = "https://api.github.com/repos/argoproj/argo-cd/releases/assets/764781273"
 
 [[tools."aqua:astral-sh/uv"]]
 version = "0.13.9"
@@ -118,17 +118,17 @@ url_api = "https://api.github.com/repos/astral-sh/uv/releases/assets/758513954"
 provenance = "github-attestations"
 
 [[tools."aqua:aws/aws-cli"]]
-version = "2.40.4"
+version = "2.42.2"
 backend = "aqua:aws/aws-cli"
-specifiers = ["2.40.4"]
+specifiers = ["2.42.2"]
 
 [tools."aqua:aws/aws-cli"."platforms.linux-arm64"]
-checksum = "sha256:88961950fb3ef0b7190b40a1bccad0308b69186dbc575cb7c999b8c18959c635"
-url = "https://awscli.amazonaws.com/awscli-exe-linux-aarch64-2.40.4.zip"
+checksum = "sha256:efda2e5d9d01726f47c491a7b006f55611e682a0bdb08f4d65594e27bdc6ab30"
+url = "https://awscli.amazonaws.com/awscli-exe-linux-aarch64-2.42.2.zip"
 
 [tools."aqua:aws/aws-cli"."platforms.linux-x64"]
-checksum = "sha256:81f573c2a0ace70cfb97aa4d014c17cbd605cb04cbad09adbc7aaf9c0979ae8e"
-url = "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.40.4.zip"
+checksum = "sha256:eb2181c8f391ee63acbadf53b13a80efe8702cbfef6a7da99a57e60631b47665"
+url = "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.42.2.zip"
 
 [[tools."aqua:bootandy/dust"]]
 version = "1.2.7"
@@ -165,36 +165,38 @@ url = "https://github.com/cilium/cilium-cli/releases/download/v0.20.3/cilium-lin
 url_api = "https://api.github.com/repos/cilium/cilium-cli/releases/assets/739456158"
 
 [[tools."aqua:cli/cli"]]
-version = "2.104.0"
+version = "2.105.0"
 backend = "aqua:cli/cli"
-specifiers = ["2.104.0"]
+specifiers = ["2.105.0"]
 
 [tools."aqua:cli/cli"."platforms.linux-arm64"]
-checksum = "sha256:cb34cefc6f4e77b90731374a2b737516bb8f3033c6ca46aa949e5344f68069e3"
-url = "https://github.com/cli/cli/releases/download/v2.104.0/gh_2.104.0_linux_arm64.tar.gz"
-url_api = "https://api.github.com/repos/cli/cli/releases/assets/740718938"
+checksum = "sha256:b1278c75107423d818f1937fd92cafc9e5e9b606631568f68d7fb816f5885a02"
+url = "https://github.com/cli/cli/releases/download/v2.105.0/gh_2.105.0_linux_arm64.tar.gz"
+url_api = "https://api.github.com/repos/cli/cli/releases/assets/761188590"
 provenance = "github-attestations"
 
 [tools."aqua:cli/cli"."platforms.linux-x64"]
-checksum = "sha256:98cb101ad87dbbd3f6b2f2bfcbd43197ccd07643140121d8a9cfaa91eadbc24e"
-url = "https://github.com/cli/cli/releases/download/v2.104.0/gh_2.104.0_linux_amd64.tar.gz"
-url_api = "https://api.github.com/repos/cli/cli/releases/assets/740718892"
+checksum = "sha256:79e7ab5db738c48777b696e374f8b428f0647debfb424f44d2f426370407fe2f"
+url = "https://github.com/cli/cli/releases/download/v2.105.0/gh_2.105.0_linux_amd64.tar.gz"
+url_api = "https://api.github.com/repos/cli/cli/releases/assets/761188566"
 provenance = "github-attestations"
 
 [[tools."aqua:dandavison/delta"]]
-version = "0.20.1"
+version = "0.22.0"
 backend = "aqua:dandavison/delta"
-specifiers = ["0.20.1"]
+specifiers = ["0.22.0"]
 
 [tools."aqua:dandavison/delta"."platforms.linux-arm64"]
-checksum = "sha256:da7f4338f593572ff426ae153e0870e2fdc72729416eff551b40cdeb67940db8"
-url = "https://github.com/dandavison/delta/releases/download/0.20.1/delta-0.20.1-aarch64-unknown-linux-gnu.tar.gz"
-url_api = "https://api.github.com/repos/dandavison/delta/releases/assets/610499593"
+checksum = "sha256:9f462d3ffb74d188964f2f0c408619f1d63f60425f87f3dce83bab0db1c71313"
+checksum_source = "mise-versions"
+url = "https://github.com/dandavison/delta/releases/download/0.22.0/delta-0.22.0-aarch64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/dandavison/delta/releases/assets/781464908"
 
 [tools."aqua:dandavison/delta"."platforms.linux-x64"]
-checksum = "sha256:50f08c879f84c81ceb220e476491a7f492d2c9c671e79918cc44badf961a6240"
-url = "https://github.com/dandavison/delta/releases/download/0.20.1/delta-0.20.1-x86_64-unknown-linux-gnu.tar.gz"
-url_api = "https://api.github.com/repos/dandavison/delta/releases/assets/610498121"
+checksum = "sha256:10d20fd7b7e0350e7996ff191a68bfd52093a2361c72b08f6fa10b31dd6782ce"
+checksum_source = "mise-versions"
+url = "https://github.com/dandavison/delta/releases/download/0.22.0/delta-0.22.0-x86_64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/dandavison/delta/releases/assets/781463517"
 
 [[tools."aqua:derailed/k9s"]]
 version = "0.51.0"
@@ -293,20 +295,20 @@ checksum = "sha256:d1c0278d46beab79582d7e50f5b3dc206944ba8e577cde618513fd07daa53
 url = "https://get.helm.sh/helm-v4.3.2-linux-amd64.tar.gz"
 
 [[tools."aqua:helmfile/helmfile"]]
-version = "1.8.4"
+version = "1.8.5"
 backend = "aqua:helmfile/helmfile"
-specifiers = ["1.8.4"]
+specifiers = ["1.8.5"]
 
 [tools."aqua:helmfile/helmfile"."platforms.linux-arm64"]
-checksum = "sha256:96f898a9faf236e06c5e65bf39a7f4ca727f5e911be1b28e2c2f80adabc132ed"
-url = "https://github.com/helmfile/helmfile/releases/download/v1.8.4/helmfile_1.8.4_linux_arm64.tar.gz"
-url_api = "https://api.github.com/repos/helmfile/helmfile/releases/assets/741828773"
+checksum = "sha256:023b28a0630b60b392407f107b336502d11fec7e901dc631cfff7d2cc86a80c2"
+url = "https://github.com/helmfile/helmfile/releases/download/v1.8.5/helmfile_1.8.5_linux_arm64.tar.gz"
+url_api = "https://api.github.com/repos/helmfile/helmfile/releases/assets/780886000"
 provenance = "github-attestations"
 
 [tools."aqua:helmfile/helmfile"."platforms.linux-x64"]
-checksum = "sha256:1f19ced8adb0cdf2350e94ca598cf64e390d8c21d0d9b4bdc1c9f246d4591c9d"
-url = "https://github.com/helmfile/helmfile/releases/download/v1.8.4/helmfile_1.8.4_linux_amd64.tar.gz"
-url_api = "https://api.github.com/repos/helmfile/helmfile/releases/assets/741828694"
+checksum = "sha256:e10344a4e6121689265c8fbe8ce96977b4722a9f953db862014a08b99938c333"
+url = "https://github.com/helmfile/helmfile/releases/download/v1.8.5/helmfile_1.8.5_linux_amd64.tar.gz"
+url_api = "https://api.github.com/repos/helmfile/helmfile/releases/assets/780885994"
 provenance = "github-attestations"
 
 [[tools."aqua:jesseduffield/lazygit"]]
@@ -583,20 +585,20 @@ url = "https://github.com/zellij-org/zellij/releases/download/v0.46.0/zellij-x86
 url_api = "https://api.github.com/repos/zellij-org/zellij/releases/assets/734911871"
 
 [[tools."github:DNSControl/dnscontrol"]]
-version = "5.9.0"
+version = "5.10.1"
 backend = "github:DNSControl/dnscontrol"
-specifiers = ["v5.9.0"]
+specifiers = ["v5.10.1"]
 
 [tools."github:DNSControl/dnscontrol"."platforms.linux-arm64"]
-checksum = "sha256:92b5c07d76966598d1f9ebc4ada9cb4955b2b32cc522767c2d4f84bd3137bb9c"
-url = "https://github.com/DNSControl/dnscontrol/releases/download/v5.9.0/dnscontrol_5.9.0_linux_arm64.tar.gz"
-url_api = "https://api.github.com/repos/DNSControl/dnscontrol/releases/assets/756176881"
+checksum = "sha256:a3d304e273685789352ded2c82b751d5eb1815898219ca76c468c6fe56562ae0"
+url = "https://github.com/DNSControl/dnscontrol/releases/download/v5.10.1/dnscontrol_5.10.1_linux_arm64.tar.gz"
+url_api = "https://api.github.com/repos/DNSControl/dnscontrol/releases/assets/769582223"
 provenance = "github-attestations"
 
 [tools."github:DNSControl/dnscontrol"."platforms.linux-x64"]
-checksum = "sha256:372f39e7858701a3d553a12f64512c4550acdc06b84e106e4e4c42dece7e7883"
-url = "https://github.com/DNSControl/dnscontrol/releases/download/v5.9.0/dnscontrol_5.9.0_linux_amd64.tar.gz"
-url_api = "https://api.github.com/repos/DNSControl/dnscontrol/releases/assets/756176995"
+checksum = "sha256:bf4b97b10e1501d953c143bad4cfbda945261762ed4d8ae36515f739663aea5b"
+url = "https://github.com/DNSControl/dnscontrol/releases/download/v5.10.1/dnscontrol_5.10.1_linux_amd64.tar.gz"
+url_api = "https://api.github.com/repos/DNSControl/dnscontrol/releases/assets/769582221"
 provenance = "github-attestations"
 
 [[tools."pipx:ansible-core"]]
@@ -610,6 +612,6 @@ backend = "pipx:ansible-lint"
 specifiers = ["26.11.0"]
 
 [[tools."pipx:argcomplete"]]
-version = "3.7.2"
+version = "3.8.0"
 backend = "pipx:argcomplete"
-specifiers = ["3.7.2"]
+specifiers = ["3.8.0"]
