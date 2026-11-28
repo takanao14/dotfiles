@@ -267,21 +267,21 @@ url_api = "https://api.github.com/repos/getsops/sops/releases/assets/486808201"
 url = "https://github.com/getsops/sops/releases/download/v3.13.3/sops-v3.13.3.intoto.jsonl"
 
 [[tools."aqua:gruntwork-io/terragrunt"]]
-version = "1.2.2"
+version = "1.2.3"
 backend = "aqua:gruntwork-io/terragrunt"
-specifiers = ["1.2.2"]
+specifiers = ["1.2.3"]
 
 [tools."aqua:gruntwork-io/terragrunt"."platforms.linux-arm64"]
-checksum = "sha256:5581e4ccf9a9bd51f58fe2e4b08f1628302d1bacd3e8ab01e4a597ac4e869aef"
+checksum = "sha256:9080e4c36871f6222034179bdc6d6b22cd26b964dbfd9bccc47e10221bdcde8d"
 checksum_source = "mise-versions"
-url = "https://github.com/gruntwork-io/terragrunt/releases/download/v1.2.2/terragrunt_linux_arm64.tar.gz"
-url_api = "https://api.github.com/repos/gruntwork-io/terragrunt/releases/assets/735923090"
+url = "https://github.com/gruntwork-io/terragrunt/releases/download/v1.2.3/terragrunt_linux_arm64.tar.gz"
+url_api = "https://api.github.com/repos/gruntwork-io/terragrunt/releases/assets/792181434"
 
 [tools."aqua:gruntwork-io/terragrunt"."platforms.linux-x64"]
-checksum = "sha256:14b076f509478202701d8c6c7338c3d5842f160e0f9d9f98b6518ab389f7d7a3"
+checksum = "sha256:f975736bb03ad3b0242df920a213656510e6294e507782453da01045c00bef41"
 checksum_source = "mise-versions"
-url = "https://github.com/gruntwork-io/terragrunt/releases/download/v1.2.2/terragrunt_linux_amd64.tar.gz"
-url_api = "https://api.github.com/repos/gruntwork-io/terragrunt/releases/assets/735922735"
+url = "https://github.com/gruntwork-io/terragrunt/releases/download/v1.2.3/terragrunt_linux_amd64.tar.gz"
+url_api = "https://api.github.com/repos/gruntwork-io/terragrunt/releases/assets/792178760"
 
 [[tools."aqua:helm/helm"]]
 version = "4.3.2"
